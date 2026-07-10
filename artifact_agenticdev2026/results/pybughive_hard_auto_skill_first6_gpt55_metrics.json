@@ -1,0 +1,23 @@
+{
+  "group_by": [
+    "method"
+  ],
+  "groups": [
+    {
+      "method": "auto_skill",
+      "n_runs": 6,
+      "n_tasks": 6,
+      "solved": 6,
+      "solve_rate": 1.0,
+      "cycles_per_solved_task": 1.6667,
+      "tokens_per_solved_task": 111978.3333,
+      "active_tokens_per_solved_task": 111219.3333,
+      "prompt_overhead_ratio": 0.0068,
+      "failed_patches_per_run": 0.5,
+      "mistakes_per_cycle": 1.0,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    }
+  ]
+}

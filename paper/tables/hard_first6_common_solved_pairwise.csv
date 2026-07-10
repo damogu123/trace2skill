@@ -1,0 +1,5 @@
+baseline,common_solved_tasks,auto_cycles,baseline_cycles,cycle_reduction_pct,auto_tokens,baseline_tokens,token_reduction_pct
+generic_checklist,"black_133, black_154, black_183, black_232",1.7500,1.7500,0.0000,47973.7500,59790.2500,19.7633
+reflexion,"black_133, black_154, black_183, black_232",1.7500,2.7500,36.3636,47973.7500,70801.5000,32.2419
+length_matched_reflexion,"black_133, black_154, black_183, black_232",1.7500,2.7500,36.3636,47973.7500,75231.2500,36.2316
+no_memory,"black_154, black_183, black_232",2.0000,3.0000,33.3333,52755.3333,78328.6667,32.6488

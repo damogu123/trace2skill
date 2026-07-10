@@ -1,0 +1,79 @@
+diff --git a/scrapy/utils/conf.py b/scrapy/utils/conf.py
+--- a/scrapy/utils/conf.py
++++ b/scrapy/utils/conf.py
+@@ -5,16 +5,30 @@
+ import six
+ from six.moves.configparser import SafeConfigParser
+ 
++from scrapy.utils.deprecate import update_classpath
+ 
+-def build_component_list(base, custom):
++
++def build_component_list(base, custom, convert=update_classpath):
+     """Compose a component list based on a custom and base dict of components
+     (typically middlewares or extensions), unless custom is already a list, in
+     which case it's returned.
+     """
++
++    def _check_components(complist):
++        if len({convert(c) for c in complist}) != len(complist):
++            raise ValueError('Some paths in {!r} convert to the same object, '
++                             'please update your settings'.format(complist))
++
+     if isinstance(custom, (list, tuple)):
+-        return custom
+-    compdict = base.copy()
+-    compdict.update(custom)
++        _check_components(custom)
++        return type(custom)(convert(c) for c in custom)
++
++    def _map_keys(compdict):
++        _check_components(compdict)
++        return {convert(k): v for k, v in six.iteritems(compdict)}
++
++    compdict = _map_keys(base)
++    compdict.update(_map_keys(custom))
+     items = (x for x in six.iteritems(compdict) if x[1] is not None)
+     return [x[0] for x in sorted(items, key=itemgetter(1))]
+ 
+diff --git a/scrapy/utils/deprecate.py b/scrapy/utils/deprecate.py
+--- a/scrapy/utils/deprecate.py
++++ b/scrapy/utils/deprecate.py
+@@ -121,3 +121,37 @@ def _clspath(cls, forced=None):
+     if forced is not None:
+         return forced
+     return '{}.{}'.format(cls.__module__, cls.__name__)
++
++
++DEPRECATION_RULES = [
++    ('scrapy.contrib_exp.downloadermiddleware.decompression.', 'scrapy.downloadermiddlewares.decompression.'),
++    ('scrapy.contrib_exp.iterators.', 'scrapy.utils.iterators.'),
++    ('scrapy.contrib.downloadermiddleware.', 'scrapy.downloadermiddlewares.'),
++    ('scrapy.contrib.exporter.', 'scrapy.exporters.'),
++    ('scrapy.contrib.linkextractors.', 'scrapy.linkextractors.'),
++    ('scrapy.contrib.loader.processor.', 'scrapy.loader.processors.'),
++    ('scrapy.contrib.loader.', 'scrapy.loader.'),
++    ('scrapy.contrib.pipeline.', 'scrapy.pipelines.'),
++    ('scrapy.contrib.spidermiddleware.', 'scrapy.spidermiddlewares.'),
++    ('scrapy.contrib.spiders.', 'scrapy.spiders.'),
++    ('scrapy.contrib.', 'scrapy.extensions.'),
++    ('scrapy.command.', 'scrapy.commands.'),
++    ('scrapy.dupefilter.', 'scrapy.dupefilters.'),
++    ('scrapy.linkextractor.', 'scrapy.linkextractors.'),
++    ('scrapy.spider.', 'scrapy.spiders.'),
++    ('scrapy.squeue.', 'scrapy.squeues.'),
++    ('scrapy.statscol.', 'scrapy.statscollectors.'),
++    ('scrapy.utils.decorator.', 'scrapy.utils.decorators.'),
++    ('scrapy.spidermanager.SpiderManager', 'scrapy.spiderloader.SpiderLoader'),
++]
++
++
++def update_classpath(path):
++    """Update a deprecated path from an object with its new location"""
++    for prefix, replacement in DEPRECATION_RULES:
++        if path.startswith(prefix):
++            new_path = path.replace(prefix, replacement, 1)
++            warnings.warn("`{}` class is deprecated, use `{}` instead".format(path, new_path),
++                          ScrapyDeprecationWarning)
++            return new_path
++    return path

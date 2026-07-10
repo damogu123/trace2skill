@@ -1,0 +1,93 @@
+{
+  "group_by": [
+    "method",
+    "source"
+  ],
+  "groups": [
+    {
+      "method": "auto_skill",
+      "source": "pybughive",
+      "n_runs": 3,
+      "n_tasks": 3,
+      "solved": 2,
+      "solve_rate": 0.6667,
+      "cycles_per_solved_task": 2.0,
+      "tokens_per_solved_task": 51607.5,
+      "active_tokens_per_solved_task": 50848.5,
+      "prompt_overhead_ratio": 0.0089,
+      "failed_patches_per_run": 1.3333,
+      "mistakes_per_cycle": 0.5714,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.3333,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "generic_checklist",
+      "source": "pybughive",
+      "n_runs": 3,
+      "n_tasks": 3,
+      "solved": 3,
+      "solve_rate": 1.0,
+      "cycles_per_solved_task": 2.3333,
+      "tokens_per_solved_task": 73665.6667,
+      "active_tokens_per_solved_task": 73254.6667,
+      "prompt_overhead_ratio": 0.0056,
+      "failed_patches_per_run": 1.3333,
+      "mistakes_per_cycle": 0.4286,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "length_matched_reflexion",
+      "source": "pybughive",
+      "n_runs": 3,
+      "n_tasks": 3,
+      "solved": 2,
+      "solve_rate": 0.6667,
+      "cycles_per_solved_task": 2.5,
+      "tokens_per_solved_task": 64713.5,
+      "active_tokens_per_solved_task": 64058.5,
+      "prompt_overhead_ratio": 0.0109,
+      "failed_patches_per_run": 1.3333,
+      "mistakes_per_cycle": 0.2857,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "no_memory",
+      "source": "pybughive",
+      "n_runs": 3,
+      "n_tasks": 3,
+      "solved": 2,
+      "solve_rate": 0.6667,
+      "cycles_per_solved_task": 3.0,
+      "tokens_per_solved_task": 98776.0,
+      "active_tokens_per_solved_task": 98776.0,
+      "prompt_overhead_ratio": 0.0,
+      "failed_patches_per_run": 1.3333,
+      "mistakes_per_cycle": 0.5556,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "reflexion",
+      "source": "pybughive",
+      "n_runs": 3,
+      "n_tasks": 3,
+      "solved": 3,
+      "solve_rate": 1.0,
+      "cycles_per_solved_task": 3.0,
+      "tokens_per_solved_task": 69174.6667,
+      "active_tokens_per_solved_task": 68799.6667,
+      "prompt_overhead_ratio": 0.0054,
+      "failed_patches_per_run": 1.0,
+      "mistakes_per_cycle": 0.5556,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    }
+  ]
+}

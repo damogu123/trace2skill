@@ -1,0 +1,8 @@
+method,task_id,split,source,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+auto_skill,pybughive_scrapy_1265,heldout,pybughive,1,1,1,1.0,2.0,41000.0,40241.0,0.0185,0.0,0.0,0.0,0.0,
+format_shuffled_skill,pybughive_scrapy_1265,heldout,pybughive,1,1,1,1.0,1.0,19885.0,19185.0,0.0352,0.0,0.0,0.0,0.0,
+generic_checklist,pybughive_scrapy_1265,heldout,pybughive,1,1,1,1.0,1.0,26317.0,25906.0,0.0156,0.0,1.0,0.0,0.0,
+length_matched_reflexion,pybughive_scrapy_1265,heldout,pybughive,1,1,1,1.0,2.0,36465.0,35810.0,0.018,0.0,0.0,0.0,0.0,
+no_memory,pybughive_scrapy_1265,heldout,pybughive,1,1,1,1.0,1.0,33318.0,33318.0,0.0,0.0,0.0,0.0,0.0,
+raw_trajectory_retrieval,pybughive_scrapy_1265,heldout,pybughive,1,1,1,1.0,1.0,40534.0,39606.0,0.0229,0.0,0.0,0.0,0.0,
+reflexion,pybughive_scrapy_1265,heldout,pybughive,1,1,1,1.0,1.0,39757.0,39382.0,0.0094,0.0,0.0,0.0,0.0,

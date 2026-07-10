@@ -1,0 +1,85 @@
+{
+  "source": "pybughive",
+  "project": "cookiecutter",
+  "issue_id": 1513,
+  "title": "Error reading yaml file using `poyo` - `ValueError: Parent of ChildMixin instance needs to be a Container.`",
+  "labels": "bug, duplicate",
+  "buggy_commit": "2fd137f2c2d508cd0d194301101da7e85df6994e",
+  "fix_commit": "cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb",
+  "warnings": [],
+  "score": 125,
+  "raw_issue": {
+    "id": 1513,
+    "created_at": "2021-04-10T21:02:09Z",
+    "closed_at": "2021-04-29T21:40:23Z",
+    "title": "Error reading yaml file using `poyo` - `ValueError: Parent of ChildMixin instance needs to be a Container.`",
+    "labels": "bug, duplicate",
+    "commits": [
+      {
+        "hash": "cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb",
+        "commit_date": "2021-04-22T22:01:32Z",
+        "parents": "2fd137f2c2d508cd0d194301101da7e85df6994e",
+        "stat": {
+          "total": 1,
+          "additions": 16,
+          "deletions": 15,
+          "files": [
+            {
+              "sha": "d93501f36862cecb57d20cb104f1022078d84d10",
+              "filename": "cookiecutter/config.py",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1,
+              "changes": 2,
+              "blob_url": "https://github.com/cookiecutter/cookiecutter/blob/cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb/cookiecutter%2Fconfig.py",
+              "raw_url": "https://github.com/cookiecutter/cookiecutter/raw/cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb/cookiecutter%2Fconfig.py",
+              "contents_url": "https://api.github.com/repos/cookiecutter/cookiecutter/contents/cookiecutter%2Fconfig.py?ref=cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb",
+              "patch": "@@ -45,7 +45,7 @@ def merge_configs(default, overwrite):\n         # Make sure to preserve existing items in\n         # nested dicts, for example `abbreviations`\n         if isinstance(v, dict):\n-            new_config[k] = merge_configs(default[k], v)\n+            new_config[k] = merge_configs(default.get(k, {}), v)\n         else:\n             new_config[k] = v\n "
+            }
+          ],
+          "tests": [
+            {
+              "sha": "c46ac4a60d7e8b8c9a81601c24d6dac697ef2842",
+              "filename": "tests/test-config/valid-config.yaml",
+              "status": "modified",
+              "additions": 6,
+              "deletions": 0,
+              "changes": 6,
+              "blob_url": "https://github.com/cookiecutter/cookiecutter/blob/cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb/tests%2Ftest-config%2Fvalid-config.yaml",
+              "raw_url": "https://github.com/cookiecutter/cookiecutter/raw/cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb/tests%2Ftest-config%2Fvalid-config.yaml",
+              "contents_url": "https://api.github.com/repos/cookiecutter/cookiecutter/contents/tests%2Ftest-config%2Fvalid-config.yaml?ref=cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb",
+              "patch": "@@ -2,6 +2,12 @@ default_context:\n     full_name: \"Firstname Lastname\"\n     email: \"firstname.lastname@gmail.com\"\n     github_username: \"example\"\n+    project:\n+        description: \"description\"\n+        tags:\n+            - \"first\"\n+            - \"second\"\n+            - \"third\"\n cookiecutters_dir: \"/home/example/some-path-to-templates\"\n replay_dir: \"/home/example/some-path-to-replay-files\"\n abbreviations:"
+            },
+            {
+              "sha": "a0e81f26619c88184c6987c611f28c9a1b77f8cd",
+              "filename": "tests/test_get_config.py",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 0,
+              "changes": 4,
+              "blob_url": "https://github.com/cookiecutter/cookiecutter/blob/cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb/tests%2Ftest_get_config.py",
+              "raw_url": "https://github.com/cookiecutter/cookiecutter/raw/cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb/tests%2Ftest_get_config.py",
+              "contents_url": "https://api.github.com/repos/cookiecutter/cookiecutter/contents/tests%2Ftest_get_config.py?ref=cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb",
+              "patch": "@@ -59,6 +59,10 @@ def test_get_config():\n             'full_name': 'Firstname Lastname',\n             'email': 'firstname.lastname@gmail.com',\n             'github_username': 'example',\n+            'project': {\n+                'description': 'description',\n+                'tags': ['first', 'second', 'third',],\n+            },\n         },\n         'abbreviations': {\n             'gh': 'https://github.com/{0}.git',"
+            },
+            {
+              "sha": "560c1d873c50a924be5dbaac798e67a94beaf40e",
+              "filename": "tests/test_get_user_config.py",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 0,
+              "changes": 4,
+              "blob_url": "https://github.com/cookiecutter/cookiecutter/blob/cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb/tests%2Ftest_get_user_config.py",
+              "raw_url": "https://github.com/cookiecutter/cookiecutter/raw/cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb/tests%2Ftest_get_user_config.py",
+              "contents_url": "https://api.github.com/repos/cookiecutter/cookiecutter/contents/tests%2Ftest_get_user_config.py?ref=cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb",
+              "patch": "@@ -46,6 +46,10 @@ def custom_config():\n             'full_name': 'Firstname Lastname',\n             'email': 'firstname.lastname@gmail.com',\n             'github_username': 'example',\n+            'project': {\n+                'description': 'description',\n+                'tags': ['first', 'second', 'third',],\n+            },\n         },\n         'cookiecutters_dir': '/home/example/some-path-to-templates',\n         'replay_dir': '/home/example/some-path-to-replay-files',"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "testSteps": "pipenv run pytest -- tests/test_get_config.py",
+    "testStepsFull": "pipenv run pytest"
+  }
+}

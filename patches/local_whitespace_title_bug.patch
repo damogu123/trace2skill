@@ -1,0 +1,11 @@
+diff --git a/src/text_title/title.py b/src/text_title/title.py
+--- a/src/text_title/title.py
++++ b/src/text_title/title.py
+@@ -1,6 +1,6 @@
+ def title_or_default(text: str | None, default: str = "Untitled") -> str:
+     if text is None:
+         return default
+     if not text.strip():
+-        return ""
++        return default
+     return text.strip().title()

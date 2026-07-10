@@ -1,0 +1,70 @@
+{
+  "run_id": "pybughive_heldout_memory_baselines_pybughive_discord_py_7818_raw_trajectory_retrieval_seed1",
+  "task_id": "pybughive_discord_py_7818",
+  "method": "raw_trajectory_retrieval",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 10,
+    "tool_calls": 9,
+    "input_tokens": 50945,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 928,
+    "active_debugging_tokens": 50017,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "Cog initialization copied top-level app command groups but failed to rebind class-declared nested groups with explicit parent, causing instance/class aliasing for nested group attributes.",
+      "file_inspections": [
+        {
+          "path": "tests/test_app_commands_group.py",
+          "reason": "Identify exact failing expectation around nested group instance copying and parent wiring."
+        },
+        {
+          "path": "discord/ext/commands/cog.py",
+          "reason": "Inspect cog construction path that clones and binds app commands to cog instances."
+        },
+        {
+          "path": "discord/app_commands/commands.py",
+          "reason": "Verify Group and Command _copy_with behavior and binding semantics for nested children."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "discord/ext/commands/cog.py"
+        ],
+        "patch_path": "runs/pybughive_heldout_memory_baselines/pybughive_heldout_memory_baselines_pybughive_discord_py_7818_raw_trajectory_retrieval_seed1/agent.patch",
+        "patch_summary": "Tracked group copy bindings during cog app-command cloning and explicitly rebound class-declared nested groups; when needed, cloned nested groups against copied parents and attached them into parent children to avoid sharing class-level nested group instances."
+      },
+      "test_rerun": {
+        "command": "pipenv run pytest -- tests/test_app_commands_group.py; pipenv run pytest",
+        "passed": true,
+        "log_path": "runs/pybughive_heldout_memory_baselines/pybughive_heldout_memory_baselines_pybughive_discord_py_7818_raw_trajectory_retrieval_seed1/final_test.log"
+      },
+      "mistakes": [
+        {
+          "type": "invalid_command",
+          "description": "A temporary WSL Python introspection command failed due shell quoting and was retried with standard test-driven inspection."
+        }
+      ]
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

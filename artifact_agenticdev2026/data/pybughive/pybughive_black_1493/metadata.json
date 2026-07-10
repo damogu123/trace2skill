@@ -1,0 +1,62 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 1493,
+  "title": "Black finds root incorrectly",
+  "labels": "T: bug",
+  "buggy_commit": "f90f50a7436ca13517933c290ef007e7cb2e7258",
+  "fix_commit": "2471b9256d9d9dfea1124d20072201693b9b0865",
+  "warnings": [],
+  "score": 148,
+  "raw_issue": {
+    "id": 1493,
+    "created_at": "2020-06-12T16:15:02Z",
+    "closed_at": "2020-06-24T09:09:10Z",
+    "title": "Black finds root incorrectly",
+    "labels": "T: bug",
+    "commits": [
+      {
+        "hash": "2471b9256d9d9dfea1124d20072201693b9b0865",
+        "commit_date": "2020-06-24T09:09:07Z",
+        "parents": "f90f50a7436ca13517933c290ef007e7cb2e7258",
+        "stat": {
+          "total": 7,
+          "additions": 45,
+          "deletions": 38,
+          "files": [
+            {
+              "sha": "d4c6e62bdbfb078f26199f78fa72dd7556cd35f1",
+              "filename": "src/black/__init__.py",
+              "status": "modified",
+              "additions": 16,
+              "deletions": 7,
+              "changes": 23,
+              "blob_url": "https://github.com/psf/black/blob/2471b9256d9d9dfea1124d20072201693b9b0865/src%2Fblack%2F__init__.py",
+              "raw_url": "https://github.com/psf/black/raw/2471b9256d9d9dfea1124d20072201693b9b0865/src%2Fblack%2F__init__.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/src%2Fblack%2F__init__.py?ref=2471b9256d9d9dfea1124d20072201693b9b0865",
+              "patch": "@@ -5825,20 +5825,29 @@ def gen_python_files(\n def find_project_root(srcs: Iterable[str]) -> Path:\n     \"\"\"Return a directory containing .git, .hg, or pyproject.toml.\n \n-    That directory can be one of the directories passed in `srcs` or their\n-    common parent.\n+    That directory will be a common parent of all files and directories\n+    passed in `srcs`.\n \n     If no directory in the tree contains a marker that would specify it's the\n     project root, the root of the file system is returned.\n     \"\"\"\n     if not srcs:\n         return Path(\"/\").resolve()\n \n-    common_base = min(Path(src).resolve() for src in srcs)\n-    if common_base.is_dir():\n-        # Append a fake file so `parents` below returns `common_base_dir`, too.\n-        common_base /= \"fake-file\"\n-    for directory in common_base.parents:\n+    path_srcs = [Path(src).resolve() for src in srcs]\n+\n+    # A list of lists of parents for each 'src'. 'src' is included as a\n+    # \"parent\" of itself if it is a directory\n+    src_parents = [\n+        list(path.parents) + ([path] if path.is_dir() else []) for path in path_srcs\n+    ]\n+\n+    common_base = max(\n+        set.intersection(*(set(parents) for parents in src_parents)),\n+        key=lambda path: path.parts,\n+    )\n+\n+    for directory in (common_base, *common_base.parents):\n         if (directory / \".git\").exists():\n             return directory\n "
+            }
+          ],
+          "tests": [
+            {
+              "sha": "3ed5daa4b494afb5b8a0918d8f60e7426f623201",
+              "filename": "tests/test_black.py",
+              "status": "modified",
+              "additions": 22,
+              "deletions": 0,
+              "changes": 22,
+              "blob_url": "https://github.com/psf/black/blob/2471b9256d9d9dfea1124d20072201693b9b0865/tests%2Ftest_black.py",
+              "raw_url": "https://github.com/psf/black/raw/2471b9256d9d9dfea1124d20072201693b9b0865/tests%2Ftest_black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Ftest_black.py?ref=2471b9256d9d9dfea1124d20072201693b9b0865",
+              "patch": "@@ -1801,6 +1801,28 @@ def __init__(self) -> None:\n         self.assertEqual(config[\"exclude\"], r\"\\.pyi?$\")\n         self.assertEqual(config[\"include\"], r\"\\.py?$\")\n \n+    def test_find_project_root(self) -> None:\n+        with TemporaryDirectory() as workspace:\n+            root = Path(workspace)\n+            test_dir = root / \"test\"\n+            test_dir.mkdir()\n+\n+            src_dir = root / \"src\"\n+            src_dir.mkdir()\n+\n+            root_pyproject = root / \"pyproject.toml\"\n+            root_pyproject.touch()\n+            src_pyproject = src_dir / \"pyproject.toml\"\n+            src_pyproject.touch()\n+            src_python = src_dir / \"foo.py\"\n+            src_python.touch()\n+\n+            self.assertEqual(\n+                black.find_project_root((src_dir, test_dir)), root.resolve()\n+            )\n+            self.assertEqual(black.find_project_root((src_dir,)), src_dir.resolve())\n+            self.assertEqual(black.find_project_root((src_python,)), src_dir.resolve())\n+\n \n class BlackDTestCase(AioHTTPTestCase):\n     async def get_application(self) -> web.Application:"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "testSteps": "pipenv run pytest -- tests/test_black.py",
+    "testStepsFull": "pipenv run pytest",
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5"
+  }
+}

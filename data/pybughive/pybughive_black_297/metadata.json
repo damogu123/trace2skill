@@ -1,0 +1,74 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 297,
+  "title": "Additional space after star unpacking",
+  "labels": "T: bug",
+  "buggy_commit": "728e5a2f1ed16e2cfe0ca5586edac6c10da436c5",
+  "fix_commit": "bbc09a4f013f2a584f143f3f5e3f76f6082367d4",
+  "warnings": [],
+  "score": 112,
+  "raw_issue": {
+    "id": 297,
+    "created_at": "2018-06-03T20:22:21Z",
+    "closed_at": "2018-06-05T04:28:37Z",
+    "title": "Additional space after star unpacking",
+    "labels": "T: bug",
+    "commits": [
+      {
+        "hash": "bbc09a4f013f2a584f143f3f5e3f76f6082367d4",
+        "commit_date": "2018-06-05T01:42:16Z",
+        "parents": "728e5a2f1ed16e2cfe0ca5586edac6c10da436c5",
+        "stat": {
+          "total": 1,
+          "additions": 6,
+          "deletions": 5,
+          "files": [
+            {
+              "sha": "46c0907894d8a9b713f1899eb4dbdb818439f13b",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 0,
+              "changes": 1,
+              "blob_url": "https://github.com/psf/black/blob/bbc09a4f013f2a584f143f3f5e3f76f6082367d4/black.py",
+              "raw_url": "https://github.com/psf/black/raw/bbc09a4f013f2a584f143f3f5e3f76f6082367d4/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=bbc09a4f013f2a584f143f3f5e3f76f6082367d4",
+              "patch": "@@ -768,6 +768,7 @@ def show(cls, code: str) -> None:\n     syms.dictsetmaker,\n     syms.listmaker,\n     syms.testlist_gexp,\n+    syms.testlist_star_expr,\n }\n TEST_DESCENDANTS = {\n     syms.test,"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "0d2ff68e4aa36bd6ce6606eca9f6c12f533f542a",
+              "filename": "tests/expression.diff",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 1,
+              "changes": 3,
+              "blob_url": "https://github.com/psf/black/blob/bbc09a4f013f2a584f143f3f5e3f76f6082367d4/tests%2Fexpression.diff",
+              "raw_url": "https://github.com/psf/black/raw/bbc09a4f013f2a584f143f3f5e3f76f6082367d4/tests%2Fexpression.diff",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.diff?ref=bbc09a4f013f2a584f143f3f5e3f76f6082367d4",
+              "patch": "@@ -147,7 +147,7 @@\n  slice[0:1:2]\n  slice[:]\n  slice[:-1]\n-@@ -133,107 +156,159 @@\n+@@ -133,108 +156,160 @@\n  numpy[-(c + 1) :, d]\n  numpy[:, l[-2]]\n  numpy[:, ::-1]\n@@ -183,6 +183,7 @@\n  c = 1\n  d = (1,) + a + (2,)\n  e = (1,).count(1)\n+ f = 1, *range(10)\n -what_is_up_with_those_new_coord_names = (coord_names + set(vars_to_create)) + set(vars_to_remove)\n -what_is_up_with_those_new_coord_names = (coord_names | set(vars_to_create)) - set(vars_to_remove)\n -result = session.query(models.Customer.id).filter(models.Customer.account_id == account_id, models.Customer.email == email_address).order_by(models.Customer.id.asc(),).all()"
+            },
+            {
+              "sha": "ea927a59f402589949e3dfaa416e9b7db47fbf37",
+              "filename": "tests/expression.py",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0,
+              "changes": 2,
+              "blob_url": "https://github.com/psf/black/blob/bbc09a4f013f2a584f143f3f5e3f76f6082367d4/tests%2Fexpression.py",
+              "raw_url": "https://github.com/psf/black/raw/bbc09a4f013f2a584f143f3f5e3f76f6082367d4/tests%2Fexpression.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.py?ref=bbc09a4f013f2a584f143f3f5e3f76f6082367d4",
+              "patch": "@@ -152,6 +152,7 @@\n c = 1\n d = (1,) + a + (2,)\n e = (1,).count(1)\n+f = 1, *range(10)\n what_is_up_with_those_new_coord_names = (coord_names + set(vars_to_create)) + set(vars_to_remove)\n what_is_up_with_those_new_coord_names = (coord_names | set(vars_to_create)) - set(vars_to_remove)\n result = session.query(models.Customer.id).filter(models.Customer.account_id == account_id, models.Customer.email == email_address).order_by(models.Customer.id.asc(),).all()\n@@ -426,6 +427,7 @@ async def f():\n c = 1\n d = (1,) + a + (2,)\n e = (1,).count(1)\n+f = 1, *range(10)\n what_is_up_with_those_new_coord_names = (coord_names + set(vars_to_create)) + set(\n     vars_to_remove\n )"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

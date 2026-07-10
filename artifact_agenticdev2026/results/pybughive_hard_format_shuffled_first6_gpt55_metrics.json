@@ -1,0 +1,23 @@
+{
+  "group_by": [
+    "method"
+  ],
+  "groups": [
+    {
+      "method": "format_shuffled_skill",
+      "n_runs": 6,
+      "n_tasks": 6,
+      "solved": 6,
+      "solve_rate": 1.0,
+      "cycles_per_solved_task": 2.1667,
+      "tokens_per_solved_task": 102005.8333,
+      "active_tokens_per_solved_task": 101305.8333,
+      "prompt_overhead_ratio": 0.0069,
+      "failed_patches_per_run": 0.8333,
+      "mistakes_per_cycle": 0.6923,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    }
+  ]
+}

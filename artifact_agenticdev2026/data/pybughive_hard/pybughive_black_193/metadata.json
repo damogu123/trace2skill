@@ -1,0 +1,110 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 193,
+  "title": "can't format python2 valid syntax",
+  "labels": "T: bug",
+  "buggy_commit": "8b64e916f65f2c1023f9abd6243a904bfbcd8fe9",
+  "fix_commit": "5a47fd13cc4c9f43270dd12c37577244c1eabfcc",
+  "warnings": [],
+  "score": 454,
+  "raw_issue": {
+    "id": 193,
+    "created_at": "2018-05-07T21:25:50Z",
+    "closed_at": "2018-05-16T05:13:24Z",
+    "title": "can't format python2 valid syntax",
+    "labels": "T: bug",
+    "commits": [
+      {
+        "hash": "5a47fd13cc4c9f43270dd12c37577244c1eabfcc",
+        "commit_date": "2018-05-16T05:13:16Z",
+        "parents": "8b64e916f65f2c1023f9abd6243a904bfbcd8fe9",
+        "stat": {
+          "total": 68,
+          "additions": 242,
+          "deletions": 174,
+          "files": [
+            {
+              "sha": "1570348ade6060f93d6192e9185233c09cf35d74",
+              "filename": "README.md",
+              "status": "modified",
+              "additions": 5,
+              "deletions": 0,
+              "changes": 5,
+              "blob_url": "https://github.com/psf/black/blob/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/README.md",
+              "raw_url": "https://github.com/psf/black/raw/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/README.md",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/README.md?ref=5a47fd13cc4c9f43270dd12c37577244c1eabfcc",
+              "patch": "@@ -597,6 +597,9 @@ More details can be found in [CONTRIBUTING](CONTRIBUTING.md).\n * math operators now use their respective priorities for delimiting multiline\n   expressions (#148)\n \n+* optional parentheses are now omitted on expressions that start or end\n+  with a bracket and only contain a single operator (#177)\n+\n * empty parentheses in a class definition are now removed (#145, #180)\n \n * string prefixes are now standardized to lowercase and `u` is removed\n@@ -621,6 +624,8 @@ More details can be found in [CONTRIBUTING](CONTRIBUTING.md).\n   where used both in function signatures with stars and function calls\n   with stars but the former would be reformatted to a single line.\n \n+* fixed crash on dealing with optional parentheses (#193)\n+\n * fixed crash when dead symlinks where encountered\n \n "
+            },
+            {
+              "sha": "e7a7aa8585836c72a5d24dfa35fda0089462578a",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 27,
+              "deletions": 25,
+              "changes": 52,
+              "blob_url": "https://github.com/psf/black/blob/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/black.py",
+              "raw_url": "https://github.com/psf/black/raw/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=5a47fd13cc4c9f43270dd12c37577244c1eabfcc",
+              "patch": "@@ -239,11 +239,8 @@ def reformat_one(\n                 src = src.resolve()\n                 if src in cache and cache[src] == get_cache_info(src):\n                     changed = Changed.CACHED\n-            if (\n-                changed is not Changed.CACHED\n-                and format_file_in_place(\n-                    src, line_length=line_length, fast=fast, write_back=write_back\n-                )\n+            if changed is not Changed.CACHED and format_file_in_place(\n+                src, line_length=line_length, fast=fast, write_back=write_back\n             ):\n                 changed = Changed.YES\n             if write_back == WriteBack.YES and changed is not Changed.NO:\n@@ -860,14 +857,11 @@ def is_def(self) -> bool:\n             second_leaf: Optional[Leaf] = self.leaves[1]\n         except IndexError:\n             second_leaf = None\n-        return (\n-            (first_leaf.type == token.NAME and first_leaf.value == \"def\")\n-            or (\n-                first_leaf.type == token.ASYNC\n-                and second_leaf is not None\n-                and second_leaf.type == token.NAME\n-                and second_leaf.value == \"def\"\n-            )\n+        return (first_leaf.type == token.NAME and first_leaf.value == \"def\") or (\n+            first_leaf.type == token.ASYNC\n+            and second_leaf is not None\n+            and second_leaf.type == token.NAME\n+            and second_leaf.value == \"def\"\n         )\n \n     @property\n@@ -1032,9 +1026,8 @@ def is_complex_subscript(self, leaf: Leaf) -> bool:\n             and subscript_start.type == syms.subscriptlist\n         ):\n             subscript_start = child_towards(subscript_start, leaf)\n-        return (\n-            subscript_start is not None\n-            and any(n.type in TEST_DESCENDANTS for n in subscript_start.pre_order())\n+        return subscript_start is not None and any(\n+            n.type in TEST_DESCENDANTS for n in subscript_start.pre_order()\n         )\n \n     def __str__(self) -> str:\n@@ -1999,8 +1992,9 @@ def right_hand_split(\n     # Since body is a new indent level, remove spurious leading whitespace.\n     if body_leaves:\n         normalize_prefix(body_leaves[0], inside_brackets=True)\n-    elif not head_leaves:\n-        # No `head` and no `body` means the split failed. `tail` has all content.\n+    if not head_leaves:\n+        # No `head` means the split failed. Either `tail` has all content or\n+        # the matching `opening_bracket` wasn't available on `line` anymore.\n         raise CannotSplit(\"No brackets found\")\n \n     # Build the new lines.\n@@ -2018,19 +2012,27 @@ def right_hand_split(\n         # the closing bracket is an optional paren\n         and closing_bracket.type == token.RPAR\n         and not closing_bracket.value\n-        # there are no delimiters or standalone comments in the body\n-        and not body.bracket_tracker.delimiters\n+        # there are no standalone comments in the body\n         and not line.contains_standalone_comments(0)\n         # and it's not an import (optional parens are the only thing we can split\n         # on in this case; attempting a split without them is a waste of time)\n         and not line.is_import\n     ):\n         omit = {id(closing_bracket), *omit}\n-        try:\n-            yield from right_hand_split(line, py36=py36, omit=omit)\n-            return\n-        except CannotSplit:\n-            pass\n+        delimiter_count = len(body.bracket_tracker.delimiters)\n+        if (\n+            delimiter_count == 0\n+            or delimiter_count == 1\n+            and (\n+                body.leaves[0].type in OPENING_BRACKETS\n+                or body.leaves[-1].type in CLOSING_BRACKETS\n+            )\n+        ):\n+            try:\n+                yield from right_hand_split(line, py36=py36, omit=omit)\n+                return\n+            except CannotSplit:\n+                pass\n \n     ensure_visible(opening_bracket)\n     ensure_visible(closing_bracket)"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "c3dfd3db042de048c26e43ad368d049557db4e8c",
+              "filename": "tests/composition.py",
+              "status": "modified",
+              "additions": 109,
+              "deletions": 1,
+              "changes": 110,
+              "blob_url": "https://github.com/psf/black/blob/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/tests%2Fcomposition.py",
+              "raw_url": "https://github.com/psf/black/raw/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/tests%2Fcomposition.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fcomposition.py?ref=5a47fd13cc4c9f43270dd12c37577244c1eabfcc",
+              "patch": "@@ -33,7 +33,7 @@ def test(self) -> None:\n                     ):\n                         print(i)\n \n-    def omitting_trailers() -> None:\n+    def omitting_trailers(self) -> None:\n         get_collection(\n             hey_this_is_a_very_long_call, it_has_funny_attributes, really=True\n         )[OneLevelIndex]\n@@ -43,3 +43,111 @@ def omitting_trailers() -> None:\n         d[0][1][2][3][4][5][6][7][8][9][10][11][12][13][14][15][16][17][18][19][20][21][\n             22\n         ]\n+\n+    def easy_asserts(self) -> None:\n+        assert {\n+            key1: value1,\n+            key2: value2,\n+            key3: value3,\n+            key4: value4,\n+            key5: value5,\n+            key6: value6,\n+            key7: value7,\n+            key8: value8,\n+            key9: value9,\n+        } == expected, \"Not what we expected\"\n+\n+        assert expected == {\n+            key1: value1,\n+            key2: value2,\n+            key3: value3,\n+            key4: value4,\n+            key5: value5,\n+            key6: value6,\n+            key7: value7,\n+            key8: value8,\n+            key9: value9,\n+        }, \"Not what we expected\"\n+\n+        assert expected == {\n+            key1: value1,\n+            key2: value2,\n+            key3: value3,\n+            key4: value4,\n+            key5: value5,\n+            key6: value6,\n+            key7: value7,\n+            key8: value8,\n+            key9: value9,\n+        }\n+\n+    def tricky_asserts(self) -> None:\n+        assert {\n+            key1: value1,\n+            key2: value2,\n+            key3: value3,\n+            key4: value4,\n+            key5: value5,\n+            key6: value6,\n+            key7: value7,\n+            key8: value8,\n+            key9: value9,\n+        } == expected(\n+            value, is_going_to_be=\"too long to fit in a single line\", srsly=True\n+        ), \"Not what we expected\"\n+\n+        assert {\n+            key1: value1,\n+            key2: value2,\n+            key3: value3,\n+            key4: value4,\n+            key5: value5,\n+            key6: value6,\n+            key7: value7,\n+            key8: value8,\n+            key9: value9,\n+        } == expected, (\n+            \"Not what we expected and the message is too long to fit in one line\"\n+        )\n+\n+        assert expected(\n+            value, is_going_to_be=\"too long to fit in a single line\", srsly=True\n+        ) == {\n+            key1: value1,\n+            key2: value2,\n+            key3: value3,\n+            key4: value4,\n+            key5: value5,\n+            key6: value6,\n+            key7: value7,\n+            key8: value8,\n+            key9: value9,\n+        }, \"Not what we expected\"\n+\n+        assert expected == {\n+            key1: value1,\n+            key2: value2,\n+            key3: value3,\n+            key4: value4,\n+            key5: value5,\n+            key6: value6,\n+            key7: value7,\n+            key8: value8,\n+            key9: value9,\n+        }, (\n+            \"Not what we expected and the message is too long to fit \"\n+            \"in one line because it's too long\"\n+        )\n+\n+        # This is weird but true.\n+        assert expectedexpectedexpectedexpectedexpectedexpectedexpectedexpectedexpect == {\n+            key1: value1,\n+            key2: value2,\n+            key3: value3,\n+            key4: value4,\n+            key5: value5,\n+            key6: value6,\n+            key7: value7,\n+            key8: value8,\n+            key9: value9,\n+        }"
+            },
+            {
+              "sha": "4c03e432383c174127c803dea8076488a09a8daf",
+              "filename": "tests/empty_lines.py",
+              "status": "modified",
+              "additions": 21,
+              "deletions": 30,
+              "changes": 51,
+              "blob_url": "https://github.com/psf/black/blob/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/tests%2Fempty_lines.py",
+              "raw_url": "https://github.com/psf/black/raw/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/tests%2Fempty_lines.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fempty_lines.py?ref=5a47fd13cc4c9f43270dd12c37577244c1eabfcc",
+              "patch": "@@ -123,29 +123,23 @@ def f():\n             return NO\n \n         if prevp.type == token.EQUAL:\n-            if (\n-                prevp.parent\n-                and prevp.parent.type in {\n-                    syms.typedargslist,\n-                    syms.varargslist,\n-                    syms.parameters,\n-                    syms.arglist,\n-                    syms.argument,\n-                }\n-            ):\n+            if prevp.parent and prevp.parent.type in {\n+                syms.typedargslist,\n+                syms.varargslist,\n+                syms.parameters,\n+                syms.arglist,\n+                syms.argument,\n+            }:\n                 return NO\n \n         elif prevp.type == token.DOUBLESTAR:\n-            if (\n-                prevp.parent\n-                and prevp.parent.type in {\n-                    syms.typedargslist,\n-                    syms.varargslist,\n-                    syms.parameters,\n-                    syms.arglist,\n-                    syms.dictsetmaker,\n-                }\n-            ):\n+            if prevp.parent and prevp.parent.type in {\n+                syms.typedargslist,\n+                syms.varargslist,\n+                syms.parameters,\n+                syms.arglist,\n+                syms.dictsetmaker,\n+            }:\n                 return NO\n \n \n@@ -183,14 +177,11 @@ def g():\n             return NO\n \n         if prevp.type == token.EQUAL:\n-            if (\n-                prevp.parent\n-                and prevp.parent.type in {\n-                    syms.typedargslist,\n-                    syms.varargslist,\n-                    syms.parameters,\n-                    syms.arglist,\n-                    syms.argument,\n-                }\n-            ):\n+            if prevp.parent and prevp.parent.type in {\n+                syms.typedargslist,\n+                syms.varargslist,\n+                syms.parameters,\n+                syms.arglist,\n+                syms.argument,\n+            }:\n                 return NO"
+            },
+            {
+              "sha": "5ad905f0f616febc48d1b38c26e30dd8635a2903",
+              "filename": "tests/expression.diff",
+              "status": "modified",
+              "additions": 6,
+              "deletions": 6,
+              "changes": 12,
+              "blob_url": "https://github.com/psf/black/blob/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/tests%2Fexpression.diff",
+              "raw_url": "https://github.com/psf/black/raw/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/tests%2Fexpression.diff",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.diff?ref=5a47fd13cc4c9f43270dd12c37577244c1eabfcc",
+              "patch": "@@ -167,11 +167,11 @@\n -what_is_up_with_those_new_coord_names = (coord_names + set(vars_to_create)) + set(vars_to_remove)\n -what_is_up_with_those_new_coord_names = (coord_names | set(vars_to_create)) - set(vars_to_remove)\n -result = session.query(models.Customer.id).filter(models.Customer.account_id == account_id, models.Customer.email == email_address).order_by(models.Customer.id.asc(),).all()\n-+what_is_up_with_those_new_coord_names = (\n-+    (coord_names + set(vars_to_create)) + set(vars_to_remove)\n++what_is_up_with_those_new_coord_names = (coord_names + set(vars_to_create)) + set(\n++    vars_to_remove\n +)\n-+what_is_up_with_those_new_coord_names = (\n-+    (coord_names | set(vars_to_create)) - set(vars_to_remove)\n++what_is_up_with_those_new_coord_names = (coord_names | set(vars_to_create)) - set(\n++    vars_to_remove\n +)\n +result = session.query(models.Customer.id).filter(\n +    models.Customer.account_id == account_id, models.Customer.email == email_address\n@@ -256,8 +256,8 @@\n -    ~ aaaaaaaaaaaaaaaa.a + aaaaaaaaaaaaaaaa.b - aaaaaaaaaaaaaaaa.c * aaaaaaaaaaaaaaaa.d @ aaaaaaaaaaaaaaaa.e | aaaaaaaaaaaaaaaa.f & aaaaaaaaaaaaaaaa.g % aaaaaaaaaaaaaaaa.h ^ aaaaaaaaaaaaaaaa.i << aaaaaaaaaaaaaaaa.k >> aaaaaaaaaaaaaaaa.l ** aaaaaaaaaaaaaaaa.m // aaaaaaaaaaaaaaaa.n\n +print(*lambda x: x)\n +assert not Test, \"Short message\"\n-+assert (\n-+    this is ComplexTest and not requirements.fit_in_a_single_line(force=False)\n++assert this is ComplexTest and not requirements.fit_in_a_single_line(\n++    force=False\n +), \"Short message\"\n +assert parens is TooMany\n +for (x,) in (1,), (2,), (3,):"
+            },
+            {
+              "sha": "65833c12efcb30c327eb56da3c04d850992a8b75",
+              "filename": "tests/expression.py",
+              "status": "modified",
+              "additions": 6,
+              "deletions": 6,
+              "changes": 12,
+              "blob_url": "https://github.com/psf/black/blob/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/tests%2Fexpression.py",
+              "raw_url": "https://github.com/psf/black/raw/5a47fd13cc4c9f43270dd12c37577244c1eabfcc/tests%2Fexpression.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.py?ref=5a47fd13cc4c9f43270dd12c37577244c1eabfcc",
+              "patch": "@@ -401,11 +401,11 @@ async def f():\n c = 1\n d = (1,) + a + (2,)\n e = (1,).count(1)\n-what_is_up_with_those_new_coord_names = (\n-    (coord_names + set(vars_to_create)) + set(vars_to_remove)\n+what_is_up_with_those_new_coord_names = (coord_names + set(vars_to_create)) + set(\n+    vars_to_remove\n )\n-what_is_up_with_those_new_coord_names = (\n-    (coord_names | set(vars_to_create)) - set(vars_to_remove)\n+what_is_up_with_those_new_coord_names = (coord_names | set(vars_to_create)) - set(\n+    vars_to_remove\n )\n result = session.query(models.Customer.id).filter(\n     models.Customer.account_id == account_id, models.Customer.email == email_address\n@@ -433,8 +433,8 @@ async def f():\n print(**{1: 3} if False else {x: x for x in range(3)})\n print(*lambda x: x)\n assert not Test, \"Short message\"\n-assert (\n-    this is ComplexTest and not requirements.fit_in_a_single_line(force=False)\n+assert this is ComplexTest and not requirements.fit_in_a_single_line(\n+    force=False\n ), \"Short message\"\n assert parens is TooMany\n for (x,) in (1,), (2,), (3,):"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

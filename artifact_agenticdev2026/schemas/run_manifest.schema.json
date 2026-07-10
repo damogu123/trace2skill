@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/skill-transfer-debugging/run_manifest.schema.json",
+  "title": "RunManifest",
+  "description": "A reproducible matrix of debugging-agent evaluation runs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "experiment_id",
+    "model",
+    "temperature",
+    "budget",
+    "runs"
+  ],
+  "properties": {
+    "experiment_id": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "temperature": {
+      "type": "number",
+      "minimum": 0
+    },
+    "notes": {
+      "type": ["string", "null"]
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_turns", "max_tokens", "max_cycles"],
+      "properties": {
+        "max_turns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_cycles": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "run_id",
+          "task_id",
+          "task_path",
+          "method",
+          "seed",
+          "workspace_path",
+          "artifacts_dir",
+          "prompt_path",
+          "trajectory_path",
+          "prepare_command",
+          "requires_memory_artifact",
+          "prompt_status"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "task_path": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "no_memory",
+              "reflexion",
+              "length_matched_reflexion",
+              "generic_checklist",
+              "raw_trajectory_retrieval",
+              "format_shuffled_skill",
+              "oracle_skill",
+              "auto_skill"
+            ]
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "workspace_path": {
+            "type": "string"
+          },
+          "artifacts_dir": {
+            "type": "string"
+          },
+          "prompt_path": {
+            "type": "string"
+          },
+          "trajectory_path": {
+            "type": "string"
+          },
+          "prepare_command": {
+            "type": "string"
+          },
+          "baseline_context_path": {
+            "type": ["string", "null"]
+          },
+          "memory_path": {
+            "type": ["string", "null"]
+          },
+          "requires_memory_artifact": {
+            "type": "boolean"
+          },
+          "prompt_status": {
+            "type": "string",
+            "enum": ["ready", "missing_memory"]
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "experiment_id": "pilot_mvp",
+      "model": "manual-agent",
+      "temperature": 0,
+      "notes": "One-task smoke-test run matrix.",
+      "budget": {
+        "max_turns": 30,
+        "max_tokens": 60000,
+        "max_cycles": 10
+      },
+      "runs": [
+        {
+          "run_id": "pilot_mvp_local_empty_input_bug_no_memory_seed1",
+          "task_id": "local_empty_input_bug",
+          "task_path": "tasks/train/local_empty_input_bug.json",
+          "method": "no_memory",
+          "seed": 1,
+          "workspace_path": "workspaces/runs/pilot_mvp/pilot_mvp_local_empty_input_bug_no_memory_seed1/repo",
+          "artifacts_dir": "runs/pilot_mvp/pilot_mvp_local_empty_input_bug_no_memory_seed1",
+          "prompt_path": "prompts/runs/pilot_mvp/pilot_mvp_local_empty_input_bug_no_memory_seed1.md",
+          "trajectory_path": "trajectories/pilot_mvp/pilot_mvp_local_empty_input_bug_no_memory_seed1.json",
+          "prepare_command": "python scripts/prepare_task.py tasks/train/local_empty_input_bug.json --workspace workspaces/runs/pilot_mvp --checkout-id pilot_mvp_local_empty_input_bug_no_memory_seed1 --force",
+          "baseline_context_path": null,
+          "memory_path": null,
+          "requires_memory_artifact": false,
+          "prompt_status": "ready"
+        }
+      ]
+    }
+  ]
+}

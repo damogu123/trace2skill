@@ -1,0 +1,3 @@
+method,split,source,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+auto_skill,heldout,pybughive,1,1,1,1.0,1.0,24520.0,23761.0,0.031,0.0,0.0,0.0,0.0,0.0
+no_memory,heldout,pybughive,1,1,1,1.0,2.0,71879.0,71879.0,0.0,1.0,0.5,0.0,0.0,0.0

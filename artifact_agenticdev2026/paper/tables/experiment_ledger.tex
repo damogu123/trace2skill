@@ -1,0 +1,9 @@
+\begin{tabular}{p{.20\linewidth}p{.16\linewidth}rp{.22\linewidth}p{.20\linewidth}}
+\toprule
+Run & Model setting & Tasks & Methods & Evidence role \\
+\midrule
+Primary first-six hard smoke & \texttt{gpt-5.3-codex} & 6 & no memory; generic checklist; Reflexion; length-matched Reflexion; Auto SKILL.md & Main quantitative evidence \\
+Exploratory all-seven aggregate & model-mixed: first six under \texttt{gpt-5.3-codex}, \texttt{black\_234} under \texttt{gpt-5.5} & 7 & no memory; generic checklist; Reflexion; length-matched Reflexion; Auto SKILL.md & Supplementary robustness check only \\
+Structural-control first-six rerun & \texttt{gpt-5.5} & 6 & Auto SKILL.md; format-shuffled SKILL.md & Supplementary structure-versus-content boundary check \\
+\bottomrule
+\end{tabular}

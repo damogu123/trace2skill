@@ -1,0 +1,54 @@
+{
+  "task_id": "pybughive_black_133",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "black",
+    "source": "pybughive",
+    "url": "https://github.com/psf/black.git",
+    "commit": "b5b658da0683c3e0806461946d8b492784e26d97",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.7",
+    "install_command": "pipenv --python 3.7\npipenv run python -m pip install setuptools==68.0.0\npipenv install\npipenv run python -m pip install click==8.0.2\npipenv run python -m pip install pytest==6.2.5",
+    "test_command": "pipenv run python setup.py test",
+    "full_test_command": "pipenv run python setup.py test",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/expression.diff",
+      "tests/expression.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "Failure to reformat a lamba expression",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive_hard/pybughive_black_133_fix.patch",
+    "modified_files": [
+      "README.md",
+      "black.py"
+    ],
+    "bug_summary": "Failure to reformat a lamba expression"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "black",
+    "issue_id": 133,
+    "buggy_commit": "b5b658da0683c3e0806461946d8b492784e26d97",
+    "fix_commit": "d73166c42b7de83249d17125cae3c2594a25b2c3",
+    "test_patch_path": "../../../patches/pybughive_hard/pybughive_black_133_tests.patch",
+    "metadata_path": "../../../data/pybughive_hard/pybughive_black_133/metadata.json",
+    "original_install_steps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "original_test_steps": "pipenv run python setup.py test",
+    "original_full_test_steps": "pipenv run python setup.py test"
+  },
+  "labels": {
+    "surface_pattern": "assertion_or_behavior_mismatch",
+    "root_cause": "cross_file_behavior_regression",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

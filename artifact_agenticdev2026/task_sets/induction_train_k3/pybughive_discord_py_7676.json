@@ -1,0 +1,52 @@
+{
+  "task_id": "pybughive_discord_py_7676",
+  "bug_family": "test_failure_triage",
+  "split": "train",
+  "repo": {
+    "name": "discord.py",
+    "source": "pybughive",
+    "url": "https://github.com/Rapptz/discord.py.git",
+    "commit": "a4676804ec15d3a9c67a76563918f866cf1b49b9",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.8",
+    "install_command": "pipenv --python 3.8\npipenv run python -m pip install -e .[test]",
+    "test_command": "pipenv run pytest -- tests/test_ext_tasks.py",
+    "full_test_command": "pipenv run pytest",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/test_ext_tasks.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "tasks.loop display too many warning.",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive/pybughive_discord_py_7676_fix.patch",
+    "modified_files": [
+      "discord/ext/tasks/__init__.py"
+    ],
+    "bug_summary": "tasks.loop display too many warning."
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "discord.py",
+    "issue_id": 7676,
+    "buggy_commit": "a4676804ec15d3a9c67a76563918f866cf1b49b9",
+    "fix_commit": "abcec5da9d501a1b54b73ac0fa3870df773fa63c",
+    "test_patch_path": "../../../patches/pybughive/pybughive_discord_py_7676_tests.patch",
+    "metadata_path": "../../../data/pybughive/pybughive_discord_py_7676/metadata.json",
+    "original_install_steps": "pipenv --python 3.8\npipenv run python -m pip install -e .[test]",
+    "original_test_steps": "pipenv run pytest -- tests/test_ext_tasks.py",
+    "original_full_test_steps": "pipenv run pytest"
+  },
+  "labels": {
+    "surface_pattern": "assertion_or_behavior_mismatch",
+    "root_cause": "localized_behavior_regression",
+    "requires_api_knowledge": true,
+    "adversarial_reason": null
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "manifest": "manifests\\heldout_memory_baselines_codex.json",
+  "experiment_id": "heldout_memory_baselines",
+  "summary": {
+    "runs": 21,
+    "methods": {
+      "no_memory": 3,
+      "generic_checklist": 3,
+      "reflexion": 3,
+      "length_matched_reflexion": 3,
+      "raw_trajectory_retrieval": 3,
+      "format_shuffled_skill": 3,
+      "auto_skill": 3
+    },
+    "tasks": {
+      "local_empty_average_bug": 7,
+      "local_missing_timeout_bug": 7,
+      "local_whitespace_title_bug": 7
+    }
+  },
+  "ready": true,
+  "errors": [],
+  "warnings": [],
+  "runs": [
+    {
+      "run_id": "heldout_memory_baselines_local_empty_average_bug_no_memory_seed1",
+      "method": "no_memory",
+      "task_id": "local_empty_average_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_empty_average_bug_generic_checklist_seed1",
+      "method": "generic_checklist",
+      "task_id": "local_empty_average_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_empty_average_bug_reflexion_seed1",
+      "method": "reflexion",
+      "task_id": "local_empty_average_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_empty_average_bug_length_matched_reflexion_seed1",
+      "method": "length_matched_reflexion",
+      "task_id": "local_empty_average_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_empty_average_bug_raw_trajectory_retrieval_seed1",
+      "method": "raw_trajectory_retrieval",
+      "task_id": "local_empty_average_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_empty_average_bug_format_shuffled_skill_seed1",
+      "method": "format_shuffled_skill",
+      "task_id": "local_empty_average_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_empty_average_bug_auto_skill_seed1",
+      "method": "auto_skill",
+      "task_id": "local_empty_average_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_missing_timeout_bug_no_memory_seed1",
+      "method": "no_memory",
+      "task_id": "local_missing_timeout_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_missing_timeout_bug_generic_checklist_seed1",
+      "method": "generic_checklist",
+      "task_id": "local_missing_timeout_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_missing_timeout_bug_reflexion_seed1",
+      "method": "reflexion",
+      "task_id": "local_missing_timeout_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_missing_timeout_bug_length_matched_reflexion_seed1",
+      "method": "length_matched_reflexion",
+      "task_id": "local_missing_timeout_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_missing_timeout_bug_raw_trajectory_retrieval_seed1",
+      "method": "raw_trajectory_retrieval",
+      "task_id": "local_missing_timeout_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_missing_timeout_bug_format_shuffled_skill_seed1",
+      "method": "format_shuffled_skill",
+      "task_id": "local_missing_timeout_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_missing_timeout_bug_auto_skill_seed1",
+      "method": "auto_skill",
+      "task_id": "local_missing_timeout_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_whitespace_title_bug_no_memory_seed1",
+      "method": "no_memory",
+      "task_id": "local_whitespace_title_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_whitespace_title_bug_generic_checklist_seed1",
+      "method": "generic_checklist",
+      "task_id": "local_whitespace_title_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_whitespace_title_bug_reflexion_seed1",
+      "method": "reflexion",
+      "task_id": "local_whitespace_title_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_whitespace_title_bug_length_matched_reflexion_seed1",
+      "method": "length_matched_reflexion",
+      "task_id": "local_whitespace_title_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_whitespace_title_bug_raw_trajectory_retrieval_seed1",
+      "method": "raw_trajectory_retrieval",
+      "task_id": "local_whitespace_title_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_whitespace_title_bug_format_shuffled_skill_seed1",
+      "method": "format_shuffled_skill",
+      "task_id": "local_whitespace_title_bug",
+      "ready": true
+    },
+    {
+      "run_id": "heldout_memory_baselines_local_whitespace_title_bug_auto_skill_seed1",
+      "method": "auto_skill",
+      "task_id": "local_whitespace_title_bug",
+      "ready": true
+    }
+  ]
+}

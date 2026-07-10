@@ -1,0 +1,44 @@
+diff --git a/tests/fmtonoff.py b/tests/fmtonoff.py
+--- a/tests/fmtonoff.py
++++ b/tests/fmtonoff.py
+@@ -6,6 +6,10 @@
+ 
+ from library import some_connection, \
+                     some_decorator
++# fmt: off
++from third_party import (X,
++                         Y, Z)
++# fmt: on
+ f'trigger 3.6 mode'
+ # fmt: off
+ def func_no_args():
+@@ -102,6 +106,10 @@ def single_literal_yapf_disable():
+ 
+ from library import some_connection, some_decorator
+ 
++# fmt: off
++from third_party import (X,
++                         Y, Z)
++# fmt: on
+ f"trigger 3.6 mode"
+ # fmt: off
+ def func_no_args():
+diff --git a/tests/import_spacing.py b/tests/import_spacing.py
+--- a/tests/import_spacing.py
++++ b/tests/import_spacing.py
+@@ -24,6 +24,7 @@
+     Just, Enough, Libraries, To, Fit, In, This, Nice, Split, Which, We, No, Longer, Use
+ )
+ from name_of_a_company.extremely_long_project_name.component.ttypes import CuteLittleServiceHandlerFactoryyy
++from name_of_a_company.extremely_long_project_name.extremely_long_component_name.ttypes import *
+ 
+ from .a.b.c.subprocess import *
+ from . import (tasks)
+@@ -87,6 +88,7 @@
+ from name_of_a_company.extremely_long_project_name.component.ttypes import (
+     CuteLittleServiceHandlerFactoryyy
+ )
++from name_of_a_company.extremely_long_project_name.extremely_long_component_name.ttypes import *
+ 
+ from .a.b.c.subprocess import *
+ from . import tasks

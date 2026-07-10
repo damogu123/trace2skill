@@ -1,0 +1,74 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 389,
+  "title": "Fails when importing __future__ as renaming it",
+  "labels": "T: bug",
+  "buggy_commit": "3bdd42389128bbbe8b64a8e050563f09bff99979",
+  "fix_commit": "dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a",
+  "warnings": [],
+  "score": 151,
+  "raw_issue": {
+    "id": 389,
+    "created_at": "2018-07-01T10:18:31Z",
+    "closed_at": "2018-07-02T16:50:09Z",
+    "title": "Fails when importing __future__ as renaming it",
+    "labels": "T: bug",
+    "commits": [
+      {
+        "hash": "dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a",
+        "commit_date": "2018-07-02T16:49:47Z",
+        "parents": "3bdd42389128bbbe8b64a8e050563f09bff99979",
+        "stat": {
+          "total": 12,
+          "additions": 45,
+          "deletions": 33,
+          "files": [
+            {
+              "sha": "36a180da702a3a003276dc3a8e1f25b96b4abd01",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 19,
+              "deletions": 10,
+              "changes": 29,
+              "blob_url": "https://github.com/psf/black/blob/dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a/black.py",
+              "raw_url": "https://github.com/psf/black/raw/dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a",
+              "patch": "@@ -20,6 +20,7 @@\n     Callable,\n     Collection,\n     Dict,\n+    Generator,\n     Generic,\n     Iterable,\n     Iterator,\n@@ -2910,7 +2911,23 @@ def generate_trailers_to_omit(line: Line, line_length: int) -> Iterator[Set[Leaf\n \n def get_future_imports(node: Node) -> Set[str]:\n     \"\"\"Return a set of __future__ imports in the file.\"\"\"\n-    imports = set()\n+    imports: Set[str] = set()\n+\n+    def get_imports_from_children(children: List[LN]) -> Generator[str, None, None]:\n+        for child in children:\n+            if isinstance(child, Leaf):\n+                if child.type == token.NAME:\n+                    yield child.value\n+            elif child.type == syms.import_as_name:\n+                orig_name = child.children[0]\n+                assert isinstance(orig_name, Leaf), \"Invalid syntax parsing imports\"\n+                assert orig_name.type == token.NAME, \"Invalid syntax parsing imports\"\n+                yield orig_name.value\n+            elif child.type == syms.import_as_names:\n+                yield from get_imports_from_children(child.children)\n+            else:\n+                assert False, \"Invalid syntax parsing imports\"\n+\n     for child in node.children:\n         if child.type != syms.simple_stmt:\n             break\n@@ -2929,15 +2946,7 @@ def get_future_imports(node: Node) -> Set[str]:\n             module_name = first_child.children[1]\n             if not isinstance(module_name, Leaf) or module_name.value != \"__future__\":\n                 break\n-            for import_from_child in first_child.children[3:]:\n-                if isinstance(import_from_child, Leaf):\n-                    if import_from_child.type == token.NAME:\n-                        imports.add(import_from_child.value)\n-                else:\n-                    assert import_from_child.type == syms.import_as_names\n-                    for leaf in import_from_child.children:\n-                        if isinstance(leaf, Leaf) and leaf.type == token.NAME:\n-                            imports.add(leaf.value)\n+            imports |= set(get_imports_from_children(first_child.children[3:]))\n         else:\n             break\n     return imports"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "2fe70392af6f6174828efb6acc1f94779b313270",
+              "filename": "tests/data/python2_unicode_literals.py",
+              "status": "modified",
+              "additions": 6,
+              "deletions": 2,
+              "changes": 8,
+              "blob_url": "https://github.com/psf/black/blob/dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a/tests%2Fdata%2Fpython2_unicode_literals.py",
+              "raw_url": "https://github.com/psf/black/raw/dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a/tests%2Fdata%2Fpython2_unicode_literals.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fdata%2Fpython2_unicode_literals.py?ref=dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a",
+              "patch": "@@ -1,5 +1,7 @@\n #!/usr/bin/env python2\n-from __future__ import unicode_literals\n+from __future__ import unicode_literals as _unicode_literals\n+from __future__ import absolute_import\n+from __future__ import print_function as lol, with_function\n \n u'hello'\n U\"hello\"\n@@ -9,7 +11,9 @@\n \n \n #!/usr/bin/env python2\n-from __future__ import unicode_literals\n+from __future__ import unicode_literals as _unicode_literals\n+from __future__ import absolute_import\n+from __future__ import print_function as lol, with_function\n \n \"hello\"\n \"hello\""
+            },
+            {
+              "sha": "cc53aa61221e346fc144b2106a2a3077aca9f193",
+              "filename": "tests/test_black.py",
+              "status": "modified",
+              "additions": 8,
+              "deletions": 0,
+              "changes": 8,
+              "blob_url": "https://github.com/psf/black/blob/dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a/tests%2Ftest_black.py",
+              "raw_url": "https://github.com/psf/black/raw/dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a/tests%2Ftest_black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Ftest_black.py?ref=dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a",
+              "patch": "@@ -735,6 +735,14 @@ def test_get_future_imports(self) -> None:\n         self.assertEqual(set(), black.get_future_imports(node))\n         node = black.lib2to3_parse(\"from some.module import black\\n\")\n         self.assertEqual(set(), black.get_future_imports(node))\n+        node = black.lib2to3_parse(\n+            \"from __future__ import unicode_literals as _unicode_literals\"\n+        )\n+        self.assertEqual({\"unicode_literals\"}, black.get_future_imports(node))\n+        node = black.lib2to3_parse(\n+            \"from __future__ import unicode_literals as _lol, print\"\n+        )\n+        self.assertEqual({\"unicode_literals\", \"print\"}, black.get_future_imports(node))\n \n     def test_debug_visitor(self) -> None:\n         source, _ = read_data(\"debug_visitor.py\")"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

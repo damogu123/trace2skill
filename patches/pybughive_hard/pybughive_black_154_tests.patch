@@ -1,0 +1,125 @@
+diff --git a/tests/comments2.py b/tests/comments2.py
+--- a/tests/comments2.py
++++ b/tests/comments2.py
+@@ -161,8 +161,6 @@ def inline_comments_in_brackets_ruin_everything():
+     # add_compiler(compilers[(7.1, 64)])
+ 
+ # Comment before function.
+-
+-
+ def inline_comments_in_brackets_ruin_everything():
+     if typedargslist:
+         parameters.children = [
+diff --git a/tests/comments5.py b/tests/comments5.py
+--- a/tests/comments5.py
++++ b/tests/comments5.py
+@@ -27,5 +27,45 @@
+ except OSError:
+     print("problems")
+ 
++import sys
++
++
++# leading function comment
++def wat():
++    ...
++    # trailing function comment
++
++
++# SECTION COMMENT
++
++
++# leading 1
++@deco1
++# leading 2
++@deco2(with_args=True)
++# leading 3
++@deco3
++def decorated1():
++    ...
++
++
++# leading 1
++@deco1
++# leading 2
++@deco2(with_args=True)
++# leading function comment
++def decorated1():
++    ...
++
++
++# Note: crappy but inevitable.  The current design of EmptyLineTracker doesn't
++# allow this to work correctly.  The user will have to split those lines by
++# hand.
++some_instruction
++# This comment should be split from `some_instruction` by two lines but isn't.
++def g():
++    ...
++
++
+ if __name__ == "__main__":
+     main()
+diff --git a/tests/empty_lines.py b/tests/empty_lines.py
+--- a/tests/empty_lines.py
++++ b/tests/empty_lines.py
+@@ -1,3 +1,7 @@
++"""Docstring."""
++
++
++# leading comment
+ def f():
+     NO = ''
+     SPACE = ' '
+@@ -44,9 +48,11 @@ def f():
+                 syms.dictsetmaker,
+             }:
+                 return NO
++
+ ###############################################################################
+ # SECTION BECAUSE SECTIONS
+ ###############################################################################
++
+ def g():
+     NO = ''
+     SPACE = ' '
+@@ -89,6 +95,10 @@ def g():
+ # output
+ 
+ 
++"""Docstring."""
++
++
++# leading comment
+ def f():
+     NO = ""
+     SPACE = " "
+diff --git a/tests/fmtonoff.py b/tests/fmtonoff.py
+--- a/tests/fmtonoff.py
++++ b/tests/fmtonoff.py
+@@ -119,8 +119,6 @@ async def coroutine(arg, exec=False):
+ def function_signature_stress_test(number:int,no_annotation=None,text:str='default',* ,debug:bool=False,**kwargs) -> str:
+  return text[number:-1]
+ # fmt: on
+-
+-
+ def spaces(a=1, b=(), c=[], d={}, e=True, f=-1, g=1 if False else 2, h="", i=r""):
+     offset = attr.ib(default=attr.Factory(lambda: _r.uniform(10000, 200000)))
+     assert task._cancel_stack[:len(old_stack)] == old_stack
+diff --git a/tests/test_black.py b/tests/test_black.py
+--- a/tests/test_black.py
++++ b/tests/test_black.py
+@@ -626,14 +626,6 @@ def test_check_diff_use_together(self) -> None:
+             )
+             self.assertEqual(result.exit_code, 1)
+ 
+-    @patch("black.dump_to_file", dump_to_stderr)
+-    def test_comment_in_decorator(self) -> None:
+-        source, expected = read_data("comments6")
+-        actual = fs(source)
+-        self.assertFormatEqual(expected, actual)
+-        black.assert_equivalent(source, actual)
+-        black.assert_stable(source, actual, line_length=ll)
+-
+ 
+ if __name__ == "__main__":
+     unittest.main()

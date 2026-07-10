@@ -1,0 +1,11 @@
+block_reason,dataset_test_patch_applied,failure_stage,initial_failure_reproduced,initial_test_returncode,install_returncode,issue_id,log_path,project,reference_patch_applied,reference_test_passed,reference_test_returncode,returncode,split,status,summary_path,task_id
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,1493,,black,,,,,heldout,environment_blocked,,pybughive_black_1493
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,185,,black,,,,,heldout,environment_blocked,,pybughive_black_185
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,389,,black,,,,,heldout,environment_blocked,,pybughive_black_389
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,59,,black,,,,,heldout,environment_blocked,,pybughive_black_59
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,7818,,discord.py,,,,,heldout,environment_blocked,,pybughive_discord_py_7818
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,1265,,scrapy,,,,,heldout,environment_blocked,,pybughive_scrapy_1265
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,2552,,scrapy,,,,,heldout,environment_blocked,,pybughive_scrapy_2552
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,297,,black,,,,,train,environment_blocked,,pybughive_black_297
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,1513,,cookiecutter,,,,,train,environment_blocked,,pybughive_cookiecutter_1513
+environment is missing Docker or native pipenv plus required Python versions,,environment,,,,7676,,discord.py,,,,,train,environment_blocked,,pybughive_discord_py_7676

@@ -1,0 +1,27 @@
+{
+  "group_by": [
+    "method",
+    "split",
+    "source"
+  ],
+  "groups": [
+    {
+      "method": "no_memory",
+      "split": "train",
+      "source": "pybughive",
+      "n_runs": 3,
+      "n_tasks": 3,
+      "solved": 3,
+      "solve_rate": 1.0,
+      "cycles_per_solved_task": 1.0,
+      "tokens_per_solved_task": 23761.0,
+      "active_tokens_per_solved_task": 23761.0,
+      "prompt_overhead_ratio": 0.0,
+      "failed_patches_per_run": 0.0,
+      "mistakes_per_cycle": 0.3333,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 1632,
+  "title": "Docstrings reformatted to be too long",
+  "labels": "T: bug, F: strings, F: linetoolong",
+  "buggy_commit": "62c2b167bcf22683fc11add2f24a132d36e8fd19",
+  "fix_commit": "20d8ccb54253f8a66321f6708d53e2a05a54079b",
+  "warnings": [],
+  "score": 469,
+  "raw_issue": {
+    "id": 1632,
+    "created_at": "2020-08-26T18:11:36Z",
+    "closed_at": "2022-05-08T04:34:33Z",
+    "title": "Docstrings reformatted to be too long",
+    "labels": "T: bug, F: strings, F: linetoolong",
+    "commits": [
+      {
+        "hash": "20d8ccb54253f8a66321f6708d53e2a05a54079b",
+        "commit_date": "2022-05-08T04:34:28Z",
+        "parents": "62c2b167bcf22683fc11add2f24a132d36e8fd19",
+        "stat": {
+          "total": 2,
+          "additions": 160,
+          "deletions": 158,
+          "files": [
+            {
+              "sha": "8f43431c8421c23d9986697a1f1295fd848f06d4",
+              "filename": "CHANGES.md",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 0,
+              "changes": 1,
+              "blob_url": "https://github.com/psf/black/blob/20d8ccb54253f8a66321f6708d53e2a05a54079b/CHANGES.md",
+              "raw_url": "https://github.com/psf/black/raw/20d8ccb54253f8a66321f6708d53e2a05a54079b/CHANGES.md",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/CHANGES.md?ref=20d8ccb54253f8a66321f6708d53e2a05a54079b",
+              "patch": "@@ -17,6 +17,7 @@\n \n <!-- Changes that affect Black's preview style -->\n \n+- Fixed bug where docstrings with triple quotes could exceed max line length (#3044)\n - Remove redundant parentheses around awaited objects (#2991)\n - Parentheses around return annotations are now managed (#2990)\n - Remove unnecessary parentheses from `with` statements (#2926)"
+            },
+            {
+              "sha": "ff54e05c4e6299d1bd2a456473a169839a03b43a",
+              "filename": "src/black/linegen.py",
+              "status": "modified",
+              "additions": 24,
+              "deletions": 2,
+              "changes": 26,
+              "blob_url": "https://github.com/psf/black/blob/20d8ccb54253f8a66321f6708d53e2a05a54079b/src%2Fblack%2Flinegen.py",
+              "raw_url": "https://github.com/psf/black/raw/20d8ccb54253f8a66321f6708d53e2a05a54079b/src%2Fblack%2Flinegen.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/src%2Fblack%2Flinegen.py?ref=20d8ccb54253f8a66321f6708d53e2a05a54079b",
+              "patch": "@@ -305,9 +305,9 @@ def visit_STRING(self, leaf: Leaf) -> Iterator[Line]:\n             quote_len = 1 if docstring[1] != quote_char else 3\n             docstring = docstring[quote_len:-quote_len]\n             docstring_started_empty = not docstring\n+            indent = \" \" * 4 * self.current_line.depth\n \n             if is_multiline_string(leaf):\n-                indent = \" \" * 4 * self.current_line.depth\n                 docstring = fix_docstring(docstring, indent)\n             else:\n                 docstring = docstring.strip()\n@@ -329,7 +329,29 @@ def visit_STRING(self, leaf: Leaf) -> Iterator[Line]:\n \n             # We could enforce triple quotes at this point.\n             quote = quote_char * quote_len\n-            leaf.value = prefix + quote + docstring + quote\n+\n+            if Preview.long_docstring_quotes_on_newline in self.mode:\n+                # We need to find the length of the last line of the docstring\n+                # to find if we can add the closing quotes to the line without\n+                # exceeding the maximum line length.\n+                # If docstring is one line, then we need to add the length\n+                # of the indent, prefix, and starting quotes. Ending quote are\n+                # handled later\n+                lines = docstring.splitlines()\n+                last_line_length = len(lines[-1]) if docstring else 0\n+\n+                if len(lines) == 1:\n+                    last_line_length += len(indent) + len(prefix) + quote_len\n+\n+                # If adding closing quotes would cause the last line to exceed\n+                # the maximum line length then put a line break before the\n+                # closing quotes\n+                if last_line_length + quote_len > self.mode.line_length:\n+                    leaf.value = prefix + quote + docstring + \"\\n\" + indent + quote\n+                else:\n+                    leaf.value = prefix + quote + docstring + quote\n+            else:\n+                leaf.value = prefix + quote + docstring + quote\n \n         yield from self.visit_default(leaf)\n "
+            },
+            {
+              "sha": "a418e0eb66510ef6ea451cbc51f8b4be035816d4",
+              "filename": "src/black/mode.py",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 0,
+              "changes": 1,
+              "blob_url": "https://github.com/psf/black/blob/20d8ccb54253f8a66321f6708d53e2a05a54079b/src%2Fblack%2Fmode.py",
+              "raw_url": "https://github.com/psf/black/raw/20d8ccb54253f8a66321f6708d53e2a05a54079b/src%2Fblack%2Fmode.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/src%2Fblack%2Fmode.py?ref=20d8ccb54253f8a66321f6708d53e2a05a54079b",
+              "patch": "@@ -147,6 +147,7 @@ class Preview(Enum):\n     remove_redundant_parens = auto()\n     one_element_subscript = auto()\n     annotation_parens = auto()\n+    long_docstring_quotes_on_newline = auto()\n \n \n class Deprecated(UserWarning):"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "7153be468c112963806ea2a7623717b1c3a88b7b",
+              "filename": "tests/data/docstring.py",
+              "status": "modified",
+              "additions": 42,
+              "deletions": 0,
+              "changes": 42,
+              "blob_url": "https://github.com/psf/black/blob/20d8ccb54253f8a66321f6708d53e2a05a54079b/tests%2Fdata%2Fdocstring.py",
+              "raw_url": "https://github.com/psf/black/raw/20d8ccb54253f8a66321f6708d53e2a05a54079b/tests%2Fdata%2Fdocstring.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fdata%2Fdocstring.py?ref=20d8ccb54253f8a66321f6708d53e2a05a54079b",
+              "patch": "@@ -188,6 +188,27 @@ def my_god_its_full_of_stars_2():\n     \"I'm sorry Dave \"\n \n \n+def docstring_almost_at_line_limit():\n+    \"\"\"long docstring.................................................................\"\"\"\n+\n+\n+def docstring_almost_at_line_limit2():\n+    \"\"\"long docstring.................................................................\n+\n+    ..................................................................................\n+    \"\"\"\n+\n+\n+def docstring_at_line_limit():\n+    \"\"\"long docstring................................................................\"\"\"\n+\n+\n+def multiline_docstring_at_line_limit():\n+    \"\"\"first line-----------------------------------------------------------------------\n+\n+    second line----------------------------------------------------------------------\"\"\"\n+\n+\n # output\n \n class MyClass:\n@@ -375,3 +396,24 @@ def my_god_its_full_of_stars_1():\n # the space below is actually a \\u2001, removed in output\n def my_god_its_full_of_stars_2():\n     \"I'm sorry Dave\"\n+\n+\n+def docstring_almost_at_line_limit():\n+    \"\"\"long docstring.................................................................\"\"\"\n+\n+\n+def docstring_almost_at_line_limit2():\n+    \"\"\"long docstring.................................................................\n+\n+    ..................................................................................\n+    \"\"\"\n+\n+\n+def docstring_at_line_limit():\n+    \"\"\"long docstring................................................................\"\"\"\n+\n+\n+def multiline_docstring_at_line_limit():\n+    \"\"\"first line-----------------------------------------------------------------------\n+\n+    second line----------------------------------------------------------------------\"\"\""
+            },
+            {
+              "sha": "2da4cd1acdb305215335ae6d3be1cf1f7aa7c19d",
+              "filename": "tests/data/docstring_preview.py",
+              "status": "added",
+              "additions": 89,
+              "deletions": 0,
+              "changes": 89,
+              "blob_url": "https://github.com/psf/black/blob/20d8ccb54253f8a66321f6708d53e2a05a54079b/tests%2Fdata%2Fdocstring_preview.py",
+              "raw_url": "https://github.com/psf/black/raw/20d8ccb54253f8a66321f6708d53e2a05a54079b/tests%2Fdata%2Fdocstring_preview.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fdata%2Fdocstring_preview.py?ref=20d8ccb54253f8a66321f6708d53e2a05a54079b",
+              "patch": "@@ -0,0 +1,89 @@\n+def docstring_almost_at_line_limit():\n+    \"\"\"long docstring.................................................................\n+    \"\"\"\n+\n+\n+def docstring_almost_at_line_limit_with_prefix():\n+    f\"\"\"long docstring................................................................\n+    \"\"\"\n+\n+\n+def mulitline_docstring_almost_at_line_limit():\n+    \"\"\"long docstring.................................................................\n+\n+    ..................................................................................\n+    \"\"\"\n+\n+\n+def mulitline_docstring_almost_at_line_limit_with_prefix():\n+    f\"\"\"long docstring................................................................\n+\n+    ..................................................................................\n+    \"\"\"\n+\n+\n+def docstring_at_line_limit():\n+    \"\"\"long docstring................................................................\"\"\"\n+\n+\n+def docstring_at_line_limit_with_prefix():\n+    f\"\"\"long docstring...............................................................\"\"\"\n+\n+\n+def multiline_docstring_at_line_limit():\n+    \"\"\"first line-----------------------------------------------------------------------\n+\n+    second line----------------------------------------------------------------------\"\"\"\n+\n+\n+def multiline_docstring_at_line_limit_with_prefix():\n+    f\"\"\"first line----------------------------------------------------------------------\n+\n+    second line----------------------------------------------------------------------\"\"\"\n+\n+\n+# output\n+\n+\n+def docstring_almost_at_line_limit():\n+    \"\"\"long docstring.................................................................\n+    \"\"\"\n+\n+\n+def docstring_almost_at_line_limit_with_prefix():\n+    f\"\"\"long docstring................................................................\n+    \"\"\"\n+\n+\n+def mulitline_docstring_almost_at_line_limit():\n+    \"\"\"long docstring.................................................................\n+\n+    ..................................................................................\n+    \"\"\"\n+\n+\n+def mulitline_docstring_almost_at_line_limit_with_prefix():\n+    f\"\"\"long docstring................................................................\n+\n+    ..................................................................................\n+    \"\"\"\n+\n+\n+def docstring_at_line_limit():\n+    \"\"\"long docstring................................................................\"\"\"\n+\n+\n+def docstring_at_line_limit_with_prefix():\n+    f\"\"\"long docstring...............................................................\"\"\"\n+\n+\n+def multiline_docstring_at_line_limit():\n+    \"\"\"first line-----------------------------------------------------------------------\n+\n+    second line----------------------------------------------------------------------\"\"\"\n+\n+\n+def multiline_docstring_at_line_limit_with_prefix():\n+    f\"\"\"first line----------------------------------------------------------------------\n+\n+    second line----------------------------------------------------------------------\"\"\""
+            },
+            {
+              "sha": "2f08d1f273d4040c4f62b09cba3bb0fea0b80a71",
+              "filename": "tests/test_format.py",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 0,
+              "changes": 1,
+              "blob_url": "https://github.com/psf/black/blob/20d8ccb54253f8a66321f6708d53e2a05a54079b/tests%2Ftest_format.py",
+              "raw_url": "https://github.com/psf/black/raw/20d8ccb54253f8a66321f6708d53e2a05a54079b/tests%2Ftest_format.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Ftest_format.py?ref=20d8ccb54253f8a66321f6708d53e2a05a54079b",
+              "patch": "@@ -91,6 +91,7 @@\n     \"one_element_subscript\",\n     \"remove_await_parens\",\n     \"return_annotation_brackets\",\n+    \"docstring_preview\",\n ]\n \n SOURCES: List[str] = ["
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "testSteps": "pipenv run pytest -- tests/test_format.py",
+    "testStepsFull": "pipenv run pytest"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "task_id": "pybughive_black_234",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "black",
+    "source": "pybughive",
+    "url": "https://github.com/psf/black.git",
+    "commit": "808754af18f1cea2444c6facf63f3a86952c5d44",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.7",
+    "install_command": "pipenv --python 3.7\npipenv run python -m pip install setuptools==68.0.0\npipenv install\npipenv run python -m pip install click==8.0.2\npipenv run python -m pip install pytest==6.2.5",
+    "test_command": "pipenv run python setup.py test",
+    "full_test_command": "pipenv run python setup.py test",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/fmtonoff.py",
+      "tests/import_spacing.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "Star import after a long path produces invalid code",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive_hard/pybughive_black_234_fix.patch",
+    "modified_files": [
+      "README.md",
+      "black.py"
+    ],
+    "bug_summary": "Star import after a long path produces invalid code"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "black",
+    "issue_id": 234,
+    "buggy_commit": "808754af18f1cea2444c6facf63f3a86952c5d44",
+    "fix_commit": "9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9",
+    "test_patch_path": "../../../patches/pybughive_hard/pybughive_black_234_tests.patch",
+    "metadata_path": "../../../data/pybughive_hard/pybughive_black_234/metadata.json",
+    "original_install_steps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "original_test_steps": "pipenv run python setup.py test",
+    "original_full_test_steps": "pipenv run python setup.py test"
+  },
+  "labels": {
+    "surface_pattern": "assertion_or_behavior_mismatch",
+    "root_cause": "cross_file_behavior_regression",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

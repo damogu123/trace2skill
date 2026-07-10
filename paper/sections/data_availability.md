@@ -1,0 +1,7 @@
+# Data Availability Statement
+
+The submission is accompanied by an anonymized artifact package containing the
+evaluation code, task and trajectory schemas, prompts, run manifests, memory
+artifacts, aggregate result tables, and the trajectory records needed to
+reproduce the reported analyses. A permanent public archival URL will be added
+to the camera-ready version.

@@ -1,0 +1,40 @@
+{
+  "task_id": "local_empty_average_bug",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "local_empty_average_bug",
+    "source": "local",
+    "url": "../../fixtures/local_empty_average_bug",
+    "commit": "WORKTREE",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.11",
+    "install_command": "python -c \"import pytest\"",
+    "test_command": "python -m pytest tests/test_average.py::test_empty_average_returns_zero -q",
+    "full_test_command": "python -m pytest -q",
+    "timeout_seconds": 120
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/test_average.py::test_empty_average_returns_zero"
+    ],
+    "error_type": "ZeroDivisionError",
+    "error_message": "division by zero",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../patches/local_empty_average_bug.patch",
+    "modified_files": [
+      "src/stats_summary/average.py"
+    ],
+    "bug_summary": "Empty list input divides by zero instead of returning the neutral default."
+  },
+  "labels": {
+    "surface_pattern": "exception_on_boundary_input",
+    "root_cause": "missing_edge_case_handling",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

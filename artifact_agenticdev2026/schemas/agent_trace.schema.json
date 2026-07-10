@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/skill-transfer-debugging/agent_trace.schema.json",
+  "title": "AgentTrace",
+  "description": "Optional structured trace emitted by an external debugging agent before harness evaluation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "llm_turns",
+    "tool_calls",
+    "input_tokens",
+    "output_tokens",
+    "cycles"
+  ],
+  "properties": {
+    "llm_turns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tool_calls": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "input_tokens": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "output_tokens": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cycles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cycle_id",
+          "diagnosis",
+          "file_inspections"
+        ],
+        "properties": {
+          "cycle_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "diagnosis": {
+            "type": "string"
+          },
+          "file_inspections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "reason"],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "modified_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "patch_summary": {
+            "type": ["string", "null"]
+          },
+          "test_command": {
+            "type": ["string", "null"]
+          },
+          "test_passed": {
+            "type": ["boolean", "null"]
+          },
+          "test_log_path": {
+            "type": ["string", "null"]
+          },
+          "mistakes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type", "description"],
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "negative_transfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "detected": {
+          "type": "boolean"
+        },
+        "category": {
+          "type": ["string", "null"],
+          "enum": ["performance", "behavioral", "self_contradictory", null]
+        },
+        "reason": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "llm_turns": 8,
+      "tool_calls": 14,
+      "input_tokens": 12000,
+      "output_tokens": 1800,
+      "cycles": [
+        {
+          "cycle_id": 1,
+          "diagnosis": "The failing assertion suggests a missing boundary-case branch.",
+          "file_inspections": [
+            {
+              "path": "src/module.py",
+              "reason": "Owns the behavior exercised by the failing test."
+            }
+          ],
+          "modified_files": ["src/module.py"],
+          "patch_summary": "Added a general boundary-case branch.",
+          "test_command": "pytest tests/test_module.py::test_case -q",
+          "test_passed": true,
+          "test_log_path": "runs/example/cycle_1.log",
+          "mistakes": []
+        }
+      ],
+      "negative_transfer": {
+        "detected": false,
+        "category": null,
+        "reason": null
+      }
+    }
+  ]
+}

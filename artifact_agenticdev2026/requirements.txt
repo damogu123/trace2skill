@@ -1,0 +1,5 @@
+# The repository harness currently uses only the Python standard library.
+# Use Python 3.12+ for the scripts in scripts/.
+#
+# Benchmark checkouts may install their own dependencies through each task's
+# environment.install_command.

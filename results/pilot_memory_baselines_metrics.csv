@@ -1,0 +1,8 @@
+method,split,bug_family,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+auto_skill,train,test_failure_triage,1,1,1,1.0,1.0,1151.0,844.0,0.2667,0.0,0.0,0.0,0.0,0.0
+format_shuffled_skill,train,test_failure_triage,1,1,1,1.0,1.0,1179.0,872.0,0.2604,0.0,0.0,0.0,0.0,0.0
+generic_checklist,train,test_failure_triage,1,1,1,1.0,1.0,1275.0,864.0,0.3224,0.0,0.0,0.0,0.0,0.0
+length_matched_reflexion,train,test_failure_triage,1,1,1,1.0,1.0,1168.0,879.0,0.2474,0.0,0.0,0.0,0.0,0.0
+no_memory,train,test_failure_triage,1,1,1,1.0,1.0,863.0,863.0,0.0,0.0,0.0,0.0,0.0,0.0
+raw_trajectory_retrieval,train,test_failure_triage,1,1,1,1.0,1.0,1148.0,879.0,0.2343,0.0,0.0,0.0,0.0,0.0
+reflexion,train,test_failure_triage,1,1,1,1.0,1.0,962.0,841.0,0.1258,0.0,0.0,0.0,0.0,0.0

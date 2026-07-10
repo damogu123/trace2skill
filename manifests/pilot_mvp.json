@@ -1,0 +1,45 @@
+{
+  "experiment_id": "pilot_mvp",
+  "model": "manual-agent",
+  "temperature": 0.0,
+  "notes": "One-task smoke test for baseline prompt generation.",
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "runs": [
+    {
+      "run_id": "pilot_mvp_local_empty_input_bug_no_memory_seed1",
+      "task_id": "local_empty_input_bug",
+      "task_path": "tasks/train/local_empty_input_bug.json",
+      "method": "no_memory",
+      "seed": 1,
+      "workspace_path": "workspaces/runs/pilot_mvp/pilot_mvp_local_empty_input_bug_no_memory_seed1/repo",
+      "artifacts_dir": "runs/pilot_mvp/pilot_mvp_local_empty_input_bug_no_memory_seed1",
+      "prompt_path": "prompts/runs/pilot_mvp/pilot_mvp_local_empty_input_bug_no_memory_seed1.md",
+      "trajectory_path": "trajectories/pilot_mvp/pilot_mvp_local_empty_input_bug_no_memory_seed1.json",
+      "prepare_command": "python scripts/prepare_task.py tasks/train/local_empty_input_bug.json --workspace workspaces/runs/pilot_mvp --checkout-id pilot_mvp_local_empty_input_bug_no_memory_seed1 --force",
+      "baseline_context_path": null,
+      "memory_path": null,
+      "requires_memory_artifact": false,
+      "prompt_status": "ready"
+    },
+    {
+      "run_id": "pilot_mvp_local_empty_input_bug_generic_checklist_seed1",
+      "task_id": "local_empty_input_bug",
+      "task_path": "tasks/train/local_empty_input_bug.json",
+      "method": "generic_checklist",
+      "seed": 1,
+      "workspace_path": "workspaces/runs/pilot_mvp/pilot_mvp_local_empty_input_bug_generic_checklist_seed1/repo",
+      "artifacts_dir": "runs/pilot_mvp/pilot_mvp_local_empty_input_bug_generic_checklist_seed1",
+      "prompt_path": "prompts/runs/pilot_mvp/pilot_mvp_local_empty_input_bug_generic_checklist_seed1.md",
+      "trajectory_path": "trajectories/pilot_mvp/pilot_mvp_local_empty_input_bug_generic_checklist_seed1.json",
+      "prepare_command": "python scripts/prepare_task.py tasks/train/local_empty_input_bug.json --workspace workspaces/runs/pilot_mvp --checkout-id pilot_mvp_local_empty_input_bug_generic_checklist_seed1 --force",
+      "baseline_context_path": "baselines/generic_debugging_checklist.md",
+      "memory_path": null,
+      "requires_memory_artifact": false,
+      "prompt_status": "ready"
+    }
+  ]
+}

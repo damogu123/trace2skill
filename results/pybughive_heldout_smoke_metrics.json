@@ -1,0 +1,45 @@
+{
+  "group_by": [
+    "method",
+    "split",
+    "source"
+  ],
+  "groups": [
+    {
+      "method": "auto_skill",
+      "split": "heldout",
+      "source": "pybughive",
+      "n_runs": 1,
+      "n_tasks": 1,
+      "solved": 1,
+      "solve_rate": 1.0,
+      "cycles_per_solved_task": 1.0,
+      "tokens_per_solved_task": 24520.0,
+      "active_tokens_per_solved_task": 23761.0,
+      "prompt_overhead_ratio": 0.031,
+      "failed_patches_per_run": 0.0,
+      "mistakes_per_cycle": 0.0,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "no_memory",
+      "split": "heldout",
+      "source": "pybughive",
+      "n_runs": 1,
+      "n_tasks": 1,
+      "solved": 1,
+      "solve_rate": 1.0,
+      "cycles_per_solved_task": 2.0,
+      "tokens_per_solved_task": 71879.0,
+      "active_tokens_per_solved_task": 71879.0,
+      "prompt_overhead_ratio": 0.0,
+      "failed_patches_per_run": 1.0,
+      "mistakes_per_cycle": 0.5,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    }
+  ]
+}

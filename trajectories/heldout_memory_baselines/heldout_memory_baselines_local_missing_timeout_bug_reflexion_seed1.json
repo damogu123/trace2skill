@@ -1,0 +1,61 @@
+{
+  "run_id": "heldout_memory_baselines_local_missing_timeout_bug_reflexion_seed1",
+  "task_id": "local_missing_timeout_bug",
+  "method": "reflexion",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 6,
+    "tool_calls": 4,
+    "input_tokens": 22963,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 121,
+    "active_debugging_tokens": 22842,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "read_timeout indexes config['timeout'] directly, so missing timeout raises KeyError instead of using default 30.",
+      "file_inspections": [
+        {
+          "path": "tests/test_timeout.py",
+          "reason": "Confirm expected behavior for missing and explicit timeout values."
+        },
+        {
+          "path": "src/config_reader/timeout.py",
+          "reason": "Inspect implementation that raised KeyError in failing test."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "src/config_reader/timeout.py"
+        ],
+        "patch_path": "runs/heldout_memory_baselines/heldout_memory_baselines_local_missing_timeout_bug_reflexion_seed1/agent.patch",
+        "patch_summary": "Changed timeout lookup to use config.get('timeout', 30) and cast to int, preserving explicit timeout behavior while applying documented default when missing."
+      },
+      "test_rerun": {
+        "command": "python -m pytest tests/test_timeout.py::test_missing_timeout_uses_default -q",
+        "passed": true,
+        "log_path": "runs/heldout_memory_baselines/heldout_memory_baselines_local_missing_timeout_bug_reflexion_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

@@ -1,0 +1,6 @@
+method,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+auto_skill,6,6,5,0.8333,2.0,56866.8,56107.8,0.0104,0.8333,0.4615,0.0,0.1667,0.0
+generic_checklist,6,6,5,0.8333,2.0,71694.4,71283.4,0.005,1.3333,0.5,0.0,0.0,0.0
+length_matched_reflexion,6,6,4,0.6667,2.75,75231.25,74576.25,0.0091,1.5,0.4375,0.0,0.0,0.0
+no_memory,6,6,4,0.6667,3.0,92030.75,92030.75,0.0,1.1667,0.5,0.0,0.0,0.0
+reflexion,6,6,5,0.8333,2.6,65914.6,65539.6,0.0056,1.3333,0.625,0.0,0.0,0.0

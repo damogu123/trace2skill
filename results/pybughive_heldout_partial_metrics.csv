@@ -1,0 +1,8 @@
+method,split,source,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+auto_skill,heldout,pybughive,6,6,6,1.0,1.8333,55454.3333,54695.3333,0.0137,0.5,0.2727,0.0,0.0,0.0
+format_shuffled_skill,heldout,pybughive,6,6,5,0.8333,1.8,38196.8,37496.8,0.022,0.5,0.3,0.0,0.0,0.0
+generic_checklist,heldout,pybughive,6,6,6,1.0,1.5,56011.1667,55600.1667,0.0073,0.3333,0.5556,0.0,0.0,0.0
+length_matched_reflexion,heldout,pybughive,6,6,6,1.0,1.8333,73982.8333,73327.8333,0.0089,0.5,0.4545,0.0,0.1667,0.0
+no_memory,heldout,pybughive,6,6,6,1.0,1.6667,53433.3333,53433.3333,0.0,0.5,0.5,0.0,0.0,0.0
+raw_trajectory_retrieval,heldout,pybughive,6,6,5,0.8333,1.0,42966.2,42038.2,0.0259,0.1667,0.6667,0.0,0.0,0.0
+reflexion,heldout,pybughive,6,6,5,0.8333,1.6,45349.6,44974.6,0.0064,0.5,0.7778,0.0,0.0,0.0

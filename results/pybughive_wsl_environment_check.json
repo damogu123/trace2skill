@@ -1,0 +1,42 @@
+{
+  "n_pybughive_tasks": 10,
+  "required_python_versions": [
+    "3.7",
+    "3.8"
+  ],
+  "tools": {
+    "git": {
+      "available": true,
+      "command": "/usr/bin/git",
+      "output": "git version 2.43.0"
+    },
+    "docker": {
+      "available": true,
+      "engine_available": true,
+      "command": "/usr/bin/docker",
+      "output": "Docker version 29.4.3, build 055a478",
+      "engine_output": "29.4.3"
+    },
+    "pipenv": {
+      "available": true,
+      "command": "/home/admin_jc/.local/bin/pipenv",
+      "output": "pipenv, version 2024.4.1"
+    },
+    "py_launcher": {
+      "available": false,
+      "versions": {}
+    },
+    "direct_python": {
+      "available": true,
+      "versions": {
+        "3.7": "python3.7: Python 3.7.12",
+        "3.8": "python3.8: Python 3.8.20"
+      }
+    }
+  },
+  "missing_python_versions": [],
+  "can_run_native_windows_probe": true,
+  "can_run_docker_probe": true,
+  "ready": true,
+  "recommended_path": "native"
+}

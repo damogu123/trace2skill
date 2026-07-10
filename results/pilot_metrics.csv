@@ -1,0 +1,2 @@
+method,split,bug_family,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+auto_skill,train,test_failure_triage,1,1,1,1.0,1.0,1550.0,1370.0,0.1161,0.0,0.0,0.0,0.0,0.0

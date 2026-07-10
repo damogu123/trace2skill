@@ -1,0 +1,52 @@
+{
+  "task_id": "pybughive_black_185",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "black",
+    "source": "pybughive",
+    "url": "https://github.com/psf/black.git",
+    "commit": "c6a6cfd3a293a69c29f93beca1c64bd857371e14",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.7",
+    "install_command": "pipenv --python 3.7\npipenv run python -m pip install setuptools==68.0.0\npipenv install\npipenv run python -m pip install click==8.0.2\npipenv run python -m pip install pytest==6.2.5",
+    "test_command": "pipenv run python setup.py test",
+    "full_test_command": "pipenv run python setup.py test",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/import_spacing.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "Trailing comma after from .. import",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive/pybughive_black_185_fix.patch",
+    "modified_files": [
+      "black.py"
+    ],
+    "bug_summary": "Trailing comma after from .. import"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "black",
+    "issue_id": 185,
+    "buggy_commit": "c6a6cfd3a293a69c29f93beca1c64bd857371e14",
+    "fix_commit": "dc0c14240e7423d9ada002835dcc195f8c6d8797",
+    "test_patch_path": "../../../patches/pybughive/pybughive_black_185_tests.patch",
+    "metadata_path": "../../../data/pybughive/pybughive_black_185/metadata.json",
+    "original_install_steps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "original_test_steps": "pipenv run python setup.py test",
+    "original_full_test_steps": "pipenv run python setup.py test"
+  },
+  "labels": {
+    "surface_pattern": "assertion_or_behavior_mismatch",
+    "root_cause": "localized_behavior_regression",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

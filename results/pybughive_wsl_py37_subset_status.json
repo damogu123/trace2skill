@@ -1,0 +1,145 @@
+{
+  "environment": {
+    "n_pybughive_tasks": 5,
+    "required_python_versions": [
+      "3.7"
+    ],
+    "tools": {
+      "git": {
+        "available": true,
+        "command": "/usr/bin/git",
+        "output": "git version 2.43.0"
+      },
+      "docker": {
+        "available": true,
+        "engine_available": true,
+        "command": "/usr/bin/docker",
+        "output": "Docker version 29.4.3, build 055a478",
+        "engine_output": "29.4.3"
+      },
+      "pipenv": {
+        "available": true,
+        "command": "/home/admin_jc/.local/bin/pipenv",
+        "output": "pipenv, version 2024.4.1"
+      },
+      "py_launcher": {
+        "available": false,
+        "versions": {}
+      },
+      "direct_python": {
+        "available": true,
+        "versions": {
+          "3.7": "python3.7: Python 3.7.12"
+        }
+      }
+    },
+    "missing_python_versions": [],
+    "can_run_native_windows_probe": true,
+    "can_run_docker_probe": true,
+    "ready": true,
+    "recommended_path": "docker"
+  },
+  "n_tasks": 5,
+  "results": [
+    {
+      "task_id": "pybughive_black_297",
+      "split": "train",
+      "project": "black",
+      "issue_id": 297,
+      "returncode": 0,
+      "status": "pilot_ready",
+      "failure_stage": null,
+      "install_returncode": 0,
+      "initial_test_returncode": 1,
+      "initial_failure_reproduced": true,
+      "initial_test_environment_failed": false,
+      "dataset_test_patch_applied": true,
+      "reference_patch_applied": true,
+      "reference_test_returncode": 0,
+      "reference_test_passed": true,
+      "reference_test_environment_failed": false,
+      "log_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_297/verify_task.log",
+      "summary_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_297/prepare_summary.json"
+    },
+    {
+      "task_id": "pybughive_black_1493",
+      "split": "heldout",
+      "project": "black",
+      "issue_id": 1493,
+      "returncode": 0,
+      "status": "pilot_ready",
+      "failure_stage": null,
+      "install_returncode": 0,
+      "initial_test_returncode": 1,
+      "initial_failure_reproduced": true,
+      "initial_test_environment_failed": false,
+      "dataset_test_patch_applied": true,
+      "reference_patch_applied": true,
+      "reference_test_returncode": 0,
+      "reference_test_passed": true,
+      "reference_test_environment_failed": false,
+      "log_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_1493/verify_task.log",
+      "summary_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_1493/prepare_summary.json"
+    },
+    {
+      "task_id": "pybughive_black_185",
+      "split": "heldout",
+      "project": "black",
+      "issue_id": 185,
+      "returncode": 0,
+      "status": "pilot_ready",
+      "failure_stage": null,
+      "install_returncode": 0,
+      "initial_test_returncode": 1,
+      "initial_failure_reproduced": true,
+      "initial_test_environment_failed": false,
+      "dataset_test_patch_applied": true,
+      "reference_patch_applied": true,
+      "reference_test_returncode": 0,
+      "reference_test_passed": true,
+      "reference_test_environment_failed": false,
+      "log_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_185/verify_task.log",
+      "summary_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_185/prepare_summary.json"
+    },
+    {
+      "task_id": "pybughive_black_389",
+      "split": "heldout",
+      "project": "black",
+      "issue_id": 389,
+      "returncode": 0,
+      "status": "pilot_ready",
+      "failure_stage": null,
+      "install_returncode": 0,
+      "initial_test_returncode": 1,
+      "initial_failure_reproduced": true,
+      "initial_test_environment_failed": false,
+      "dataset_test_patch_applied": true,
+      "reference_patch_applied": true,
+      "reference_test_returncode": 0,
+      "reference_test_passed": true,
+      "reference_test_environment_failed": false,
+      "log_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_389/verify_task.log",
+      "summary_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_389/prepare_summary.json"
+    },
+    {
+      "task_id": "pybughive_black_59",
+      "split": "heldout",
+      "project": "black",
+      "issue_id": 59,
+      "returncode": 0,
+      "status": "pilot_ready",
+      "failure_stage": null,
+      "install_returncode": 0,
+      "initial_test_returncode": 1,
+      "initial_failure_reproduced": true,
+      "initial_test_environment_failed": false,
+      "dataset_test_patch_applied": true,
+      "reference_patch_applied": true,
+      "reference_test_returncode": 0,
+      "reference_test_passed": true,
+      "reference_test_environment_failed": false,
+      "log_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_59/verify_task.log",
+      "summary_path": "workspaces/pybughive_verify_wsl_py37/pybughive_black_59/prepare_summary.json"
+    }
+  ]
+}

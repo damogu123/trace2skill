@@ -1,0 +1,74 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 232,
+  "title": "Multiline strings cause unnecessary optional parentheses",
+  "labels": "T: bug",
+  "buggy_commit": "23a00f051576d2e7edd18b6af382902cc34ea4a2",
+  "fix_commit": "d638d56e0e383caeeff048e76b02b50b29367c3d",
+  "warnings": [],
+  "score": 303,
+  "raw_issue": {
+    "id": 232,
+    "created_at": "2018-05-19T17:20:00Z",
+    "closed_at": "2018-06-05T04:28:37Z",
+    "title": "Multiline strings cause unnecessary optional parentheses",
+    "labels": "T: bug",
+    "commits": [
+      {
+        "hash": "d638d56e0e383caeeff048e76b02b50b29367c3d",
+        "commit_date": "2018-06-05T04:27:51Z",
+        "parents": "23a00f051576d2e7edd18b6af382902cc34ea4a2",
+        "stat": {
+          "total": 15,
+          "additions": 100,
+          "deletions": 85,
+          "files": [
+            {
+              "sha": "ac25db156e5e2b307246c38fc7a2f784e6d8e31d",
+              "filename": "README.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0,
+              "changes": 2,
+              "blob_url": "https://github.com/psf/black/blob/d638d56e0e383caeeff048e76b02b50b29367c3d/README.md",
+              "raw_url": "https://github.com/psf/black/raw/d638d56e0e383caeeff048e76b02b50b29367c3d/README.md",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/README.md?ref=d638d56e0e383caeeff048e76b02b50b29367c3d",
+              "patch": "@@ -721,6 +721,8 @@ More details can be found in [CONTRIBUTING](CONTRIBUTING.md).\n \n * fixed long trivial assignments being wrapped in unnecessary parentheses (#273)\n \n+* fixed unnecessary parentheses when a line contained multiline strings (#232)\n+\n * fixed stdin handling not working correctly if an old version of Click was\n   used (#276)\n "
+            },
+            {
+              "sha": "551d3c1dbdaf9c82f38a48729b78aed92c6c8079",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 69,
+              "deletions": 15,
+              "changes": 84,
+              "blob_url": "https://github.com/psf/black/blob/d638d56e0e383caeeff048e76b02b50b29367c3d/black.py",
+              "raw_url": "https://github.com/psf/black/raw/d638d56e0e383caeeff048e76b02b50b29367c3d/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=d638d56e0e383caeeff048e76b02b50b29367c3d",
+              "patch": "@@ -1094,6 +1094,13 @@ def contains_standalone_comments(self, depth_limit: int = sys.maxsize) -> bool:\n \n         return False\n \n+    def contains_multiline_strings(self) -> bool:\n+        for leaf in self.leaves:\n+            if is_multiline_string(leaf):\n+                return True\n+\n+        return False\n+\n     def maybe_remove_trailing_comma(self, closing: Leaf) -> bool:\n         \"\"\"Remove trailing comma if there is one and it's safe.\"\"\"\n         if not (\n@@ -2225,24 +2232,35 @@ def right_hand_split(\n         # the closing bracket is an optional paren\n         and closing_bracket.type == token.RPAR\n         and not closing_bracket.value\n-        # there are no standalone comments in the body\n-        and not line.contains_standalone_comments(0)\n-        # and it's not an import (optional parens are the only thing we can split\n-        # on in this case; attempting a split without them is a waste of time)\n+        # it's not an import (optional parens are the only thing we can split on\n+        # in this case; attempting a split without them is a waste of time)\n         and not line.is_import\n+        # there are no standalone comments in the body\n+        and not body.contains_standalone_comments(0)\n+        # and we can actually remove the parens\n+        and can_omit_invisible_parens(body, line_length)\n     ):\n         omit = {id(closing_bracket), *omit}\n-        if can_omit_invisible_parens(body, line_length):\n-            try:\n-                yield from right_hand_split(line, line_length, py36=py36, omit=omit)\n-                return\n-            except CannotSplit:\n-                if len(body.leaves) == 1 and not is_line_short_enough(\n-                    body, line_length=line_length\n-                ):\n-                    raise CannotSplit(\n-                        \"Splitting failed, body is still too long and can't be split.\"\n-                    )\n+        try:\n+            yield from right_hand_split(line, line_length, py36=py36, omit=omit)\n+            return\n+\n+        except CannotSplit:\n+            if not (\n+                can_be_split(body)\n+                or is_line_short_enough(body, line_length=line_length)\n+            ):\n+                raise CannotSplit(\n+                    \"Splitting failed, body is still too long and can't be split.\"\n+                )\n+\n+            elif head.contains_multiline_strings() or tail.contains_multiline_strings():\n+                raise CannotSplit(\n+                    \"The current optional pair of parentheses is bound to fail to \"\n+                    \"satisfy the splitting algorithm becase the head or the tail \"\n+                    \"contains multiline strings which by definition never fit one \"\n+                    \"line.\"\n+                )\n \n     ensure_visible(opening_bracket)\n     ensure_visible(closing_bracket)\n@@ -3190,6 +3208,42 @@ def is_line_short_enough(line: Line, *, line_length: int, line_str: str = \"\") ->\n     )\n \n \n+def can_be_split(line: Line) -> bool:\n+    \"\"\"Return False if the line cannot be split *for sure*.\n+\n+    This is not an exhaustive search but a cheap heuristic that we can use to\n+    avoid some unfortunate formattings (mostly around wrapping unsplittable code\n+    in unnecessary parentheses).\n+    \"\"\"\n+    leaves = line.leaves\n+    if len(leaves) < 2:\n+        return False\n+\n+    if leaves[0].type == token.STRING and leaves[1].type == token.DOT:\n+        call_count = 0\n+        dot_count = 0\n+        next = leaves[-1]\n+        for leaf in leaves[-2::-1]:\n+            if leaf.type in OPENING_BRACKETS:\n+                if next.type not in CLOSING_BRACKETS:\n+                    return False\n+\n+                call_count += 1\n+            elif leaf.type == token.DOT:\n+                dot_count += 1\n+            elif leaf.type == token.NAME:\n+                if not (next.type == token.DOT or next.type in OPENING_BRACKETS):\n+                    return False\n+\n+            elif leaf.type not in CLOSING_BRACKETS:\n+                return False\n+\n+            if dot_count > 1 and call_count > 1:\n+                return False\n+\n+    return True\n+\n+\n def can_omit_invisible_parens(line: Line, line_length: int) -> bool:\n     \"\"\"Does `line` have a shape safe to reformat without optional parens around it?\n "
+            }
+          ],
+          "tests": [
+            {
+              "sha": "e15e69cf94e22018779d54ecc8335ef42720c169",
+              "filename": "tests/cantfit.py",
+              "status": "modified",
+              "additions": 14,
+              "deletions": 0,
+              "changes": 14,
+              "blob_url": "https://github.com/psf/black/blob/d638d56e0e383caeeff048e76b02b50b29367c3d/tests%2Fcantfit.py",
+              "raw_url": "https://github.com/psf/black/raw/d638d56e0e383caeeff048e76b02b50b29367c3d/tests%2Fcantfit.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fcantfit.py?ref=d638d56e0e383caeeff048e76b02b50b29367c3d",
+              "patch": "@@ -28,6 +28,13 @@\n string_variable_name = (\n     \"a string that is waaaaaaaayyyyyyyy too long, even in parens, there's nothing you can do\"  # noqa\n )\n+for key in \"\"\"\n+    hostname\n+    port\n+    username\n+\"\"\".split():\n+    if key in self.connect_kwargs:\n+        raise ValueError(err.format(key))\n \n \n # output\n@@ -71,3 +78,10 @@\n     this_is_a_ridiculously_long_name_and_nobody_in_their_right_mind_would_use_one_like_it=0,\n )\n string_variable_name = \"a string that is waaaaaaaayyyyyyyy too long, even in parens, there's nothing you can do\"  # noqa\n+for key in \"\"\"\n+    hostname\n+    port\n+    username\n+\"\"\".split():\n+    if key in self.connect_kwargs:\n+        raise ValueError(err.format(key))"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

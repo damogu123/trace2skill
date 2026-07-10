@@ -1,0 +1,55 @@
+{
+  "task_id": "pybughive_black_183",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "black",
+    "source": "pybughive",
+    "url": "https://github.com/psf/black.git",
+    "commit": "dc0c14240e7423d9ada002835dcc195f8c6d8797",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.7",
+    "install_command": "pipenv --python 3.7\npipenv run python -m pip install setuptools==68.0.0\npipenv install\npipenv run python -m pip install click==8.0.2\npipenv run python -m pip install pytest==6.2.5",
+    "test_command": "pipenv run python setup.py test",
+    "full_test_command": "pipenv run python setup.py test",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/expression.diff",
+      "tests/expression.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "Different code on second pass",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive_hard/pybughive_black_183_fix.patch",
+    "modified_files": [
+      "README.md",
+      "black.py",
+      "docs/reference/reference_functions.rst"
+    ],
+    "bug_summary": "Different code on second pass"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "black",
+    "issue_id": 183,
+    "buggy_commit": "dc0c14240e7423d9ada002835dcc195f8c6d8797",
+    "fix_commit": "cfb003f51c89802b5bca29018fde62c4501a8940",
+    "test_patch_path": "../../../patches/pybughive_hard/pybughive_black_183_tests.patch",
+    "metadata_path": "../../../data/pybughive_hard/pybughive_black_183/metadata.json",
+    "original_install_steps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "original_test_steps": "pipenv run python setup.py test",
+    "original_full_test_steps": "pipenv run python setup.py test"
+  },
+  "labels": {
+    "surface_pattern": "assertion_or_behavior_mismatch",
+    "root_cause": "cross_file_behavior_regression",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

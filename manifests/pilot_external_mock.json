@@ -1,0 +1,29 @@
+{
+  "experiment_id": "pilot_external_mock",
+  "model": "mock-external-agent",
+  "temperature": 0.0,
+  "notes": "Single-run smoke test for run_external_agent.py.",
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "runs": [
+    {
+      "run_id": "pilot_external_mock_local_empty_input_bug_no_memory_seed1",
+      "task_id": "local_empty_input_bug",
+      "task_path": "tasks/train/local_empty_input_bug.json",
+      "method": "no_memory",
+      "seed": 1,
+      "workspace_path": "workspaces/runs/pilot_external_mock/pilot_external_mock_local_empty_input_bug_no_memory_seed1/repo",
+      "artifacts_dir": "runs/pilot_external_mock/pilot_external_mock_local_empty_input_bug_no_memory_seed1",
+      "prompt_path": "prompts/runs/pilot_external_mock/pilot_external_mock_local_empty_input_bug_no_memory_seed1.md",
+      "trajectory_path": "trajectories/pilot_external_mock/pilot_external_mock_local_empty_input_bug_no_memory_seed1.json",
+      "prepare_command": "python scripts/prepare_task.py tasks/train/local_empty_input_bug.json --workspace workspaces/runs/pilot_external_mock --checkout-id pilot_external_mock_local_empty_input_bug_no_memory_seed1 --force",
+      "baseline_context_path": null,
+      "memory_path": null,
+      "requires_memory_artifact": false,
+      "prompt_status": "ready"
+    }
+  ]
+}

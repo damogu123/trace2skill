@@ -1,0 +1,57 @@
+{
+  "run_id": "local_empty_input_bug_auto_skill_seed1",
+  "task_id": "local_empty_input_bug",
+  "method": "auto_skill",
+  "model": "manual-fixture",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 4,
+    "tool_calls": 8,
+    "input_tokens": 1200,
+    "output_tokens": 350,
+    "prompt_overhead_tokens": 180,
+    "active_debugging_tokens": 1370,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "The failure indicates a missing empty-input branch.",
+      "file_inspections": [
+        {
+          "path": "src/sample_parser/parser.py",
+          "reason": "Likely implementation of parse_items behavior."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "src/sample_parser/parser.py"
+        ],
+        "patch_path": null,
+        "patch_summary": "Return an empty list for whitespace-only input."
+      },
+      "test_rerun": {
+        "command": "python -m pytest tests/test_parser.py::test_empty_input_returns_empty_list -q",
+        "passed": true,
+        "log_path": "workspaces/local_empty_input_bug/logs/reference_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

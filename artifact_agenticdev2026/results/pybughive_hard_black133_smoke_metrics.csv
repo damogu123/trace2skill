@@ -1,0 +1,11 @@
+method,task_id,source,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+auto_skill,pybughive_black_132,unknown,1,1,0,0.0,,,,0.005,3.0,0.6667,0.0,1.0,0.0
+auto_skill,pybughive_black_133,pybughive,1,1,1,1.0,1.0,33629.0,32870.0,0.0226,0.0,0.0,0.0,0.0,0.0
+generic_checklist,pybughive_black_132,unknown,1,1,1,1.0,3.0,119311.0,118900.0,0.0034,2.0,0.3333,0.0,0.0,0.0
+generic_checklist,pybughive_black_133,pybughive,1,1,1,1.0,1.0,45692.0,45281.0,0.009,0.0,0.0,0.0,0.0,0.0
+length_matched_reflexion,pybughive_black_132,unknown,1,1,0,0.0,,,,0.0129,2.0,0.5,0.0,0.0,0.0
+length_matched_reflexion,pybughive_black_133,pybughive,1,1,1,1.0,1.0,52402.0,51747.0,0.0125,0.0,0.0,0.0,0.0,0.0
+no_memory,pybughive_black_132,unknown,1,1,1,1.0,3.0,133137.0,133137.0,0.0,1.0,1.0,0.0,0.0,0.0
+no_memory,pybughive_black_133,pybughive,1,1,0,0.0,,,,0.0,2.0,0.0,0.0,0.0,0.0
+reflexion,pybughive_black_132,unknown,1,1,1,1.0,2.0,46367.0,45992.0,0.0081,0.0,0.5,0.0,0.0,0.0
+reflexion,pybughive_black_133,pybughive,1,1,1,1.0,3.0,89908.0,89533.0,0.0042,0.0,0.3333,0.0,0.0,0.0

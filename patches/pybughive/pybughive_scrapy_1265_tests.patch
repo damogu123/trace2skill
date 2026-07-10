@@ -1,0 +1,90 @@
+diff --git a/tests/test_utils_conf.py b/tests/test_utils_conf.py
+--- a/tests/test_utils_conf.py
++++ b/tests/test_utils_conf.py
+@@ -2,16 +2,41 @@
+ 
+ from scrapy.utils.conf import build_component_list, arglist_to_dict
+ 
+-class UtilsConfTestCase(unittest.TestCase):
+ 
+-    def test_build_component_list(self):
++class BuildComponentListTest(unittest.TestCase):
++
++    def test_build_dict(self):
+         base = {'one': 1, 'two': 2, 'three': 3, 'five': 5, 'six': None}
+         custom = {'two': None, 'three': 8, 'four': 4}
+-        self.assertEqual(build_component_list(base, custom),
++        self.assertEqual(build_component_list(base, custom, lambda x: x),
+                          ['one', 'four', 'five', 'three'])
+ 
++    def test_return_list(self):
++        custom = ['a', 'b', 'c']
++        self.assertEqual(build_component_list(None, custom, lambda x: x),
++                         custom)
++
++    def test_map_dict(self):
++        custom = {'one': 1, 'two': 2, 'three': 3}
++        self.assertEqual(build_component_list({}, custom, lambda x: x.upper()),
++                         ['ONE', 'TWO', 'THREE'])
++
++    def test_map_list(self):
+         custom = ['a', 'b', 'c']
+-        self.assertEqual(build_component_list(base, custom), custom)
++        self.assertEqual(build_component_list(None, custom, lambda x: x.upper()),
++                         ['A', 'B', 'C'])
++
++    def test_duplicate_components_in_dict(self):
++        duplicate_dict = {'one': 1, 'two': 2, 'ONE': 4}
++        self.assertRaises(ValueError,
++                          build_component_list, {}, duplicate_dict, lambda x: x.lower())
++
++    def test_duplicate_components_in_list(self):
++        duplicate_list = ['a', 'b', 'a']
++        self.assertRaises(ValueError,
++                          build_component_list, None, duplicate_list, lambda x: x)
++
++class UtilsConfTestCase(unittest.TestCase):
+ 
+     def test_arglist_to_dict(self):
+         self.assertEqual(arglist_to_dict(['arg1=val1', 'arg2=val2']),
+diff --git a/tests/test_utils_deprecate.py b/tests/test_utils_deprecate.py
+--- a/tests/test_utils_deprecate.py
++++ b/tests/test_utils_deprecate.py
+@@ -3,7 +3,7 @@
+ import inspect
+ import unittest
+ import warnings
+-from scrapy.utils.deprecate import create_deprecated_class
++from scrapy.utils.deprecate import create_deprecated_class, update_classpath
+ 
+ from tests import mock
+ 
+@@ -248,3 +248,28 @@ class SubClass(DeprecatedName):
+                     pass
+ 
+         self.assertIn("Error detecting parent module", str(w[0].message))
++
++
++@mock.patch('scrapy.utils.deprecate.DEPRECATION_RULES',
++            [('scrapy.contrib.pipeline.', 'scrapy.pipelines.'),
++             ('scrapy.contrib.', 'scrapy.extensions.')])
++class UpdateClassPathTest(unittest.TestCase):
++
++    def test_old_path_gets_fixed(self):
++        with warnings.catch_warnings(record=True) as w:
++            output = update_classpath('scrapy.contrib.debug.Debug')
++        self.assertEqual(output, 'scrapy.extensions.debug.Debug')
++        self.assertEqual(len(w), 1)
++        self.assertIn("scrapy.contrib.debug.Debug", str(w[0].message))
++        self.assertIn("scrapy.extensions.debug.Debug", str(w[0].message))
++
++    def test_sorted_replacement(self):
++        with warnings.catch_warnings(record=True):
++            output = update_classpath('scrapy.contrib.pipeline.Pipeline')
++        self.assertEqual(output, 'scrapy.pipelines.Pipeline')
++
++    def test_unmatched_path_stays_the_same(self):
++        with warnings.catch_warnings(record=True) as w:
++            output = update_classpath('scrapy.unmatched.Path')
++        self.assertEqual(output, 'scrapy.unmatched.Path')
++        self.assertEqual(len(w), 0)

@@ -1,0 +1,61 @@
+{
+  "run_id": "heldout_memory_baselines_local_empty_average_bug_auto_skill_seed1",
+  "task_id": "local_empty_average_bug",
+  "method": "auto_skill",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 5,
+    "tool_calls": 7,
+    "input_tokens": 21240,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 307,
+    "active_debugging_tokens": 20933,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "average() divides by len(values) without handling an empty list, causing ZeroDivisionError; expected behavior is 0.0 for empty input.",
+      "file_inspections": [
+        {
+          "path": "tests/test_average.py",
+          "reason": "Confirm expected behavior for empty and non-empty input."
+        },
+        {
+          "path": "src/stats_summary/average.py",
+          "reason": "Direct traceback target where division by zero occurs."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "src/stats_summary/average.py"
+        ],
+        "patch_path": "runs/heldout_memory_baselines/heldout_memory_baselines_local_empty_average_bug_auto_skill_seed1/agent.patch",
+        "patch_summary": "Added a minimal empty-input guard in average(values) to return 0.0 when values is empty; retained existing mean calculation for non-empty lists."
+      },
+      "test_rerun": {
+        "command": "python -m pytest tests/test_average.py::test_empty_average_returns_zero -q; python -m pytest -q",
+        "passed": true,
+        "log_path": "runs/heldout_memory_baselines/heldout_memory_baselines_local_empty_average_bug_auto_skill_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

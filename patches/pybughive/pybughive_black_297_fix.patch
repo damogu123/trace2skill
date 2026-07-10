@@ -1,0 +1,11 @@
+diff --git a/black.py b/black.py
+--- a/black.py
++++ b/black.py
+@@ -768,6 +768,7 @@ def show(cls, code: str) -> None:
+     syms.dictsetmaker,
+     syms.listmaker,
+     syms.testlist_gexp,
++    syms.testlist_star_expr,
+ }
+ TEST_DESCENDANTS = {
+     syms.test,

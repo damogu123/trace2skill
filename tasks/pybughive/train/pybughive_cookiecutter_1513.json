@@ -1,0 +1,54 @@
+{
+  "task_id": "pybughive_cookiecutter_1513",
+  "bug_family": "test_failure_triage",
+  "split": "train",
+  "repo": {
+    "name": "cookiecutter",
+    "source": "pybughive",
+    "url": "https://github.com/cookiecutter/cookiecutter.git",
+    "commit": "2fd137f2c2d508cd0d194301101da7e85df6994e",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.8",
+    "install_command": "pipenv --python 3.8\npipenv run python -m pip install -r test_requirements.txt\npipenv run python -m pip install .",
+    "test_command": "pipenv run pytest -- tests/test_get_config.py",
+    "full_test_command": "pipenv run pytest",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/test-config/valid-config.yaml",
+      "tests/test_get_config.py",
+      "tests/test_get_user_config.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "Error reading yaml file using `poyo` - `ValueError: Parent of ChildMixin instance needs to be a Container.`",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive/pybughive_cookiecutter_1513_fix.patch",
+    "modified_files": [
+      "cookiecutter/config.py"
+    ],
+    "bug_summary": "Error reading yaml file using `poyo` - `ValueError: Parent of ChildMixin instance needs to be a Container.`"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "cookiecutter",
+    "issue_id": 1513,
+    "buggy_commit": "2fd137f2c2d508cd0d194301101da7e85df6994e",
+    "fix_commit": "cc92e3cc00a3d2acd1ef6d38cf5731478dade3cb",
+    "test_patch_path": "../../../patches/pybughive/pybughive_cookiecutter_1513_tests.patch",
+    "metadata_path": "../../../data/pybughive/pybughive_cookiecutter_1513/metadata.json",
+    "original_install_steps": "pipenv --python 3.8\npipenv install -r test_requirements.txt\npipenv run python setup.py install",
+    "original_test_steps": "pipenv run pytest -- tests/test_get_config.py",
+    "original_full_test_steps": "pipenv run pytest"
+  },
+  "labels": {
+    "surface_pattern": "exception_or_crash",
+    "root_cause": "localized_behavior_regression",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

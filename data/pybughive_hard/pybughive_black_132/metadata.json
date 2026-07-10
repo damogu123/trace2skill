@@ -1,0 +1,122 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 132,
+  "title": "Trailing comma is removed in complex dict literal",
+  "labels": "T: bug",
+  "buggy_commit": "f294cc272c3aa5b8d3cd35b9f9283721b7e458d8",
+  "fix_commit": "a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+  "warnings": [],
+  "score": 471,
+  "raw_issue": {
+    "id": 132,
+    "created_at": "2018-04-15T09:47:59Z",
+    "closed_at": "2018-04-16T08:34:56Z",
+    "title": "Trailing comma is removed in complex dict literal",
+    "labels": "T: bug",
+    "commits": [
+      {
+        "hash": "a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+        "commit_date": "2018-04-16T08:34:15Z",
+        "parents": "f294cc272c3aa5b8d3cd35b9f9283721b7e458d8",
+        "stat": {
+          "total": 32,
+          "additions": 159,
+          "deletions": 127,
+          "files": [
+            {
+              "sha": "e65d9810c84658fef86561c17f252f0693177721",
+              "filename": "README.md",
+              "status": "modified",
+              "additions": 5,
+              "deletions": 0,
+              "changes": 5,
+              "blob_url": "https://github.com/psf/black/blob/a764f1bb3b459ee6f2e752e3d67793b119a2144a/README.md",
+              "raw_url": "https://github.com/psf/black/raw/a764f1bb3b459ee6f2e752e3d67793b119a2144a/README.md",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/README.md?ref=a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+              "patch": "@@ -491,6 +491,11 @@ More details can be found in [CONTRIBUTING](CONTRIBUTING.md).\n \n ## Change Log\n \n+### 18.4a3\n+\n+* generalized star expression handling, including double stars; this\n+  fixes multiplication making expressions \"unsafe\" for trailing commas (#132)\n+\n ### 18.4a2\n \n * fixed parsing of unaligned standalone comments (#99, #112)"
+            },
+            {
+              "sha": "c3610c74b12a43ecf654a9e08cadaa3cc8f9a5f7",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 42,
+              "deletions": 21,
+              "changes": 63,
+              "blob_url": "https://github.com/psf/black/blob/a764f1bb3b459ee6f2e752e3d67793b119a2144a/black.py",
+              "raw_url": "https://github.com/psf/black/raw/a764f1bb3b459ee6f2e752e3d67793b119a2144a/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+              "patch": "@@ -522,7 +522,20 @@ def show(cls, code: str) -> None:\n     token.DOUBLESTAR,\n     token.DOUBLESLASH,\n }\n-VARARGS = {token.STAR, token.DOUBLESTAR}\n+STARS = {token.STAR, token.DOUBLESTAR}\n+VARARGS_PARENTS = {\n+    syms.arglist,\n+    syms.argument,  # double star in arglist\n+    syms.trailer,  # single argument to call\n+    syms.typedargslist,\n+    syms.varargslist,  # lambdas\n+}\n+UNPACKING_PARENTS = {\n+    syms.atom,  # single element of a list or set literal\n+    syms.dictsetmaker,\n+    syms.listmaker,\n+    syms.testlist_gexp,\n+}\n COMPREHENSION_PRIORITY = 20\n COMMA_PRIORITY = 10\n LOGIC_PRIORITY = 5\n@@ -1255,18 +1268,8 @@ def whitespace(leaf: Leaf) -> str:  # noqa C901\n                     # that, too.\n                     return prevp.prefix\n \n-        elif prevp.type == token.DOUBLESTAR:\n-            if (\n-                prevp.parent\n-                and prevp.parent.type in {\n-                    syms.arglist,\n-                    syms.argument,\n-                    syms.dictsetmaker,\n-                    syms.parameters,\n-                    syms.typedargslist,\n-                    syms.varargslist,\n-                }\n-            ):\n+        elif prevp.type in STARS:\n+            if is_vararg(prevp, within=VARARGS_PARENTS | UNPACKING_PARENTS):\n                 return NO\n \n         elif prevp.type == token.COLON:\n@@ -1275,7 +1278,7 @@ def whitespace(leaf: Leaf) -> str:  # noqa C901\n \n         elif (\n             prevp.parent\n-            and prevp.parent.type in {syms.factor, syms.star_expr}\n+            and prevp.parent.type == syms.factor\n             and prevp.type in MATH_OPERATORS\n         ):\n             return NO\n@@ -1496,11 +1499,7 @@ def is_split_before_delimiter(leaf: Leaf, previous: Leaf = None) -> int:\n \n     Higher numbers are higher priority.\n     \"\"\"\n-    if (\n-        leaf.type in VARARGS\n-        and leaf.parent\n-        and leaf.parent.type in {syms.argument, syms.typedargslist, syms.dictsetmaker}\n-    ):\n+    if is_vararg(leaf, within=VARARGS_PARENTS | UNPACKING_PARENTS):\n         # * and ** might also be MATH_OPERATORS but in this case they are not.\n         # Don't treat them as a delimiter.\n         return 0\n@@ -1878,8 +1877,7 @@ def append_to_line(leaf: Leaf) -> Iterator[Line]:\n         lowest_depth = min(lowest_depth, leaf.bracket_depth)\n         if (\n             leaf.bracket_depth == lowest_depth\n-            and leaf.type == token.STAR\n-            or leaf.type == token.DOUBLESTAR\n+            and is_vararg(leaf, within=VARARGS_PARENTS)\n         ):\n             trailing_comma_safe = trailing_comma_safe and py36\n         leaf_priority = delimiters.get(id(leaf))\n@@ -2090,6 +2088,29 @@ def is_one_tuple(node: LN) -> bool:\n     )\n \n \n+def is_vararg(leaf: Leaf, within: Set[NodeType]) -> bool:\n+    \"\"\"Return True if `leaf` is a star or double star in a vararg or kwarg.\n+\n+    If `within` includes VARARGS_PARENTS, this applies to function signatures.\n+    If `within` includes COLLECTION_LIBERALS_PARENTS, it applies to right\n+    hand-side extended iterable unpacking (PEP 3132) and additional unpacking\n+    generalizations (PEP 448).\n+    \"\"\"\n+    if leaf.type not in STARS or not leaf.parent:\n+        return False\n+\n+    p = leaf.parent\n+    if p.type == syms.star_expr:\n+        # Star expressions are also used as assignment targets in extended\n+        # iterable unpacking (PEP 3132).  See what its parent is instead.\n+        if not p.parent:\n+            return False\n+\n+        p = p.parent\n+\n+    return p.type in within\n+\n+\n def max_delimiter_priority_in_atom(node: LN) -> int:\n     if node.type != syms.atom:\n         return 0"
+            },
+            {
+              "sha": "8e9936dfaa50d28a024142a19fe8871ded38838c",
+              "filename": "docs/reference/reference_functions.rst",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0,
+              "changes": 2,
+              "blob_url": "https://github.com/psf/black/blob/a764f1bb3b459ee6f2e752e3d67793b119a2144a/docs%2Freference%2Freference_functions.rst",
+              "raw_url": "https://github.com/psf/black/raw/a764f1bb3b459ee6f2e752e3d67793b119a2144a/docs%2Freference%2Freference_functions.rst",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/docs%2Freference%2Freference_functions.rst?ref=a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+              "patch": "@@ -26,6 +26,8 @@ Assertions and checks\n \n .. autofunction:: black.is_python36\n \n+.. autofunction:: black.is_vararg\n+\n Formatting\n ----------\n "
+            }
+          ],
+          "tests": [
+            {
+              "sha": "bc34c0ed496e4f289d7f468be5fef61eccd9b85e",
+              "filename": "tests/expression.diff",
+              "status": "modified",
+              "additions": 27,
+              "deletions": 7,
+              "changes": 34,
+              "blob_url": "https://github.com/psf/black/blob/a764f1bb3b459ee6f2e752e3d67793b119a2144a/tests%2Fexpression.diff",
+              "raw_url": "https://github.com/psf/black/raw/a764f1bb3b459ee6f2e752e3d67793b119a2144a/tests%2Fexpression.diff",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.diff?ref=a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+              "patch": "@@ -11,7 +11,7 @@\n  True\n  False\n  1\n-@@ -29,65 +29,74 @@\n+@@ -29,59 +29,73 @@\n  ~great\n  +value\n  -1\n@@ -48,6 +48,19 @@\n  [1, 2, 3, 4, 5, 6, 7, 8, 9, (10 or A), (11 or B), (12 or C)]\n -[1, 2, 3,]\n +[1, 2, 3]\n+ [*a]\n+ [*range(10)]\n+-[*a, 4, 5,]\n+-[4, *a, 5,]\n+-[this_is_a_very_long_variable_which_will_force_a_delimiter_split, element, another, *more]\n++[*a, 4, 5]\n++[4, *a, 5]\n++[\n++    this_is_a_very_long_variable_which_will_force_a_delimiter_split,\n++    element,\n++    another,\n++    *more,\n++]\n  {i for i in (1, 2, 3)}\n  {(i ** 2) for i in (1, 2, 3)}\n -{(i ** 2) for i, _ in ((1, 'a'), (2, 'b'), (3, 'c'))}\n@@ -87,10 +100,11 @@\n +    **kwargs\n +)  # note: no trailing comma pre-3.6\n  call(*gidgets[:2])\n+ call(a, *gidgets[:2])\n  call(**self.screen_kwargs)\n+ call(b, **self.screen_kwargs)\n  lukasz.langa.pl\n- call.me(maybe)\n- 1 .real\n+@@ -90,11 +104,11 @@\n  1.0 .real\n  ....__class__\n  list[str]\n@@ -103,7 +117,7 @@\n  ]\n  slice[0]\n  slice[0:1]\n-@@ -114,79 +123,113 @@\n+@@ -121,85 +135,119 @@\n  numpy[-(c + 1):, d]\n  numpy[:, l[-2]]\n  numpy[:, ::-1]\n@@ -123,16 +137,16 @@\n +((i ** 2) for i, _ in ((1, \"a\"), (2, \"b\"), (3, \"c\")))\n  (((i ** 2) + j) for i in (1, 2, 3) for j in (1, 2, 3))\n  (*starred)\n--{\"id\": \"1\",\"type\": \"type\",\"started_at\": now(),\"ended_at\": now() + timedelta(days=10),\"priority\": 1,\"import_session_id\": 1,**kwargs}  # no trailing comma, this file is not 3.6+\n+-{\"id\": \"1\",\"type\": \"type\",\"started_at\": now(),\"ended_at\": now() + timedelta(days=10),\"priority\": 1,\"import_session_id\": 1,**kwargs}\n +{\n +    \"id\": \"1\",\n +    \"type\": \"type\",\n +    \"started_at\": now(),\n +    \"ended_at\": now() + timedelta(days=10),\n +    \"priority\": 1,\n +    \"import_session_id\": 1,\n-+    **kwargs\n-+}  # no trailing comma, this file is not 3.6+\n++    **kwargs,\n++}\n  a = (1,)\n  b = 1,\n  c = 1\n@@ -154,6 +168,12 @@\n +).all()\n  Ø = set()\n  authors.łukasz.say_thanks()\n+ mapping = {\n+     A: 0.25 * (10.0 / 12),\n+     B: 0.1 * (10.0 / 12),\n+     C: 0.1 * (10.0 / 12),\n+     D: 0.1 * (10.0 / 12),\n+ }\n  \n +\n  def gen():"
+            },
+            {
+              "sha": "9c071771f7676ba528d5f98c480e874f759f99a5",
+              "filename": "tests/expression.py",
+              "status": "modified",
+              "additions": 34,
+              "deletions": 3,
+              "changes": 37,
+              "blob_url": "https://github.com/psf/black/blob/a764f1bb3b459ee6f2e752e3d67793b119a2144a/tests%2Fexpression.py",
+              "raw_url": "https://github.com/psf/black/raw/a764f1bb3b459ee6f2e752e3d67793b119a2144a/tests%2Fexpression.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.py?ref=a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+              "patch": "@@ -54,6 +54,11 @@\n []\n [1, 2, 3, 4, 5, 6, 7, 8, 9, (10 or A), (11 or B), (12 or C)]\n [1, 2, 3,]\n+[*a]\n+[*range(10)]\n+[*a, 4, 5,]\n+[4, *a, 5,]\n+[this_is_a_very_long_variable_which_will_force_a_delimiter_split, element, another, *more]\n {i for i in (1, 2, 3)}\n {(i ** 2) for i in (1, 2, 3)}\n {(i ** 2) for i, _ in ((1, 'a'), (2, 'b'), (3, 'c'))}\n@@ -76,7 +81,9 @@\n call(arg, another, kwarg='hey', **kwargs)\n call(this_is_a_very_long_variable_which_will_force_a_delimiter_split, arg, another, kwarg='hey', **kwargs)  # note: no trailing comma pre-3.6\n call(*gidgets[:2])\n+call(a, *gidgets[:2])\n call(**self.screen_kwargs)\n+call(b, **self.screen_kwargs)\n lukasz.langa.pl\n call.me(maybe)\n 1 .real\n@@ -127,7 +134,7 @@\n ((i ** 2) for i, _ in ((1, 'a'), (2, 'b'), (3, 'c')))\n (((i ** 2) + j) for i in (1, 2, 3) for j in (1, 2, 3))\n (*starred)\n-{\"id\": \"1\",\"type\": \"type\",\"started_at\": now(),\"ended_at\": now() + timedelta(days=10),\"priority\": 1,\"import_session_id\": 1,**kwargs}  # no trailing comma, this file is not 3.6+\n+{\"id\": \"1\",\"type\": \"type\",\"started_at\": now(),\"ended_at\": now() + timedelta(days=10),\"priority\": 1,\"import_session_id\": 1,**kwargs}\n a = (1,)\n b = 1,\n c = 1\n@@ -138,6 +145,12 @@\n result = session.query(models.Customer.id).filter(models.Customer.account_id == account_id, models.Customer.email == email_address).order_by(models.Customer.id.asc(),).all()\n Ø = set()\n authors.łukasz.say_thanks()\n+mapping = {\n+    A: 0.25 * (10.0 / 12),\n+    B: 0.1 * (10.0 / 12),\n+    C: 0.1 * (10.0 / 12),\n+    D: 0.1 * (10.0 / 12),\n+}\n \n def gen():\n     yield from outside_of_generator\n@@ -250,6 +263,16 @@ async def f():\n []\n [1, 2, 3, 4, 5, 6, 7, 8, 9, (10 or A), (11 or B), (12 or C)]\n [1, 2, 3]\n+[*a]\n+[*range(10)]\n+[*a, 4, 5]\n+[4, *a, 5]\n+[\n+    this_is_a_very_long_variable_which_will_force_a_delimiter_split,\n+    element,\n+    another,\n+    *more,\n+]\n {i for i in (1, 2, 3)}\n {(i ** 2) for i in (1, 2, 3)}\n {(i ** 2) for i, _ in ((1, \"a\"), (2, \"b\"), (3, \"c\"))}\n@@ -281,7 +304,9 @@ async def f():\n     **kwargs\n )  # note: no trailing comma pre-3.6\n call(*gidgets[:2])\n+call(a, *gidgets[:2])\n call(**self.screen_kwargs)\n+call(b, **self.screen_kwargs)\n lukasz.langa.pl\n call.me(maybe)\n 1 .real\n@@ -339,8 +364,8 @@ async def f():\n     \"ended_at\": now() + timedelta(days=10),\n     \"priority\": 1,\n     \"import_session_id\": 1,\n-    **kwargs\n-}  # no trailing comma, this file is not 3.6+\n+    **kwargs,\n+}\n a = (1,)\n b = 1,\n c = 1\n@@ -359,6 +384,12 @@ async def f():\n ).all()\n Ø = set()\n authors.łukasz.say_thanks()\n+mapping = {\n+    A: 0.25 * (10.0 / 12),\n+    B: 0.1 * (10.0 / 12),\n+    C: 0.1 * (10.0 / 12),\n+    D: 0.1 * (10.0 / 12),\n+}\n \n \n def gen():"
+            },
+            {
+              "sha": "08f9414a7b5041452573b7c6bc6e4c2f21e3cce3",
+              "filename": "tests/function.py",
+              "status": "modified",
+              "additions": 16,
+              "deletions": 0,
+              "changes": 16,
+              "blob_url": "https://github.com/psf/black/blob/a764f1bb3b459ee6f2e752e3d67793b119a2144a/tests%2Ffunction.py",
+              "raw_url": "https://github.com/psf/black/raw/a764f1bb3b459ee6f2e752e3d67793b119a2144a/tests%2Ffunction.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Ffunction.py?ref=a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+              "patch": "@@ -74,6 +74,13 @@ def long_lines():\n         $\n         \"\"\", re.MULTILINE | re.VERBOSE\n     )\n+def trailing_comma():\n+    mapping = {\n+    A: 0.25 * (10.0 / 12),\n+    B: 0.1 * (10.0 / 12),\n+    C: 0.1 * (10.0 / 12),\n+    D: 0.1 * (10.0 / 12),\n+}\n \n # output\n \n@@ -198,3 +205,12 @@ def long_lines():\n         \"\"\",\n         re.MULTILINE | re.VERBOSE,\n     )\n+\n+\n+def trailing_comma():\n+    mapping = {\n+        A: 0.25 * (10.0 / 12),\n+        B: 0.1 * (10.0 / 12),\n+        C: 0.1 * (10.0 / 12),\n+        D: 0.1 * (10.0 / 12),\n+    }"
+            },
+            {
+              "sha": "a4d23823c9d2164cfb0176d8544ca01e6d23fc47",
+              "filename": "tests/test_black.py",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1,
+              "changes": 2,
+              "blob_url": "https://github.com/psf/black/blob/a764f1bb3b459ee6f2e752e3d67793b119a2144a/tests%2Ftest_black.py",
+              "raw_url": "https://github.com/psf/black/raw/a764f1bb3b459ee6f2e752e3d67793b119a2144a/tests%2Ftest_black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Ftest_black.py?ref=a764f1bb3b459ee6f2e752e3d67793b119a2144a",
+              "patch": "@@ -179,7 +179,7 @@ def test_expression_diff(self) -> None:\n             msg = (\n                 f\"Expected diff isn't equal to the actual. If you made changes \"\n                 f\"to expression.py and this is an anticipated difference, \"\n-                f\"overwrite tests/expression.diff with {dump}.\"\n+                f\"overwrite tests/expression.diff with {dump}\"\n             )\n             self.assertEqual(expected, actual, msg)\n "
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

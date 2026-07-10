@@ -1,0 +1,57 @@
+{
+  "run_id": "pilot_external_mock_local_empty_input_bug_no_memory_seed1",
+  "task_id": "local_empty_input_bug",
+  "method": "no_memory",
+  "model": "mock-external-agent",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 4,
+    "tool_calls": 6,
+    "input_tokens": 1000,
+    "output_tokens": 200,
+    "prompt_overhead_tokens": 0,
+    "active_debugging_tokens": 1200,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "The failing assertion indicates a missing empty-input branch.",
+      "file_inspections": [
+        {
+          "path": "src/sample_parser/parser.py",
+          "reason": "This implementation owns the failing behavior."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "src/sample_parser/parser.py"
+        ],
+        "patch_path": "runs/pilot_external_mock/pilot_external_mock_local_empty_input_bug_no_memory_seed1/agent.patch",
+        "patch_summary": "Return an empty list for whitespace-only input."
+      },
+      "test_rerun": {
+        "command": "python -m pytest tests/test_parser.py::test_empty_input_returns_empty_list -q",
+        "passed": true,
+        "log_path": "runs/pilot_external_mock/pilot_external_mock_local_empty_input_bug_no_memory_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

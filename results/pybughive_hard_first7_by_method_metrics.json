@@ -1,0 +1,87 @@
+{
+  "group_by": [
+    "method"
+  ],
+  "groups": [
+    {
+      "method": "auto_skill",
+      "n_runs": 7,
+      "n_tasks": 7,
+      "solved": 6,
+      "solve_rate": 0.8571,
+      "cycles_per_solved_task": 2.0,
+      "tokens_per_solved_task": 59609.6667,
+      "active_tokens_per_solved_task": 58850.6667,
+      "prompt_overhead_ratio": 0.0104,
+      "failed_patches_per_run": 0.8571,
+      "mistakes_per_cycle": 0.4667,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.1429,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "generic_checklist",
+      "n_runs": 7,
+      "n_tasks": 7,
+      "solved": 6,
+      "solve_rate": 0.8571,
+      "cycles_per_solved_task": 1.8333,
+      "tokens_per_solved_task": 68717.8333,
+      "active_tokens_per_solved_task": 68306.8333,
+      "prompt_overhead_ratio": 0.0052,
+      "failed_patches_per_run": 1.1429,
+      "mistakes_per_cycle": 0.5333,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "length_matched_reflexion",
+      "n_runs": 7,
+      "n_tasks": 7,
+      "solved": 5,
+      "solve_rate": 0.7143,
+      "cycles_per_solved_task": 2.4,
+      "tokens_per_solved_task": 70456.2,
+      "active_tokens_per_solved_task": 69801.2,
+      "prompt_overhead_ratio": 0.0094,
+      "failed_patches_per_run": 1.2857,
+      "mistakes_per_cycle": 0.4118,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "no_memory",
+      "n_runs": 7,
+      "n_tasks": 7,
+      "solved": 5,
+      "solve_rate": 0.7143,
+      "cycles_per_solved_task": 2.6,
+      "tokens_per_solved_task": 93414.2,
+      "active_tokens_per_solved_task": 93414.2,
+      "prompt_overhead_ratio": 0.0,
+      "failed_patches_per_run": 1.0,
+      "mistakes_per_cycle": 0.4706,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    },
+    {
+      "method": "reflexion",
+      "n_runs": 7,
+      "n_tasks": 7,
+      "solved": 6,
+      "solve_rate": 0.8571,
+      "cycles_per_solved_task": 2.3333,
+      "tokens_per_solved_task": 63632.5,
+      "active_tokens_per_solved_task": 63257.5,
+      "prompt_overhead_ratio": 0.0058,
+      "failed_patches_per_run": 1.1429,
+      "mistakes_per_cycle": 0.5882,
+      "repeated_mistake_rate": 0.0,
+      "negative_transfer_rate": 0.0,
+      "broke_existing_tests_rate": 0.0
+    }
+  ]
+}

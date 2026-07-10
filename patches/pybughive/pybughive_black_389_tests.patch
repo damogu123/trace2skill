@@ -1,0 +1,41 @@
+diff --git a/tests/data/python2_unicode_literals.py b/tests/data/python2_unicode_literals.py
+--- a/tests/data/python2_unicode_literals.py
++++ b/tests/data/python2_unicode_literals.py
+@@ -1,5 +1,7 @@
+ #!/usr/bin/env python2
+-from __future__ import unicode_literals
++from __future__ import unicode_literals as _unicode_literals
++from __future__ import absolute_import
++from __future__ import print_function as lol, with_function
+ 
+ u'hello'
+ U"hello"
+@@ -9,7 +11,9 @@
+ 
+ 
+ #!/usr/bin/env python2
+-from __future__ import unicode_literals
++from __future__ import unicode_literals as _unicode_literals
++from __future__ import absolute_import
++from __future__ import print_function as lol, with_function
+ 
+ "hello"
+ "hello"
+diff --git a/tests/test_black.py b/tests/test_black.py
+--- a/tests/test_black.py
++++ b/tests/test_black.py
+@@ -735,6 +735,14 @@ def test_get_future_imports(self) -> None:
+         self.assertEqual(set(), black.get_future_imports(node))
+         node = black.lib2to3_parse("from some.module import black\n")
+         self.assertEqual(set(), black.get_future_imports(node))
++        node = black.lib2to3_parse(
++            "from __future__ import unicode_literals as _unicode_literals"
++        )
++        self.assertEqual({"unicode_literals"}, black.get_future_imports(node))
++        node = black.lib2to3_parse(
++            "from __future__ import unicode_literals as _lol, print"
++        )
++        self.assertEqual({"unicode_literals", "print"}, black.get_future_imports(node))
+ 
+     def test_debug_visitor(self) -> None:
+         source, _ = read_data("debug_visitor.py")

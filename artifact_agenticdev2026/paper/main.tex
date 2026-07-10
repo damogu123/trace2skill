@@ -1,0 +1,69 @@
+\documentclass[sigconf,review,anonymous,pbalance]{acmart}
+
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{svg}
+\svgsetup{inkscapelatex=false}
+\usepackage{placeins}
+\usepackage{xurl}
+
+\citestyle{acmnumeric}
+\setcopyright{none}
+\settopmatter{printacmref=true, printccs=true}
+
+\acmConference[AgenticDev 2026]{International Workshop on Agentic AI for
+Next-Generation Software Development}{October 12, 2026}{Munich, Germany}
+\acmYear{2026}
+\acmDOI{}
+\acmISBN{}
+
+\title{Evaluating Low-Shot Procedural Skill Transfer in Language-Agent
+Debugging}
+
+\author{Anonymous Author(s)}
+\affiliation{%
+  \institution{Anonymous Institution}
+  \country{Anonymous}
+}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10011007.10011006.10011008</concept_id>
+       <concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+   <concept>
+       <concept_id>10010147.10010178.10010216</concept_id>
+       <concept_desc>Computing methodologies~Intelligent agents</concept_desc>
+       <concept_significance>300</concept_significance>
+   </concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+\ccsdesc[300]{Computing methodologies~Intelligent agents}
+
+\begin{document}
+
+\input{sections/abstract}
+\keywords{language agents, software debugging, procedural memory, skill
+induction, negative transfer}
+
+\maketitle
+
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/method}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/limitations}
+\input{sections/conclusion}
+\input{sections/ai_disclosure}
+\input{sections/data_availability}
+
+\clearpage
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

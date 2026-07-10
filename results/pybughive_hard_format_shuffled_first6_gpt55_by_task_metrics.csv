@@ -1,0 +1,7 @@
+method,task_id,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+format_shuffled_skill,pybughive_black_132,1,1,1,1.0,2.0,107759.0,107059.0,0.0065,1.0,1.5,0.0,0.0,0.0
+format_shuffled_skill,pybughive_black_133,1,1,1,1.0,2.0,58483.0,57783.0,0.012,0.0,0.5,0.0,0.0,0.0
+format_shuffled_skill,pybughive_black_154,1,1,1,1.0,2.0,65245.0,64545.0,0.0107,1.0,0.5,0.0,0.0,0.0
+format_shuffled_skill,pybughive_black_183,1,1,1,1.0,1.0,133830.0,133130.0,0.0052,0.0,1.0,0.0,0.0,0.0
+format_shuffled_skill,pybughive_black_193,1,1,1,1.0,4.0,184255.0,183555.0,0.0038,2.0,0.5,0.0,0.0,0.0
+format_shuffled_skill,pybughive_black_232,1,1,1,1.0,2.0,62463.0,61763.0,0.0112,1.0,0.5,0.0,0.0,0.0

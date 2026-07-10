@@ -1,0 +1,61 @@
+{
+  "run_id": "heldout_memory_baselines_local_empty_average_bug_reflexion_seed1",
+  "task_id": "local_empty_average_bug",
+  "method": "reflexion",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 6,
+    "tool_calls": 5,
+    "input_tokens": 18937,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 121,
+    "active_debugging_tokens": 18816,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "average() divides by len(values) without handling empty input, causing ZeroDivisionError for [].",
+      "file_inspections": [
+        {
+          "path": "tests/test_average.py",
+          "reason": "Confirm expected behavior for empty and non-empty inputs."
+        },
+        {
+          "path": "src/stats_summary/average.py",
+          "reason": "Inspect implementation that directly triggers ZeroDivisionError."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "src/stats_summary/average.py"
+        ],
+        "patch_path": "runs/heldout_memory_baselines/heldout_memory_baselines_local_empty_average_bug_reflexion_seed1/agent.patch",
+        "patch_summary": "Added an empty-input guard in average() to return 0.0 before division."
+      },
+      "test_rerun": {
+        "command": "python -m pytest tests/test_average.py::test_empty_average_returns_zero -q",
+        "passed": true,
+        "log_path": "runs/heldout_memory_baselines/heldout_memory_baselines_local_empty_average_bug_reflexion_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

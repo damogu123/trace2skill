@@ -1,0 +1,8 @@
+diff --git a/src/stats_summary/average.py b/src/stats_summary/average.py
+--- a/src/stats_summary/average.py
++++ b/src/stats_summary/average.py
+@@ -1,2 +1,4 @@
+ def average(values: list[float]) -> float:
++    if not values:
++        return 0.0
+     return sum(values) / len(values)

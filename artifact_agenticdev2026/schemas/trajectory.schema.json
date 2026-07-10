@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/skill-transfer-debugging/trajectory.schema.json",
+  "title": "AgentTrajectory",
+  "description": "A logged agent run for a debugging task, including diagnosis-edit-test cycles and outcome metrics.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "task_id",
+    "method",
+    "model",
+    "budget",
+    "final_outcome",
+    "cycles"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "no_memory",
+        "reflexion",
+        "length_matched_reflexion",
+        "generic_checklist",
+        "raw_trajectory_retrieval",
+        "format_shuffled_skill",
+        "oracle_skill",
+        "auto_skill"
+      ]
+    },
+    "model": {
+      "type": "string"
+    },
+    "temperature": {
+      "type": "number",
+      "minimum": 0
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_turns", "max_tokens", "max_cycles"],
+      "properties": {
+        "max_turns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_cycles": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "final_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "solved",
+        "cycles_used",
+        "llm_turns",
+        "tool_calls",
+        "input_tokens",
+        "output_tokens"
+      ],
+      "properties": {
+        "solved": {
+          "type": "boolean"
+        },
+        "final_test_passed": {
+          "type": "boolean"
+        },
+        "full_test_passed": {
+          "type": ["boolean", "null"]
+        },
+        "broke_existing_tests": {
+          "type": ["boolean", "null"]
+        },
+        "timeout": {
+          "type": "boolean"
+        },
+        "cycles_used": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "llm_turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tool_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "prompt_overhead_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_debugging_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed_patch_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "cycles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cycle_id",
+          "diagnosis",
+          "file_inspections",
+          "patch_attempt",
+          "test_rerun"
+        ],
+        "properties": {
+          "cycle_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "diagnosis": {
+            "type": "string"
+          },
+          "file_inspections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "reason"],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "patch_attempt": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["modified_files"],
+            "properties": {
+              "modified_files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "patch_path": {
+                "type": ["string", "null"]
+              },
+              "patch_summary": {
+                "type": ["string", "null"]
+              }
+            }
+          },
+          "test_rerun": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["command", "passed", "log_path"],
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "passed": {
+                "type": "boolean"
+              },
+              "log_path": {
+                "type": "string"
+              }
+            }
+          },
+          "mistakes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type", "description"],
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "negative_transfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "detected": {
+          "type": "boolean"
+        },
+        "category": {
+          "type": ["string", "null"],
+          "enum": ["performance", "behavioral", "self_contradictory", null]
+        },
+        "reason": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "run_id": "auto_skill_pybh_001_seed1",
+      "task_id": "pybh_001",
+      "method": "auto_skill",
+      "model": "gpt-x",
+      "temperature": 0,
+      "budget": {
+        "max_turns": 30,
+        "max_tokens": 60000,
+        "max_cycles": 10
+      },
+      "final_outcome": {
+        "solved": true,
+        "final_test_passed": true,
+        "full_test_passed": true,
+        "broke_existing_tests": false,
+        "timeout": false,
+        "cycles_used": 3,
+        "llm_turns": 12,
+        "tool_calls": 25,
+        "input_tokens": 31000,
+        "output_tokens": 6500,
+        "prompt_overhead_tokens": 1600,
+        "active_debugging_tokens": 35900,
+        "failed_patch_count": 2
+      },
+      "cycles": [
+        {
+          "cycle_id": 1,
+          "diagnosis": "The failure suggests an unhandled empty input branch.",
+          "file_inspections": [
+            {
+              "path": "src/parser.py",
+              "reason": "Likely implementation of the failing behavior."
+            }
+          ],
+          "patch_attempt": {
+            "modified_files": ["src/parser.py"],
+            "patch_path": "runs/auto_skill_pybh_001_seed1/cycle_1.patch",
+            "patch_summary": "Added an empty-input branch."
+          },
+          "test_rerun": {
+            "command": "pytest tests/test_parser.py::test_empty_input -q",
+            "passed": false,
+            "log_path": "runs/auto_skill_pybh_001_seed1/cycle_1.log"
+          },
+          "mistakes": [
+            {
+              "type": "overfit_to_single_input_shape",
+              "description": "Handled one empty input shape but not the general empty-input case."
+            }
+          ]
+        }
+      ],
+      "negative_transfer": {
+        "detected": false,
+        "category": null,
+        "reason": null
+      }
+    }
+  ]
+}

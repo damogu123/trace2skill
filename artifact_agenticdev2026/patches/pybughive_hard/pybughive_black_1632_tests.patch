@@ -1,0 +1,161 @@
+diff --git a/tests/data/docstring.py b/tests/data/docstring.py
+--- a/tests/data/docstring.py
++++ b/tests/data/docstring.py
+@@ -188,6 +188,27 @@ def my_god_its_full_of_stars_2():
+     "I'm sorry Dave "
+ 
+ 
++def docstring_almost_at_line_limit():
++    """long docstring................................................................."""
++
++
++def docstring_almost_at_line_limit2():
++    """long docstring.................................................................
++
++    ..................................................................................
++    """
++
++
++def docstring_at_line_limit():
++    """long docstring................................................................"""
++
++
++def multiline_docstring_at_line_limit():
++    """first line-----------------------------------------------------------------------
++
++    second line----------------------------------------------------------------------"""
++
++
+ # output
+ 
+ class MyClass:
+@@ -375,3 +396,24 @@ def my_god_its_full_of_stars_1():
+ # the space below is actually a \u2001, removed in output
+ def my_god_its_full_of_stars_2():
+     "I'm sorry Dave"
++
++
++def docstring_almost_at_line_limit():
++    """long docstring................................................................."""
++
++
++def docstring_almost_at_line_limit2():
++    """long docstring.................................................................
++
++    ..................................................................................
++    """
++
++
++def docstring_at_line_limit():
++    """long docstring................................................................"""
++
++
++def multiline_docstring_at_line_limit():
++    """first line-----------------------------------------------------------------------
++
++    second line----------------------------------------------------------------------"""
+diff --git a/tests/data/docstring_preview.py b/tests/data/docstring_preview.py
+new file mode 100644
+--- /dev/null
++++ b/tests/data/docstring_preview.py
+@@ -0,0 +1,89 @@
++def docstring_almost_at_line_limit():
++    """long docstring.................................................................
++    """
++
++
++def docstring_almost_at_line_limit_with_prefix():
++    f"""long docstring................................................................
++    """
++
++
++def mulitline_docstring_almost_at_line_limit():
++    """long docstring.................................................................
++
++    ..................................................................................
++    """
++
++
++def mulitline_docstring_almost_at_line_limit_with_prefix():
++    f"""long docstring................................................................
++
++    ..................................................................................
++    """
++
++
++def docstring_at_line_limit():
++    """long docstring................................................................"""
++
++
++def docstring_at_line_limit_with_prefix():
++    f"""long docstring..............................................................."""
++
++
++def multiline_docstring_at_line_limit():
++    """first line-----------------------------------------------------------------------
++
++    second line----------------------------------------------------------------------"""
++
++
++def multiline_docstring_at_line_limit_with_prefix():
++    f"""first line----------------------------------------------------------------------
++
++    second line----------------------------------------------------------------------"""
++
++
++# output
++
++
++def docstring_almost_at_line_limit():
++    """long docstring.................................................................
++    """
++
++
++def docstring_almost_at_line_limit_with_prefix():
++    f"""long docstring................................................................
++    """
++
++
++def mulitline_docstring_almost_at_line_limit():
++    """long docstring.................................................................
++
++    ..................................................................................
++    """
++
++
++def mulitline_docstring_almost_at_line_limit_with_prefix():
++    f"""long docstring................................................................
++
++    ..................................................................................
++    """
++
++
++def docstring_at_line_limit():
++    """long docstring................................................................"""
++
++
++def docstring_at_line_limit_with_prefix():
++    f"""long docstring..............................................................."""
++
++
++def multiline_docstring_at_line_limit():
++    """first line-----------------------------------------------------------------------
++
++    second line----------------------------------------------------------------------"""
++
++
++def multiline_docstring_at_line_limit_with_prefix():
++    f"""first line----------------------------------------------------------------------
++
++    second line----------------------------------------------------------------------"""
+diff --git a/tests/test_format.py b/tests/test_format.py
+--- a/tests/test_format.py
++++ b/tests/test_format.py
+@@ -91,6 +91,7 @@
+     "one_element_subscript",
+     "remove_await_parens",
+     "return_annotation_brackets",
++    "docstring_preview",
+ ]
+ 
+ SOURCES: List[str] = [

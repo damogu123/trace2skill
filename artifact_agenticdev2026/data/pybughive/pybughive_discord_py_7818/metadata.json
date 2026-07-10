@@ -1,0 +1,62 @@
+{
+  "source": "pybughive",
+  "project": "discord.py",
+  "issue_id": 7818,
+  "title": "Unable to create nested groups with explicit parent set",
+  "labels": "bug",
+  "buggy_commit": "c67130821151266e6b6855b8ce0e031850bf6fbc",
+  "fix_commit": "25ad5b675c044e67c160e8a18a4753e93efec26d",
+  "warnings": [],
+  "score": 153,
+  "raw_issue": {
+    "id": 7818,
+    "created_at": "2022-04-01T11:44:03Z",
+    "closed_at": "2022-04-01T13:14:02Z",
+    "title": "Unable to create nested groups with explicit parent set",
+    "labels": "bug",
+    "text_based": false,
+    "commits": [
+      {
+        "hash": "25ad5b675c044e67c160e8a18a4753e93efec26d",
+        "commit_date": "2022-04-01T13:13:27Z",
+        "parents": "c67130821151266e6b6855b8ce0e031850bf6fbc",
+        "stat": {
+          "total": 4,
+          "additions": 50,
+          "deletions": 46,
+          "files": [
+            {
+              "sha": "11af21f8fc3623e5c6e3d318fb9144a0ee34f0b5",
+              "filename": "discord/app_commands/commands.py",
+              "status": "modified",
+              "additions": 13,
+              "deletions": 2,
+              "changes": 15,
+              "blob_url": "https://github.com/Rapptz/discord.py/blob/25ad5b675c044e67c160e8a18a4753e93efec26d/discord%2Fapp_commands%2Fcommands.py",
+              "raw_url": "https://github.com/Rapptz/discord.py/raw/25ad5b675c044e67c160e8a18a4753e93efec26d/discord%2Fapp_commands%2Fcommands.py",
+              "contents_url": "https://api.github.com/repos/Rapptz/discord.py/contents/discord%2Fapp_commands%2Fcommands.py?ref=25ad5b675c044e67c160e8a18a4753e93efec26d",
+              "patch": "@@ -971,6 +971,7 @@ def __init__(\n         self.name: str = validate_name(name) if name is not MISSING else cls.__discord_app_commands_group_name__\n         self.description: str = description or cls.__discord_app_commands_group_description__\n         self._attr: Optional[str] = None\n+        self._owner_cls: Optional[Type[Any]] = None\n         self._guild_ids: Optional[List[int]] = guild_ids\n \n         if not self.description:\n@@ -1004,12 +1005,15 @@ def __init__(\n             if copy._attr and not cls.__discord_app_commands_skip_init_binding__:\n                 setattr(self, copy._attr, copy)\n \n-        if parent is not None and parent.parent is not None:\n-            raise ValueError('groups can only be nested at most one level')\n+        if parent is not None:\n+            if parent.parent is not None:\n+                raise ValueError('groups can only be nested at most one level')\n+            parent.add_command(self)\n \n     def __set_name__(self, owner: Type[Any], name: str) -> None:\n         self._attr = name\n         self.module = owner.__module__\n+        self._owner_cls = owner\n \n     def _copy_with(\n         self,\n@@ -1029,6 +1033,7 @@ def _copy_with(\n         copy.parent = parent\n         copy.module = self.module\n         copy._attr = self._attr\n+        copy._owner_cls = self._owner_cls\n         copy._children = {}\n \n         bindings[self] = copy\n@@ -1038,6 +1043,12 @@ def _copy_with(\n             child_copy.parent = copy\n             copy._children[child_copy.name] = child_copy\n \n+            if isinstance(child_copy, Group) and child_copy._attr and set_on_binding:\n+                if binding.__class__ is child_copy._owner_cls:\n+                    setattr(binding, child_copy._attr, child_copy)\n+                elif child_copy._owner_cls is copy.__class__:\n+                    setattr(copy, child_copy._attr, child_copy)\n+\n         if copy._attr and set_on_binding:\n             setattr(parent or binding, copy._attr, copy)\n "
+            }
+          ],
+          "tests": [
+            {
+              "sha": "827c38d5d5e8a7c1d80e6ab175f0f29b21b2f99d",
+              "filename": "tests/test_app_commands_group.py",
+              "status": "modified",
+              "additions": 33,
+              "deletions": 2,
+              "changes": 35,
+              "blob_url": "https://github.com/Rapptz/discord.py/blob/25ad5b675c044e67c160e8a18a4753e93efec26d/tests%2Ftest_app_commands_group.py",
+              "raw_url": "https://github.com/Rapptz/discord.py/raw/25ad5b675c044e67c160e8a18a4753e93efec26d/tests%2Ftest_app_commands_group.py",
+              "contents_url": "https://api.github.com/repos/Rapptz/discord.py/contents/tests%2Ftest_app_commands_group.py?ref=25ad5b675c044e67c160e8a18a4753e93efec26d",
+              "patch": "@@ -95,8 +95,7 @@ async def my_group_command(self, interaction: discord.Interaction) -> None:\n     assert my_group.my_group_command.parent is my_group\n     assert my_group.my_group_command.binding is my_group\n     assert my_group.sub_group.my_sub_group_command.parent is my_group.sub_group\n-    print(my_group.sub_group.my_sub_group_command.binding)\n-    print(MyGroup.sub_group)\n+    assert not hasattr(my_group, 'my_sub_group_command')\n     assert my_group.sub_group.my_sub_group_command.binding is my_group.sub_group\n \n \n@@ -127,6 +126,32 @@ async def my_command(self, interaction: discord.Interaction) -> None:\n     assert cog.my_command.binding is cog\n \n \n+def test_cog_with_nested_group_with_commands():\n+    class MyCog(commands.Cog):\n+        first = app_commands.Group(name='test', description='Test 1')\n+        second = app_commands.Group(name='test2', parent=first, description='Test 2')\n+\n+        @first.command(name='cmd')\n+        async def test_cmd(self, interaction: discord.Interaction) -> None:\n+            ...\n+\n+        @second.command(name='cmd2')\n+        async def test2_cmd(self, interaction: discord.Interaction) -> None:\n+            ...\n+\n+    cog = MyCog()\n+\n+    assert len(MyCog.__cog_app_commands__) == 1\n+    assert cog.first.parent is None\n+    assert cog.first is not MyCog.first\n+    assert cog.second is not MyCog.second\n+    assert cog.second.parent is cog.first\n+    assert cog.test_cmd.parent is cog.first\n+    assert cog.test2_cmd.parent is cog.second\n+    assert cog.test_cmd.binding is cog\n+    assert cog.test2_cmd.binding is cog\n+\n+\n def test_cog_with_group_subclass_with_commands():\n     class MyGroup(app_commands.Group, name='mygroup'):\n         @app_commands.command()\n@@ -175,6 +200,8 @@ async def my_cog_command(self, interaction: discord.Interaction) -> None:\n     assert cog.my_group.my_command is not MyGroup.my_command\n     assert cog.my_cog_command is not MyCog.my_cog_command\n     assert not hasattr(cog.my_group, 'my_cog_command')\n+    assert not hasattr(cog, 'sub_group')\n+    assert not hasattr(cog, 'my_command')\n     assert cog.my_group.parent is None\n     assert cog.my_group.sub_group.parent is cog.my_group\n     assert cog.my_group.my_command.parent is cog.my_group.sub_group\n@@ -215,6 +242,10 @@ async def my_sub_group_cog_command(self, interaction: discord.Interaction) -> No\n     assert cog.my_group.sub_group is not MyGroup.sub_group\n     assert cog.my_cog_command is not MyCog.my_cog_command\n     assert not hasattr(cog.my_group, 'my_cog_command')\n+    assert not hasattr(cog, 'sub_group')\n+    assert not hasattr(cog, 'my_group_command')\n+    assert not hasattr(cog, 'my_sub_group_command')\n+    assert not hasattr(cog.my_group, 'my_sub_group_command')\n     assert cog.my_group.sub_group.my_sub_group_command is not MyGroup.sub_group.my_sub_group_command\n     assert cog.my_group.sub_group.my_sub_group_command is not MySubGroup.my_sub_group_command\n     assert cog.my_group.sub_group.parent is cog.my_group"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "testSteps": "pipenv run pytest -- tests/test_app_commands_group.py",
+    "testStepsFull": "pipenv run pytest"
+  }
+}

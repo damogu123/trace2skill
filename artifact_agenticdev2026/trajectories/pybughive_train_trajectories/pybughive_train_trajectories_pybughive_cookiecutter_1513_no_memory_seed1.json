@@ -1,0 +1,77 @@
+{
+  "run_id": "pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1",
+  "task_id": "pybughive_cookiecutter_1513",
+  "method": "no_memory",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 7,
+    "tool_calls": 7,
+    "input_tokens": 51071,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 0,
+    "active_debugging_tokens": 51071,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "Recursive config merge assumed nested keys already exist in defaults and only handled plain dict, causing KeyError for user-only nested mappings like default_context.project.",
+      "file_inspections": [
+        {
+          "path": "cookiecutter/config.py",
+          "reason": "Failure traceback points to merge_configs recursion and poyo YAML parsing path."
+        },
+        {
+          "path": "tests/test_get_config.py",
+          "reason": "Validate expected merged structure and failing scenario from get_config."
+        },
+        {
+          "path": "tests/test_get_user_config.py",
+          "reason": "Confirm related user-config behaviors and regression coverage."
+        },
+        {
+          "path": "tests/test-config/valid-config.yaml",
+          "reason": "Inspect nested YAML shape that triggers recursion for new key under default_context."
+        },
+        {
+          "path": "tests/test-config/valid-partial-config.yaml",
+          "reason": "Check partial override behavior remains intact."
+        },
+        {
+          "path": "tests/test-config/invalid-config.yaml",
+          "reason": "Confirm invalid fixture context for parser error handling was unaffected."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "cookiecutter/config.py"
+        ],
+        "patch_path": "runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1/agent.patch",
+        "patch_summary": "Updated merge_configs to treat mapping-like objects robustly and safely recurse with an empty mapping when a nested default key is missing or non-mapping."
+      },
+      "test_rerun": {
+        "command": "pipenv run pytest -- tests/test_get_config.py tests/test_get_user_config.py",
+        "passed": true,
+        "log_path": "runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

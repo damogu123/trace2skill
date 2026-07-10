@@ -1,0 +1,52 @@
+{
+  "task_id": "pybughive_scrapy_2552",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "scrapy",
+    "source": "pybughive",
+    "url": "https://github.com/scrapy/scrapy.git",
+    "commit": "1d5c270ce8caf954ce83c8db262e2a35707e0c5e",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.8",
+    "install_command": "pipenv --python 3.8\npipenv run python -m pip install pytest\npipenv run python -m pip install twisted[tls]\npipenv run python -m pip install -r requirements-py3.txt\npipenv run python -m pip install .",
+    "test_command": "pipenv run pytest tests/test_http_request.py ",
+    "full_test_command": null,
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/test_http_request.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "scrapy.Request no init error on invalid url",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive/pybughive_scrapy_2552_fix.patch",
+    "modified_files": [
+      "scrapy/http/request/__init__.py"
+    ],
+    "bug_summary": "scrapy.Request no init error on invalid url"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "scrapy",
+    "issue_id": 2552,
+    "buggy_commit": "1d5c270ce8caf954ce83c8db262e2a35707e0c5e",
+    "fix_commit": "f701f5b0db10faef08e4ed9a21b98fd72f9cfc9a",
+    "test_patch_path": "../../../patches/pybughive/pybughive_scrapy_2552_tests.patch",
+    "metadata_path": "../../../data/pybughive/pybughive_scrapy_2552/metadata.json",
+    "original_install_steps": "pipenv --python 3.8\npipenv install pytest\npipenv install twisted[tls]\npipenv install -r requirements-py3.txt\npipenv install .",
+    "original_test_steps": "pipenv run pytest tests/test_http_request.py ",
+    "original_full_test_steps": null
+  },
+  "labels": {
+    "surface_pattern": "exception_or_crash",
+    "root_cause": "localized_behavior_regression",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

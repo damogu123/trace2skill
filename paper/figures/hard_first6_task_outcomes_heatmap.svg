@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="470" viewBox="0 0 1040 470">
+  <rect width="100%" height="100%" fill="#ffffff" />
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; }
+  </style>
+  <text x="520.0" y="32.0" text-anchor="middle" font-size="20" font-weight="700" fill="#222222">Per-task outcomes on hard PyBugHive Black tasks</text>
+  <text x="520.0" y="54.0" text-anchor="middle" font-size="12" font-weight="400" fill="#555555">First-six tasks only; green = solved, red = unsolved, NT = negative transfer</text>
+  <text x="307.5" y="77.0" text-anchor="middle" font-size="12" font-weight="700" fill="#222222">black_132</text>
+  <text x="412.5" y="77.0" text-anchor="middle" font-size="12" font-weight="700" fill="#222222">black_133</text>
+  <text x="517.5" y="77.0" text-anchor="middle" font-size="12" font-weight="700" fill="#222222">black_154</text>
+  <text x="622.5" y="77.0" text-anchor="middle" font-size="12" font-weight="700" fill="#222222">black_183</text>
+  <text x="727.5" y="77.0" text-anchor="middle" font-size="12" font-weight="700" fill="#222222">black_193</text>
+  <text x="832.5" y="77.0" text-anchor="middle" font-size="12" font-weight="700" fill="#222222">black_232</text>
+  <text x="235.0" y="126.0" text-anchor="end" font-size="12" font-weight="700" fill="#222222">Auto SKILL.md</text>
+  <rect x="255.0" y="95.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#F4C7C3" opacity="1.000" stroke="#B00020" stroke-width="3.0" />
+  <text x="307.5" y="120.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">0</text>
+  <text x="307.5" y="138.0" text-anchor="middle" font-size="10" font-weight="700" fill="#B00020">NT</text>
+  <rect x="360.0" y="95.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="412.5" y="120.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="465.0" y="95.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="517.5" y="120.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="570.0" y="95.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="622.5" y="120.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="675.0" y="95.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="727.5" y="120.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="780.0" y="95.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="832.5" y="120.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <text x="235.0" y="178.0" text-anchor="end" font-size="12" font-weight="700" fill="#222222">Generic checklist</text>
+  <rect x="255.0" y="147.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="307.5" y="172.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="360.0" y="147.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="412.5" y="172.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="465.0" y="147.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="517.5" y="172.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="570.0" y="147.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="622.5" y="172.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="675.0" y="147.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#F4C7C3" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="727.5" y="172.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">0</text>
+  <rect x="780.0" y="147.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="832.5" y="172.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <text x="235.0" y="230.0" text-anchor="end" font-size="12" font-weight="700" fill="#222222">Reflexion memory</text>
+  <rect x="255.0" y="199.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="307.5" y="224.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="360.0" y="199.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="412.5" y="224.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="465.0" y="199.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="517.5" y="224.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="570.0" y="199.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="622.5" y="224.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="675.0" y="199.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#F4C7C3" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="727.5" y="224.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">0</text>
+  <rect x="780.0" y="199.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="832.5" y="224.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <text x="235.0" y="282.0" text-anchor="end" font-size="12" font-weight="700" fill="#222222">Length-matched Reflexion</text>
+  <rect x="255.0" y="251.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#F4C7C3" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="307.5" y="276.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">0</text>
+  <rect x="360.0" y="251.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="412.5" y="276.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="465.0" y="251.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="517.5" y="276.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="570.0" y="251.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="622.5" y="276.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="675.0" y="251.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#F4C7C3" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="727.5" y="276.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">0</text>
+  <rect x="780.0" y="251.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="832.5" y="276.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <text x="235.0" y="334.0" text-anchor="end" font-size="12" font-weight="700" fill="#222222">No memory</text>
+  <rect x="255.0" y="303.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="307.5" y="328.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="360.0" y="303.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#F4C7C3" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="412.5" y="328.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">0</text>
+  <rect x="465.0" y="303.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="517.5" y="328.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="570.0" y="303.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="622.5" y="328.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="675.0" y="303.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#F4C7C3" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="727.5" y="328.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">0</text>
+  <rect x="780.0" y="303.0" width="102.0" height="49.0" rx="2.0" ry="2.0" fill="#CFE8D5" opacity="1.000" stroke="#FFFFFF" stroke-width="1.0" />
+  <text x="832.5" y="328.0" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1</text>
+  <rect x="330.0" y="381.0" width="18.0" height="18.0" rx="0.0" ry="0.0" fill="#CFE8D5" opacity="1.000" stroke="#CCCCCC" stroke-width="1.0" />
+  <text x="355.0" y="395.0" text-anchor="start" font-size="12" font-weight="400" fill="#222222">Solved</text>
+  <rect x="430.0" y="381.0" width="18.0" height="18.0" rx="0.0" ry="0.0" fill="#F4C7C3" opacity="1.000" stroke="#CCCCCC" stroke-width="1.0" />
+  <text x="455.0" y="395.0" text-anchor="start" font-size="12" font-weight="400" fill="#222222">Unsolved</text>
+  <rect x="555.0" y="381.0" width="18.0" height="18.0" rx="0.0" ry="0.0" fill="#F4C7C3" opacity="1.000" stroke="#B00020" stroke-width="3.0" />
+  <text x="580.0" y="395.0" text-anchor="start" font-size="12" font-weight="400" fill="#222222">Negative transfer flagged</text>
+</svg>

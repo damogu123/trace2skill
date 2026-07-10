@@ -1,0 +1,40 @@
+{
+  "task_id": "local_empty_input_bug",
+  "bug_family": "test_failure_triage",
+  "split": "train",
+  "repo": {
+    "name": "local_empty_input_bug",
+    "source": "local",
+    "url": "../../fixtures/local_empty_input_bug",
+    "commit": "WORKTREE",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.11",
+    "install_command": "python -c \"import pytest\"",
+    "test_command": "python -m pytest tests/test_parser.py::test_empty_input_returns_empty_list -q",
+    "full_test_command": "python -m pytest -q",
+    "timeout_seconds": 120
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/test_parser.py::test_empty_input_returns_empty_list"
+    ],
+    "error_type": "AssertionError",
+    "error_message": "Expected [], got None",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../patches/local_empty_input_bug.patch",
+    "modified_files": [
+      "src/sample_parser/parser.py"
+    ],
+    "bug_summary": "Empty string input returns None instead of an empty list."
+  },
+  "labels": {
+    "surface_pattern": "assertion_mismatch",
+    "root_cause": "missing_edge_case_handling",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

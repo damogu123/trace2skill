@@ -1,0 +1,62 @@
+{
+  "source": "pybughive",
+  "project": "discord.py",
+  "issue_id": 7676,
+  "title": "tasks.loop display too many warning.",
+  "labels": "bug",
+  "buggy_commit": "a4676804ec15d3a9c67a76563918f866cf1b49b9",
+  "fix_commit": "abcec5da9d501a1b54b73ac0fa3870df773fa63c",
+  "warnings": [],
+  "score": 149,
+  "raw_issue": {
+    "id": 7676,
+    "created_at": "2022-03-13T18:22:23Z",
+    "closed_at": "2022-03-14T10:09:27Z",
+    "title": "tasks.loop display too many warning.",
+    "labels": "bug",
+    "text_based": false,
+    "commits": [
+      {
+        "hash": "abcec5da9d501a1b54b73ac0fa3870df773fa63c",
+        "commit_date": "2022-03-14T08:54:56Z",
+        "parents": "a4676804ec15d3a9c67a76563918f866cf1b49b9",
+        "stat": {
+          "total": 7,
+          "additions": 46,
+          "deletions": 39,
+          "files": [
+            {
+              "sha": "93f6969b8c890537b7c0efce722e36c4ada60b35",
+              "filename": "discord/ext/tasks/__init__.py",
+              "status": "modified",
+              "additions": 13,
+              "deletions": 6,
+              "changes": 19,
+              "blob_url": "https://github.com/Rapptz/discord.py/blob/abcec5da9d501a1b54b73ac0fa3870df773fa63c/discord%2Fext%2Ftasks%2F__init__.py",
+              "raw_url": "https://github.com/Rapptz/discord.py/raw/abcec5da9d501a1b54b73ac0fa3870df773fa63c/discord%2Fext%2Ftasks%2F__init__.py",
+              "contents_url": "https://api.github.com/repos/Rapptz/discord.py/contents/discord%2Fext%2Ftasks%2F__init__.py?ref=abcec5da9d501a1b54b73ac0fa3870df773fa63c",
+              "patch": "@@ -632,13 +632,14 @@ def _get_next_sleep_time(self, now: datetime.datetime = MISSING) -> datetime.dat\n \n         if index is None:\n             time = self._time[0]\n-            tomorrow = now + datetime.timedelta(days=1)\n+            tomorrow = now.astimezone(time.tzinfo) + datetime.timedelta(days=1)\n             date = tomorrow.date()\n         else:\n-            date = now.date()\n             time = self._time[index]\n+            date = now.astimezone(time.tzinfo).date()\n \n-        return resolve_datetime(datetime.datetime.combine(date, time, tzinfo=time.tzinfo or datetime.timezone.utc))\n+        dt = datetime.datetime.combine(date, time, tzinfo=time.tzinfo)\n+        return resolve_datetime(dt)\n \n     def _start_time_relative_to(self, now: datetime.datetime) -> Optional[int]:\n         # now kwarg should be a datetime.datetime representing the time \"now\"\n@@ -651,10 +652,16 @@ def _start_time_relative_to(self, now: datetime.datetime) -> Optional[int]:\n         # For example, if given a list of times [0, 3, 18]\n         # If it's 04:00 today then we know we have to wait until 18:00 today\n         # If it's 19:00 today then we know we we have to wait until 00:00 tomorrow\n-        date = now.date()\n+        # Note that timezones need to be taken into consideration for this to work.\n+        # If the timezone is set to UTC+9 and the now timezone is UTC\n+        # A conversion needs to be done.\n+        # i.e. 03:00 UTC+9 -> 18:00 UTC the previous day\n         for idx, time in enumerate(self._time):\n-            start_time = datetime.datetime.combine(date, time, tzinfo=time.tzinfo)\n-            if start_time >= now:\n+            # Convert the current time to the target timezone\n+            # e.g. 18:00 UTC -> 03:00 UTC+9\n+            # Then compare the time instances to see if they're the same\n+            start = now.astimezone(time.tzinfo)\n+            if time >= start.timetz():\n                 return idx\n         else:\n             return None"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "04e0c7ea6e857029f22056dbee7f159e8d0c6d58",
+              "filename": "tests/test_ext_tasks.py",
+              "status": "modified",
+              "additions": 26,
+              "deletions": 1,
+              "changes": 27,
+              "blob_url": "https://github.com/Rapptz/discord.py/blob/abcec5da9d501a1b54b73ac0fa3870df773fa63c/tests%2Ftest_ext_tasks.py",
+              "raw_url": "https://github.com/Rapptz/discord.py/raw/abcec5da9d501a1b54b73ac0fa3870df773fa63c/tests%2Ftest_ext_tasks.py",
+              "contents_url": "https://api.github.com/repos/Rapptz/discord.py/contents/tests%2Ftest_ext_tasks.py?ref=abcec5da9d501a1b54b73ac0fa3870df773fa63c",
+              "patch": "@@ -102,7 +102,32 @@ async def loop():\n \n     for before, expected_time in zip(minute_before, times):\n         expected = datetime.datetime.combine(today, expected_time, tzinfo=jst)\n-        assert loop._get_next_sleep_time(before) == expected\n+        actual = loop._get_next_sleep_time(before)\n+        assert actual == expected\n+\n+\n+def test_task_regression_issue7676():\n+    jst = datetime.timezone(datetime.timedelta(hours=9))\n+\n+    # 00:00, 03:00, 06:00, 09:00, 12:00, 15:00, 18:00, 21:00\n+    times = [datetime.time(hour=h, tzinfo=jst) for h in range(0, 24, 3)]\n+\n+    @tasks.loop(time=times)\n+    async def loop():\n+        pass\n+\n+    # Create pseudo UTC times\n+    now = utils.utcnow()\n+    today = now.date()\n+    times_before_in_utc = [\n+        datetime.datetime.combine(today, time, tzinfo=jst).astimezone(datetime.timezone.utc) - datetime.timedelta(minutes=1)\n+        for time in times\n+    ]\n+\n+    for before, expected_time in zip(times_before_in_utc, times):\n+        actual = loop._get_next_sleep_time(before)\n+        actual_time = actual.timetz()\n+        assert actual_time == expected_time\n \n \n @pytest.mark.skipif(sys.version_info < (3, 9), reason=\"zoneinfo requires 3.9\")"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "testSteps": "pipenv run pytest -- tests/test_ext_tasks.py",
+    "testStepsFull": "pipenv run pytest"
+  }
+}

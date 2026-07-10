@@ -1,0 +1,65 @@
+{
+  "run_id": "pybughive_hard_smoke_pybughive_black_234_no_memory_seed1",
+  "task_id": "pybughive_black_234",
+  "method": "no_memory",
+  "model": "gpt-5.5",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 1,
+    "tool_calls": 16,
+    "input_tokens": 98948,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 0,
+    "active_debugging_tokens": 98948,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "The import-specific invisible-parentheses logic was adding optional parentheses around star imports, producing invalid split output for long from-import-* statements. The same import-specific path also mutated parenthesized imports before detecting a leading # fmt: off comment, so unformatted imports lost their original visible parentheses.",
+      "file_inspections": [
+        {
+          "path": "tests/import_spacing.py",
+          "reason": "Confirmed expected formatting for long star imports and relative import spacing."
+        },
+        {
+          "path": "tests/fmtonoff.py",
+          "reason": "Confirmed expected preservation of parenthesized import syntax inside a # fmt: off block."
+        },
+        {
+          "path": "black.py",
+          "reason": "Inspected LineGenerator.visit_import_from, split_line/right_hand_split, and invisible-parentheses helpers that control import splitting."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "black.py"
+        ],
+        "patch_path": "runs/pybughive_hard_smoke/pybughive_hard_smoke_pybughive_black_234_no_memory_seed1/agent.patch",
+        "patch_summary": "Made visit_import_from respect # fmt: off before mutating import parentheses and skip optional parenthesis insertion for from-import-* statements."
+      },
+      "test_rerun": {
+        "command": "wsl.exe -d Ubuntu-24.04 --exec /bin/bash -lc 'export PATH=$HOME/.local/bin:$PATH; export PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple; export PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn; export PIP_DEFAULT_TIMEOUT=120; export PIPENV_PYPI_MIRROR=https://pypi.tuna.tsinghua.edu.cn/simple; export PIPENV_TIMEOUT=120; cd <PROJECT_ROOT>/workspaces/runs/pybughive_hard_smoke/pybughive_hard_smoke_pybughive_black_234_no_memory_seed1/repo; pipenv run python setup.py test'",
+        "passed": true,
+        "log_path": "runs/pybughive_hard_smoke/pybughive_hard_smoke_pybughive_black_234_no_memory_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

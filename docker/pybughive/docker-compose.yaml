@@ -1,0 +1,39 @@
+services:
+  pybughive-env:
+    image: skill-transfer-pybughive-env
+    build:
+      context: ../../data/external/pybughive-env
+      dockerfile: Dockerfile.pybughive
+      args:
+        UBUNTU_IMAGE: ${PYBUGHIVE_UBUNTU_IMAGE:-dockerproxy.net/library/ubuntu:22.04}
+    environment:
+      MONGO_URI: mongodb://admin:pybughive@mongodb:27017/pybughive?authSource=admin
+      MONGO_URL: mongodb://admin:pybughive@mongodb:27017/pybughive?authSource=admin
+      INSTALL_DIRECTORY: /data
+    tty: true
+    working_dir: /project
+    volumes:
+      - ../..:/project
+      - ../../workspaces/pybughive_docker_data:/data
+    networks:
+      - pybughive-bridge
+
+  mongodb:
+    image: skill-transfer-pybughive-mongodb
+    build:
+      context: ../../data/external/pybughive-env
+      dockerfile: Dockerfile.mongodb
+      args:
+        MONGO_IMAGE: ${PYBUGHIVE_MONGO_IMAGE:-dockerproxy.net/library/mongo:6.0}
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - pybughive-bridge
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: pybughive
+
+networks:
+  pybughive-bridge:
+    driver: bridge

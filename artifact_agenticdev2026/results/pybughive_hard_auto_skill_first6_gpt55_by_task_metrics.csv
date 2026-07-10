@@ -1,0 +1,7 @@
+method,task_id,n_runs,n_tasks,solved,solve_rate,cycles_per_solved_task,tokens_per_solved_task,active_tokens_per_solved_task,prompt_overhead_ratio,failed_patches_per_run,mistakes_per_cycle,repeated_mistake_rate,negative_transfer_rate,broke_existing_tests_rate
+auto_skill,pybughive_black_132,1,1,1,1.0,2.0,107406.0,106647.0,0.0071,0.0,1.0,0.0,0.0,0.0
+auto_skill,pybughive_black_133,1,1,1,1.0,2.0,57947.0,57188.0,0.0131,1.0,0.5,0.0,0.0,0.0
+auto_skill,pybughive_black_154,1,1,1,1.0,2.0,78849.0,78090.0,0.0096,1.0,1.0,0.0,0.0,0.0
+auto_skill,pybughive_black_183,1,1,1,1.0,1.0,74970.0,74211.0,0.0101,0.0,1.0,0.0,0.0,0.0
+auto_skill,pybughive_black_193,1,1,1,1.0,1.0,258676.0,257917.0,0.0029,0.0,3.0,0.0,0.0,0.0
+auto_skill,pybughive_black_232,1,1,1,1.0,2.0,94022.0,93263.0,0.0081,1.0,0.5,0.0,0.0,0.0

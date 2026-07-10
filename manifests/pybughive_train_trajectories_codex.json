@@ -1,0 +1,61 @@
+{
+  "experiment_id": "pybughive_train_trajectories",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "notes": "PyBugHive verified train tasks for low-shot trajectory collection before SKILL.md induction.",
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "runs": [
+    {
+      "run_id": "pybughive_train_trajectories_pybughive_black_297_no_memory_seed1",
+      "task_id": "pybughive_black_297",
+      "task_path": "tasks/pybughive/train/pybughive_black_297.json",
+      "method": "no_memory",
+      "seed": 1,
+      "workspace_path": "workspaces/runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_black_297_no_memory_seed1/repo",
+      "artifacts_dir": "runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_black_297_no_memory_seed1",
+      "prompt_path": "prompts/runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_black_297_no_memory_seed1.md",
+      "trajectory_path": "trajectories/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_black_297_no_memory_seed1.json",
+      "prepare_command": "python3 scripts/prepare_task.py tasks/pybughive/train/pybughive_black_297.json --workspace workspaces/runs/pybughive_train_trajectories --checkout-id pybughive_train_trajectories_pybughive_black_297_no_memory_seed1 --force",
+      "baseline_context_path": null,
+      "memory_path": null,
+      "requires_memory_artifact": false,
+      "prompt_status": "ready"
+    },
+    {
+      "run_id": "pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1",
+      "task_id": "pybughive_cookiecutter_1513",
+      "task_path": "tasks/pybughive/train/pybughive_cookiecutter_1513.json",
+      "method": "no_memory",
+      "seed": 1,
+      "workspace_path": "workspaces/runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1/repo",
+      "artifacts_dir": "runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1",
+      "prompt_path": "prompts/runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1.md",
+      "trajectory_path": "trajectories/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1.json",
+      "prepare_command": "python3 scripts/prepare_task.py tasks/pybughive/train/pybughive_cookiecutter_1513.json --workspace workspaces/runs/pybughive_train_trajectories --checkout-id pybughive_train_trajectories_pybughive_cookiecutter_1513_no_memory_seed1 --force",
+      "baseline_context_path": null,
+      "memory_path": null,
+      "requires_memory_artifact": false,
+      "prompt_status": "ready"
+    },
+    {
+      "run_id": "pybughive_train_trajectories_pybughive_discord_py_7676_no_memory_seed1",
+      "task_id": "pybughive_discord_py_7676",
+      "task_path": "tasks/pybughive/train/pybughive_discord_py_7676.json",
+      "method": "no_memory",
+      "seed": 1,
+      "workspace_path": "workspaces/runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_discord_py_7676_no_memory_seed1/repo",
+      "artifacts_dir": "runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_discord_py_7676_no_memory_seed1",
+      "prompt_path": "prompts/runs/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_discord_py_7676_no_memory_seed1.md",
+      "trajectory_path": "trajectories/pybughive_train_trajectories/pybughive_train_trajectories_pybughive_discord_py_7676_no_memory_seed1.json",
+      "prepare_command": "python3 scripts/prepare_task.py tasks/pybughive/train/pybughive_discord_py_7676.json --workspace workspaces/runs/pybughive_train_trajectories --checkout-id pybughive_train_trajectories_pybughive_discord_py_7676_no_memory_seed1 --force",
+      "baseline_context_path": null,
+      "memory_path": null,
+      "requires_memory_artifact": false,
+      "prompt_status": "ready"
+    }
+  ]
+}

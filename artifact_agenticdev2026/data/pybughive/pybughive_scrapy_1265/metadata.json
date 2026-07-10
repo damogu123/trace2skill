@@ -1,0 +1,86 @@
+{
+  "source": "pybughive",
+  "project": "scrapy",
+  "issue_id": 1265,
+  "title": "Backward incompatibility for relocated paths in settings",
+  "labels": "bug",
+  "buggy_commit": "bd2fe996aabe5467a89d9eff6831e6b0bf731be4",
+  "fix_commit": "d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d",
+  "warnings": [],
+  "score": 322,
+  "raw_issue": {
+    "id": 1265,
+    "created_at": "2015-05-29T14:14:45Z",
+    "closed_at": "2015-06-01T23:31:53Z",
+    "title": "Backward incompatibility for relocated paths in settings",
+    "labels": "bug",
+    "text_based": false,
+    "commits": [
+      {
+        "hash": "d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d",
+        "commit_date": "2015-06-01T23:31:46Z",
+        "parents": "bd2fe996aabe5467a89d9eff6831e6b0bf731be4",
+        "stat": {
+          "total": 9,
+          "additions": 116,
+          "deletions": 107,
+          "files": [
+            {
+              "sha": "423ca43e25a7cd41757b0c8af56a01e117f18906",
+              "filename": "scrapy/utils/conf.py",
+              "status": "modified",
+              "additions": 18,
+              "deletions": 4,
+              "changes": 22,
+              "blob_url": "https://github.com/scrapy/scrapy/blob/d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d/scrapy%2Futils%2Fconf.py",
+              "raw_url": "https://github.com/scrapy/scrapy/raw/d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d/scrapy%2Futils%2Fconf.py",
+              "contents_url": "https://api.github.com/repos/scrapy/scrapy/contents/scrapy%2Futils%2Fconf.py?ref=d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d",
+              "patch": "@@ -5,16 +5,30 @@\n import six\n from six.moves.configparser import SafeConfigParser\n \n+from scrapy.utils.deprecate import update_classpath\n \n-def build_component_list(base, custom):\n+\n+def build_component_list(base, custom, convert=update_classpath):\n     \"\"\"Compose a component list based on a custom and base dict of components\n     (typically middlewares or extensions), unless custom is already a list, in\n     which case it's returned.\n     \"\"\"\n+\n+    def _check_components(complist):\n+        if len({convert(c) for c in complist}) != len(complist):\n+            raise ValueError('Some paths in {!r} convert to the same object, '\n+                             'please update your settings'.format(complist))\n+\n     if isinstance(custom, (list, tuple)):\n-        return custom\n-    compdict = base.copy()\n-    compdict.update(custom)\n+        _check_components(custom)\n+        return type(custom)(convert(c) for c in custom)\n+\n+    def _map_keys(compdict):\n+        _check_components(compdict)\n+        return {convert(k): v for k, v in six.iteritems(compdict)}\n+\n+    compdict = _map_keys(base)\n+    compdict.update(_map_keys(custom))\n     items = (x for x in six.iteritems(compdict) if x[1] is not None)\n     return [x[0] for x in sorted(items, key=itemgetter(1))]\n "
+            },
+            {
+              "sha": "37e94fae946b59e7d6959989cc4a81cbde8ba426",
+              "filename": "scrapy/utils/deprecate.py",
+              "status": "modified",
+              "additions": 34,
+              "deletions": 0,
+              "changes": 34,
+              "blob_url": "https://github.com/scrapy/scrapy/blob/d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d/scrapy%2Futils%2Fdeprecate.py",
+              "raw_url": "https://github.com/scrapy/scrapy/raw/d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d/scrapy%2Futils%2Fdeprecate.py",
+              "contents_url": "https://api.github.com/repos/scrapy/scrapy/contents/scrapy%2Futils%2Fdeprecate.py?ref=d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d",
+              "patch": "@@ -121,3 +121,37 @@ def _clspath(cls, forced=None):\n     if forced is not None:\n         return forced\n     return '{}.{}'.format(cls.__module__, cls.__name__)\n+\n+\n+DEPRECATION_RULES = [\n+    ('scrapy.contrib_exp.downloadermiddleware.decompression.', 'scrapy.downloadermiddlewares.decompression.'),\n+    ('scrapy.contrib_exp.iterators.', 'scrapy.utils.iterators.'),\n+    ('scrapy.contrib.downloadermiddleware.', 'scrapy.downloadermiddlewares.'),\n+    ('scrapy.contrib.exporter.', 'scrapy.exporters.'),\n+    ('scrapy.contrib.linkextractors.', 'scrapy.linkextractors.'),\n+    ('scrapy.contrib.loader.processor.', 'scrapy.loader.processors.'),\n+    ('scrapy.contrib.loader.', 'scrapy.loader.'),\n+    ('scrapy.contrib.pipeline.', 'scrapy.pipelines.'),\n+    ('scrapy.contrib.spidermiddleware.', 'scrapy.spidermiddlewares.'),\n+    ('scrapy.contrib.spiders.', 'scrapy.spiders.'),\n+    ('scrapy.contrib.', 'scrapy.extensions.'),\n+    ('scrapy.command.', 'scrapy.commands.'),\n+    ('scrapy.dupefilter.', 'scrapy.dupefilters.'),\n+    ('scrapy.linkextractor.', 'scrapy.linkextractors.'),\n+    ('scrapy.spider.', 'scrapy.spiders.'),\n+    ('scrapy.squeue.', 'scrapy.squeues.'),\n+    ('scrapy.statscol.', 'scrapy.statscollectors.'),\n+    ('scrapy.utils.decorator.', 'scrapy.utils.decorators.'),\n+    ('scrapy.spidermanager.SpiderManager', 'scrapy.spiderloader.SpiderLoader'),\n+]\n+\n+\n+def update_classpath(path):\n+    \"\"\"Update a deprecated path from an object with its new location\"\"\"\n+    for prefix, replacement in DEPRECATION_RULES:\n+        if path.startswith(prefix):\n+            new_path = path.replace(prefix, replacement, 1)\n+            warnings.warn(\"`{}` class is deprecated, use `{}` instead\".format(path, new_path),\n+                          ScrapyDeprecationWarning)\n+            return new_path\n+    return path"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "177d024fb574f3583ef9ff3541407ecb99e4c5a9",
+              "filename": "tests/test_utils_conf.py",
+              "status": "modified",
+              "additions": 29,
+              "deletions": 4,
+              "changes": 33,
+              "blob_url": "https://github.com/scrapy/scrapy/blob/d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d/tests%2Ftest_utils_conf.py",
+              "raw_url": "https://github.com/scrapy/scrapy/raw/d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d/tests%2Ftest_utils_conf.py",
+              "contents_url": "https://api.github.com/repos/scrapy/scrapy/contents/tests%2Ftest_utils_conf.py?ref=d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d",
+              "patch": "@@ -2,16 +2,41 @@\n \n from scrapy.utils.conf import build_component_list, arglist_to_dict\n \n-class UtilsConfTestCase(unittest.TestCase):\n \n-    def test_build_component_list(self):\n+class BuildComponentListTest(unittest.TestCase):\n+\n+    def test_build_dict(self):\n         base = {'one': 1, 'two': 2, 'three': 3, 'five': 5, 'six': None}\n         custom = {'two': None, 'three': 8, 'four': 4}\n-        self.assertEqual(build_component_list(base, custom),\n+        self.assertEqual(build_component_list(base, custom, lambda x: x),\n                          ['one', 'four', 'five', 'three'])\n \n+    def test_return_list(self):\n+        custom = ['a', 'b', 'c']\n+        self.assertEqual(build_component_list(None, custom, lambda x: x),\n+                         custom)\n+\n+    def test_map_dict(self):\n+        custom = {'one': 1, 'two': 2, 'three': 3}\n+        self.assertEqual(build_component_list({}, custom, lambda x: x.upper()),\n+                         ['ONE', 'TWO', 'THREE'])\n+\n+    def test_map_list(self):\n         custom = ['a', 'b', 'c']\n-        self.assertEqual(build_component_list(base, custom), custom)\n+        self.assertEqual(build_component_list(None, custom, lambda x: x.upper()),\n+                         ['A', 'B', 'C'])\n+\n+    def test_duplicate_components_in_dict(self):\n+        duplicate_dict = {'one': 1, 'two': 2, 'ONE': 4}\n+        self.assertRaises(ValueError,\n+                          build_component_list, {}, duplicate_dict, lambda x: x.lower())\n+\n+    def test_duplicate_components_in_list(self):\n+        duplicate_list = ['a', 'b', 'a']\n+        self.assertRaises(ValueError,\n+                          build_component_list, None, duplicate_list, lambda x: x)\n+\n+class UtilsConfTestCase(unittest.TestCase):\n \n     def test_arglist_to_dict(self):\n         self.assertEqual(arglist_to_dict(['arg1=val1', 'arg2=val2']),"
+            },
+            {
+              "sha": "41b8100d76ec7c019e7662a61cdb02f7a069bd29",
+              "filename": "tests/test_utils_deprecate.py",
+              "status": "modified",
+              "additions": 26,
+              "deletions": 1,
+              "changes": 27,
+              "blob_url": "https://github.com/scrapy/scrapy/blob/d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d/tests%2Ftest_utils_deprecate.py",
+              "raw_url": "https://github.com/scrapy/scrapy/raw/d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d/tests%2Ftest_utils_deprecate.py",
+              "contents_url": "https://api.github.com/repos/scrapy/scrapy/contents/tests%2Ftest_utils_deprecate.py?ref=d52cf8bb036ce2dc6cfbe63f78cfd172cc7c888d",
+              "patch": "@@ -3,7 +3,7 @@\n import inspect\n import unittest\n import warnings\n-from scrapy.utils.deprecate import create_deprecated_class\n+from scrapy.utils.deprecate import create_deprecated_class, update_classpath\n \n from tests import mock\n \n@@ -248,3 +248,28 @@ class SubClass(DeprecatedName):\n                     pass\n \n         self.assertIn(\"Error detecting parent module\", str(w[0].message))\n+\n+\n+@mock.patch('scrapy.utils.deprecate.DEPRECATION_RULES',\n+            [('scrapy.contrib.pipeline.', 'scrapy.pipelines.'),\n+             ('scrapy.contrib.', 'scrapy.extensions.')])\n+class UpdateClassPathTest(unittest.TestCase):\n+\n+    def test_old_path_gets_fixed(self):\n+        with warnings.catch_warnings(record=True) as w:\n+            output = update_classpath('scrapy.contrib.debug.Debug')\n+        self.assertEqual(output, 'scrapy.extensions.debug.Debug')\n+        self.assertEqual(len(w), 1)\n+        self.assertIn(\"scrapy.contrib.debug.Debug\", str(w[0].message))\n+        self.assertIn(\"scrapy.extensions.debug.Debug\", str(w[0].message))\n+\n+    def test_sorted_replacement(self):\n+        with warnings.catch_warnings(record=True):\n+            output = update_classpath('scrapy.contrib.pipeline.Pipeline')\n+        self.assertEqual(output, 'scrapy.pipelines.Pipeline')\n+\n+    def test_unmatched_path_stays_the_same(self):\n+        with warnings.catch_warnings(record=True) as w:\n+            output = update_classpath('scrapy.unmatched.Path')\n+        self.assertEqual(output, 'scrapy.unmatched.Path')\n+        self.assertEqual(len(w), 0)"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.8\npipenv install pytest\npipenv install twisted[tls]\npipenv install -r requirements.txt\npipenv install .",
+    "testSteps": "pipenv run pytest tests/test_utils_conf.py\npipenv run pytest tests/test_utils_deprecate.py"
+  }
+}

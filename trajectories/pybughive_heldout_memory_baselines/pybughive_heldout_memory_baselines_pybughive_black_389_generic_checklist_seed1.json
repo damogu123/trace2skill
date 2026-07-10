@@ -1,0 +1,65 @@
+{
+  "run_id": "pybughive_heldout_memory_baselines_pybughive_black_389_generic_checklist_seed1",
+  "task_id": "pybughive_black_389",
+  "method": "generic_checklist",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 6,
+    "tool_calls": 10,
+    "input_tokens": 18387,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 411,
+    "active_debugging_tokens": 17976,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "get_future_imports assumes non-leaf import nodes are always import_as_names; aliased __future__ imports can parse as import_as_name, causing an assertion failure.",
+      "file_inspections": [
+        {
+          "path": "black.py",
+          "reason": "Traceback points to get_future_imports assertion failure and import CST handling."
+        },
+        {
+          "path": "tests/test_black.py",
+          "reason": "Inspect failing tests and expected behavior for __future__ imports with aliases."
+        },
+        {
+          "path": "tests/data/python2_unicode_literals.py",
+          "reason": "Confirm real-world input case using aliased __future__ imports."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "black.py"
+        ],
+        "patch_path": "runs/pybughive_heldout_memory_baselines/pybughive_heldout_memory_baselines_pybughive_black_389_generic_checklist_seed1/agent.patch",
+        "patch_summary": "Updated get_future_imports to handle both import_as_name and import_as_names nodes and collect only imported feature names (excluding alias names)."
+      },
+      "test_rerun": {
+        "command": "pipenv run python -m unittest tests.test_black.BlackTestCase.test_get_future_imports tests.test_black.BlackTestCase.test_python2_unicode_literals; pipenv run python setup.py test",
+        "passed": true,
+        "log_path": "runs/pybughive_heldout_memory_baselines/pybughive_heldout_memory_baselines_pybughive_black_389_generic_checklist_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

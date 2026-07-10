@@ -1,0 +1,43 @@
+{
+  "n_pybughive_tasks": 8,
+  "required_python_versions": [
+    "3.7"
+  ],
+  "tools": {
+    "git": {
+      "available": true,
+      "command": "C:\\Program Files\\Git\\cmd\\git.EXE",
+      "output": "git version 2.53.0.windows.1"
+    },
+    "docker": {
+      "available": true,
+      "engine_available": false,
+      "command": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.EXE",
+      "output": "Docker version 29.4.3, build 055a478",
+      "engine_output": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+    },
+    "pipenv": {
+      "available": false,
+      "command": "pipenv",
+      "output": "pipenv not found"
+    },
+    "py_launcher": {
+      "available": true,
+      "versions": {
+        "3.14": "<LOCAL_PYTHON>\\pythoncore-3.14-64\\python.exe",
+        "3.13": "<LOCAL_PYTHON>\\Python313\\python.exe"
+      }
+    },
+    "direct_python": {
+      "available": false,
+      "versions": {}
+    }
+  },
+  "missing_python_versions": [
+    "3.7"
+  ],
+  "can_run_native_windows_probe": false,
+  "can_run_docker_probe": false,
+  "ready": false,
+  "recommended_path": "setup_required"
+}

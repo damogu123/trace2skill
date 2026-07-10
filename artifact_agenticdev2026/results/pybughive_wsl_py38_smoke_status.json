@@ -1,0 +1,65 @@
+{
+  "environment": {
+    "n_pybughive_tasks": 1,
+    "required_python_versions": [
+      "3.8"
+    ],
+    "tools": {
+      "git": {
+        "available": true,
+        "command": "/usr/bin/git",
+        "output": "git version 2.43.0"
+      },
+      "docker": {
+        "available": true,
+        "engine_available": true,
+        "command": "/usr/bin/docker",
+        "output": "Docker version 29.4.3, build 055a478",
+        "engine_output": "29.4.3"
+      },
+      "pipenv": {
+        "available": true,
+        "command": "/home/admin_jc/.local/bin/pipenv",
+        "output": "pipenv, version 2024.4.1"
+      },
+      "py_launcher": {
+        "available": false,
+        "versions": {}
+      },
+      "direct_python": {
+        "available": true,
+        "versions": {
+          "3.8": "python3.8: Python 3.8.20"
+        }
+      }
+    },
+    "missing_python_versions": [],
+    "can_run_native_windows_probe": true,
+    "can_run_docker_probe": true,
+    "ready": true,
+    "recommended_path": "docker"
+  },
+  "n_tasks": 1,
+  "results": [
+    {
+      "task_id": "pybughive_cookiecutter_1513",
+      "split": "train",
+      "project": "cookiecutter",
+      "issue_id": 1513,
+      "returncode": 0,
+      "status": "pilot_ready",
+      "failure_stage": null,
+      "install_returncode": 0,
+      "initial_test_returncode": 1,
+      "initial_failure_reproduced": true,
+      "initial_test_environment_failed": false,
+      "dataset_test_patch_applied": true,
+      "reference_patch_applied": true,
+      "reference_test_returncode": 0,
+      "reference_test_passed": true,
+      "reference_test_environment_failed": false,
+      "log_path": "workspaces/pybughive_verify_wsl/pybughive_cookiecutter_1513/verify_task.log",
+      "summary_path": "workspaces/pybughive_verify_wsl/pybughive_cookiecutter_1513/prepare_summary.json"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "task_id": "pybughive_discord_py_7818",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "discord.py",
+    "source": "pybughive",
+    "url": "https://github.com/Rapptz/discord.py.git",
+    "commit": "c67130821151266e6b6855b8ce0e031850bf6fbc",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.8",
+    "install_command": "pipenv --python 3.8\npipenv run python -m pip install -e .[test]",
+    "test_command": "pipenv run pytest -- tests/test_app_commands_group.py",
+    "full_test_command": "pipenv run pytest",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/test_app_commands_group.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "Unable to create nested groups with explicit parent set",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive/pybughive_discord_py_7818_fix.patch",
+    "modified_files": [
+      "discord/app_commands/commands.py"
+    ],
+    "bug_summary": "Unable to create nested groups with explicit parent set"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "discord.py",
+    "issue_id": 7818,
+    "buggy_commit": "c67130821151266e6b6855b8ce0e031850bf6fbc",
+    "fix_commit": "25ad5b675c044e67c160e8a18a4753e93efec26d",
+    "test_patch_path": "../../../patches/pybughive/pybughive_discord_py_7818_tests.patch",
+    "metadata_path": "../../../data/pybughive/pybughive_discord_py_7818/metadata.json",
+    "original_install_steps": "pipenv --python 3.8\npipenv run python -m pip install -e .[test]",
+    "original_test_steps": "pipenv run pytest -- tests/test_app_commands_group.py",
+    "original_full_test_steps": "pipenv run pytest"
+  },
+  "labels": {
+    "surface_pattern": "assertion_or_behavior_mismatch",
+    "root_cause": "localized_behavior_regression",
+    "requires_api_knowledge": true,
+    "adversarial_reason": null
+  }
+}

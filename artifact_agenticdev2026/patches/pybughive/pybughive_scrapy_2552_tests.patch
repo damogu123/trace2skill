@@ -1,0 +1,12 @@
+diff --git a/tests/test_http_request.py b/tests/test_http_request.py
+--- a/tests/test_http_request.py
++++ b/tests/test_http_request.py
+@@ -52,6 +52,8 @@ def test_init(self):
+ 
+     def test_url_no_scheme(self):
+         self.assertRaises(ValueError, self.request_class, 'foo')
++        self.assertRaises(ValueError, self.request_class, '/foo/')
++        self.assertRaises(ValueError, self.request_class, '/foo:bar')
+ 
+     def test_headers(self):
+         # Different ways of setting headers attribute

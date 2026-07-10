@@ -1,0 +1,65 @@
+{
+  "run_id": "pybughive_heldout_memory_baselines_pybughive_black_389_raw_trajectory_retrieval_seed1",
+  "task_id": "pybughive_black_389",
+  "method": "raw_trajectory_retrieval",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 6,
+    "tool_calls": 7,
+    "input_tokens": 24566,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 928,
+    "active_debugging_tokens": 23638,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "get_future_imports assumed aliased __future__ imports always parse as import_as_names, but single aliases parse as import_as_name and triggered an assertion",
+      "file_inspections": [
+        {
+          "path": "black.py",
+          "reason": "Traceback pointed to get_future_imports assertion; needed to inspect parse-node handling for future imports"
+        },
+        {
+          "path": "tests/test_black.py",
+          "reason": "Confirm expected behavior for aliased and mixed __future__ imports"
+        },
+        {
+          "path": "tests/data/python2_unicode_literals.py",
+          "reason": "Inspect real fixture using aliased __future__ imports that reproduces the failure"
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "black.py"
+        ],
+        "patch_path": "runs/pybughive_heldout_memory_baselines/pybughive_heldout_memory_baselines_pybughive_black_389_raw_trajectory_retrieval_seed1/agent.patch",
+        "patch_summary": "Reworked get_future_imports import-name extraction to recursively handle both import_as_name and import_as_names nodes and collect imported feature names (not aliases), removing the failing assertion path."
+      },
+      "test_rerun": {
+        "command": "pipenv run python -m unittest tests.test_black.BlackTestCase.test_get_future_imports tests.test_black.BlackTestCase.test_python2_unicode_literals",
+        "passed": true,
+        "log_path": "runs/pybughive_heldout_memory_baselines/pybughive_heldout_memory_baselines_pybughive_black_389_raw_trajectory_retrieval_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

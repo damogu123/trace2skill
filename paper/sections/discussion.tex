@@ -1,0 +1,56 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Procedural memory is different from adding more context}
+\label{sec:discussion_procedural_memory}
+
+The central question is not whether a longer prompt can help. We ask whether experience can be compressed into a reusable procedural memory artifact with trigger conditions, an ordered debugging procedure, and failure modes. A raw memory item records what happened; a procedural artifact states when prior experience applies, how to act on it, and when to stop. Prior language-agent research spans verbal reflection, reusable workflows, and explicitly procedural memory representations \cite{shinn2023reflexion,wang2025workflowmemory,fang2026memp,mi2026skillpro}.
+
+The length-matched Reflexion control is the main evidence for this distinction against unstructured reflection memory. It gives the agent additional memory text without the same three-part organization. Reflexion is the direct verbal self-reflection reference point for this control \cite{shinn2023reflexion}. Auto SKILL.md improves both solve rate and efficiency relative to this control in the same-model hard-smoke aggregate. The result does not prove that the exact template is optimal, but it supports the claim that procedural organization is doing useful work beyond increasing unstructured context length.
+
+The stricter format-shuffled control makes this claim more precise. In a same-model \texttt{gpt-5.5} rerun, preserving the skill content while disrupting its section structure still solved all six tasks. This means the evidence should not be read as showing that structure is necessary for solvability. Instead, the structural claim is about process behavior: Auto SKILL.md used fewer recorded cycles and fewer failed patches than the shuffled version, while token cost was mixed. The control therefore narrows the contribution from ``structure beats content'' to ``procedural organization gives an inspectable memory artifact whose process effects can be measured.''
+
+This framing also helps avoid reducing SKILL.md to prompt engineering. In our protocol, SKILL.md is a learned artifact produced from trajectories under leakage constraints. It has an induction procedure, a task-family scope, a structured output contract, and an evaluation harness that can measure both transfer and negative transfer. Related work similarly extracts reusable workflows or procedural memories from agent experience rather than retaining undifferentiated histories \cite{wang2025workflowmemory,fang2026memp}. The artifact is written in natural language because the downstream agent can execute natural-language procedures, not because the contribution is a hand-tuned prompt.
+
+\subsection{The strongest evidence is process efficiency}
+\label{sec:discussion_efficiency}
+
+The current result should be read as an efficiency claim, not a universal solve-rate claim. Auto SKILL.md ties the best solve rate on the first-six same-model hard-smoke slice, but it does not dominate Reflexion memory or the generic checklist by solve rate. In the primary five-method table, its advantage is that it reaches comparable or better outcomes with fewer tokens, and in common-solved comparisons it reduces diagnosis-edit-test cycles relative to reflection baselines.
+
+The supplementary shuffled-control rerun also shows why process efficiency should be decomposed rather than reported as a single number. Auto SKILL.md had fewer recorded cycles and fewer failed patches than format-shuffled skill content, but it used more tokens in aggregate because one hard task required extensive internal search. This makes token cost a fragile metric at small scale. The paper should therefore report cycles, tokens, failed patches, mistakes, and negative transfer together instead of treating any one metric as decisive.
+
+This is a meaningful target for language-agent debugging. Solve rate alone hides how much search, patch churn, and repeated diagnosis the agent needs before reaching a fix. Experience-reuse studies have likewise treated reasoning steps, interactions, or token use as relevant efficiency outcomes \cite{qian2024ice,ouyang2026reasoningbank}. In practical settings, a memory system that solves the same tasks with fewer cycles and fewer tokens is valuable even if it does not increase solve rate on every benchmark slice. It also gives a sharper evaluation signal for low-shot transfer, where task counts are small and solve-rate differences can be coarse.
+
+The process-efficiency result is clearest on task 232, where all methods solve but Auto SKILL.md converges in one cycle while reflection baselines require more iteration. This pattern suggests that procedural memory can help the agent identify the relevant invariant earlier. The skill does not replace code inspection and validation; it changes their order and focus.
+
+\subsection{Negative transfer is part of the contribution}
+\label{sec:discussion_negative_transfer}
+
+The negative-transfer failure on \texttt{pybughive\_black\_132} in the primary run is not just a weakness of the method. It is also a reason the evaluation protocol is useful. A memory artifact that transfers across tasks can also transfer the wrong procedure to an adjacent subfamily. If the evaluation only reported solve rate, this failure would appear as an ordinary miss. By logging cycle-level decisions and annotating negative transfer, the protocol makes it possible to distinguish harmless failure from skill-induced failure.
+
+This matters for future skill-learning systems. A procedural memory should include trigger conditions and failure modes, but those sections are only useful if the evaluation checks whether the agent obeys them. The current Auto SKILL.md warns against overfitting and distant edits, yet in the primary run it still fails on a task where the learned procedure points toward a nearby but insufficient invariant. A later \texttt{gpt-5.5} rerun solved the same task, which further shows that negative transfer is model- and executor-dependent rather than a permanent property of a task. The protocol remains useful because it exposes when a memory artifact misdirects a particular agent under a particular model.
+
+The result also argues for reporting negative transfer as a first-class metric. Prior memory systems recognize that stale, noisy, or poorly matched experience can interfere with current behavior rather than guarantee improvement \cite{chen2024automanual,wang2025workflowmemory,fang2026memp,ouyang2026reasoningbank}. A method that improves average efficiency while occasionally misdirecting the agent is different from a method that simply fails on hard tasks. The former needs better triggers, abstention, or fallback behavior; the latter may need stronger task knowledge. Treating these cases separately should make memory-system evaluation more diagnostic.
+
+\subsection{Why a narrow Black hard smoke is still useful}
+\label{sec:discussion_black_slice}
+
+The current PyBugHive \texttt{black} slice is intentionally narrow \cite{antal2024pybughive}. That narrowness is a limitation, but it also gives the experiment a clean within-family transfer setting. The tasks share formatter-style failure modes, executable regression tests, and reproducible environments. This lets us ask whether procedural memory transfers across related but non-identical debugging problems without immediately mixing in project-specific setup failures, API knowledge gaps, and unrelated benchmark variance.
+
+The hard-smoke subset also serves a practical role in research development. Earlier MVP tasks were too easy: generic baselines solved nearly everything, leaving little room to study transfer. The harder \texttt{black} slice exposes method differences in solve rate, token cost, cycles, failed patch count, and negative transfer. That makes it a useful controlled pilot before scaling to cross-repository tasks.
+
+The paper should therefore frame this study as an initial controlled evaluation, not as the final benchmark. The contribution is the protocol plus evidence that the protocol can expose meaningful differences among memory formats. Broader repair benchmarks such as BugsInPy and SWE-bench provide natural settings for testing whether these findings survive greater repository and task diversity \cite{widyasari2020bugsinpy,jimenez2024swebench}. A full conference version should extend the same protocol to more projects, more bug families, more seeds, and additional controls.
+
+\subsection{Implications for skill self-evolution}
+\label{sec:discussion_self_evolution}
+
+For skill self-evolution, the main implication is that experience compression should be evaluated at the procedure level. A self-evolving agent should not only store successful patches or short reflections. It should induce artifacts that specify applicability, procedural steps, validation behavior, and known failure modes. Workflow-, skill-, and procedural-memory systems similarly motivate libraries that can be retrieved, composed, or revised as experience accumulates \cite{wang2025workflowmemory,zheng2025skillweaver,fang2026memp,mi2026skillpro}. The observed efficiency gains support the idea that such artifacts can help future agents act more directly on held-out tasks from the same family.
+
+At the same time, the negative-transfer case shows why self-evolution cannot be judged only by whether the memory grows. A self-evolving skill library needs mechanisms for pruning, specializing, or gating skills when a new task is adjacent but not actually covered by the learned procedure. This suggests a useful future direction: skill induction should be paired with trigger calibration and abstention tests, not just with held-out repair runs.
+
+The current work therefore positions SKILL.md as an inspectable procedural memory unit. Its natural-language form makes the learned procedure auditable: researchers can read whether it encodes task-specific leakage, generic advice, or a real transferable debugging process. That auditability is a practical advantage over opaque memory vectors or unstructured trajectory retrieval, especially when negative transfer needs to be diagnosed.
+
+\subsection{Summary of the claim}
+\label{sec:discussion_summary}
+
+The supported claim is deliberately modest. On a controlled same-model hard-smoke slice, trajectory-induced SKILL.md matches the best solve rate while improving process efficiency relative to unstructured memory and no-memory controls, with one explicit negative-transfer failure. A supplementary shuffled-control rerun shows that a stronger model can also solve with disrupted skill structure. The contribution is therefore an evaluation protocol and process-behavior study, not proof of universal superiority.

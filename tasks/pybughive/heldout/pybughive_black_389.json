@@ -1,0 +1,53 @@
+{
+  "task_id": "pybughive_black_389",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "black",
+    "source": "pybughive",
+    "url": "https://github.com/psf/black.git",
+    "commit": "3bdd42389128bbbe8b64a8e050563f09bff99979",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.7",
+    "install_command": "pipenv --python 3.7\npipenv run python -m pip install setuptools==68.0.0\npipenv install\npipenv run python -m pip install click==8.0.2\npipenv run python -m pip install pytest==6.2.5",
+    "test_command": "pipenv run python setup.py test",
+    "full_test_command": "pipenv run python setup.py test",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/data/python2_unicode_literals.py",
+      "tests/test_black.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "Fails when importing __future__ as renaming it",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive/pybughive_black_389_fix.patch",
+    "modified_files": [
+      "black.py"
+    ],
+    "bug_summary": "Fails when importing __future__ as renaming it"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "black",
+    "issue_id": 389,
+    "buggy_commit": "3bdd42389128bbbe8b64a8e050563f09bff99979",
+    "fix_commit": "dd8bde6d2fbfe8a7a11093e761a0cb5837efa96a",
+    "test_patch_path": "../../../patches/pybughive/pybughive_black_389_tests.patch",
+    "metadata_path": "../../../data/pybughive/pybughive_black_389/metadata.json",
+    "original_install_steps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "original_test_steps": "pipenv run python setup.py test",
+    "original_full_test_steps": "pipenv run python setup.py test"
+  },
+  "labels": {
+    "surface_pattern": "assertion_or_behavior_mismatch",
+    "root_cause": "localized_behavior_regression",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

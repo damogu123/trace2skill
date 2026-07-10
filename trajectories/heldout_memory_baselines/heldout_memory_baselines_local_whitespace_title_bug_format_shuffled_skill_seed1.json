@@ -1,0 +1,61 @@
+{
+  "run_id": "heldout_memory_baselines_local_whitespace_title_bug_format_shuffled_skill_seed1",
+  "task_id": "local_whitespace_title_bug",
+  "method": "format_shuffled_skill",
+  "model": "gpt-5.3-codex",
+  "temperature": 0.0,
+  "budget": {
+    "max_turns": 30,
+    "max_tokens": 60000,
+    "max_cycles": 10
+  },
+  "final_outcome": {
+    "solved": true,
+    "final_test_passed": true,
+    "full_test_passed": true,
+    "broke_existing_tests": false,
+    "timeout": false,
+    "cycles_used": 1,
+    "llm_turns": 6,
+    "tool_calls": 7,
+    "input_tokens": 10231,
+    "output_tokens": 0,
+    "prompt_overhead_tokens": 307,
+    "active_debugging_tokens": 9924,
+    "failed_patch_count": 0
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "diagnosis": "Whitespace-only input is stripped to empty string and incorrectly returned as an empty title instead of default.",
+      "file_inspections": [
+        {
+          "path": "src/text_title/title.py",
+          "reason": "Direct implementation of title_or_default behavior from failing assertion."
+        },
+        {
+          "path": "tests/test_title.py",
+          "reason": "Confirm exact expected behavior for whitespace-only and normal title input."
+        }
+      ],
+      "patch_attempt": {
+        "modified_files": [
+          "src/text_title/title.py"
+        ],
+        "patch_path": "runs/heldout_memory_baselines/heldout_memory_baselines_local_whitespace_title_bug_format_shuffled_skill_seed1/agent.patch",
+        "patch_summary": "Changed whitespace-only branch in title_or_default to return default instead of empty string."
+      },
+      "test_rerun": {
+        "command": "python -m pytest tests/test_title.py::test_whitespace_title_uses_default -q; python -m pytest -q",
+        "passed": true,
+        "log_path": "runs/heldout_memory_baselines/heldout_memory_baselines_local_whitespace_title_bug_format_shuffled_skill_seed1/final_test.log"
+      },
+      "mistakes": []
+    }
+  ],
+  "negative_transfer": {
+    "detected": false,
+    "category": null,
+    "reason": null
+  }
+}

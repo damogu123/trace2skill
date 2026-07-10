@@ -1,0 +1,98 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 183,
+  "title": "Different code on second pass",
+  "labels": "T: bug",
+  "buggy_commit": "dc0c14240e7423d9ada002835dcc195f8c6d8797",
+  "fix_commit": "cfb003f51c89802b5bca29018fde62c4501a8940",
+  "warnings": [],
+  "score": 370,
+  "raw_issue": {
+    "id": 183,
+    "created_at": "2018-05-01T03:36:30Z",
+    "closed_at": "2018-05-07T18:15:06Z",
+    "title": "Different code on second pass",
+    "labels": "T: bug",
+    "commits": [
+      {
+        "hash": "cfb003f51c89802b5bca29018fde62c4501a8940",
+        "commit_date": "2018-05-07T18:13:55Z",
+        "parents": "dc0c14240e7423d9ada002835dcc195f8c6d8797",
+        "stat": {
+          "total": 14,
+          "additions": 64,
+          "deletions": 50,
+          "files": [
+            {
+              "sha": "30990590403a52158789e1953f2bc522a64dcf06",
+              "filename": "README.md",
+              "status": "modified",
+              "additions": 7,
+              "deletions": 2,
+              "changes": 9,
+              "blob_url": "https://github.com/psf/black/blob/cfb003f51c89802b5bca29018fde62c4501a8940/README.md",
+              "raw_url": "https://github.com/psf/black/raw/cfb003f51c89802b5bca29018fde62c4501a8940/README.md",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/README.md?ref=cfb003f51c89802b5bca29018fde62c4501a8940",
+              "patch": "@@ -538,9 +538,14 @@ More details can be found in [CONTRIBUTING](CONTRIBUTING.md).\n \n ### 18.5a0 (unreleased)\n \n-* Slices are now formatted according to PEP 8 (#178)\n+* slices are now formatted according to PEP 8 (#178)\n \n-* Empty parentheses in a class definition are removed (#145, #180)\n+* empty parentheses in a class definition are now removed (#145, #180)\n+\n+* fixed an invalid trailing comma sometimes left in imports (#185)\n+\n+* fixed non-deterministic formatting when multiple pairs of removable parentheses\n+  were used (#183)\n \n \n ### 18.4a4"
+            },
+            {
+              "sha": "34bdcf900dd50b2601a610d428006a1fdc06f59f",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 24,
+              "deletions": 11,
+              "changes": 35,
+              "blob_url": "https://github.com/psf/black/blob/cfb003f51c89802b5bca29018fde62c4501a8940/black.py",
+              "raw_url": "https://github.com/psf/black/raw/cfb003f51c89802b5bca29018fde62c4501a8940/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=cfb003f51c89802b5bca29018fde62c4501a8940",
+              "patch": "@@ -2187,17 +2187,7 @@ def normalize_invisible_parens(node: Node, parens_after: Set[str]) -> None:\n     for child in list(node.children):\n         if check_lpar:\n             if child.type == syms.atom:\n-                if not (\n-                    is_empty_tuple(child)\n-                    or is_one_tuple(child)\n-                    or max_delimiter_priority_in_atom(child) >= COMMA_PRIORITY\n-                ):\n-                    first = child.children[0]\n-                    last = child.children[-1]\n-                    if first.type == token.LPAR and last.type == token.RPAR:\n-                        # make parentheses invisible\n-                        first.value = \"\"  # type: ignore\n-                        last.value = \"\"  # type: ignore\n+                maybe_make_parens_invisible_in_atom(child)\n             elif is_one_tuple(child):\n                 # wrap child in visible parentheses\n                 lpar = Leaf(token.LPAR, \"(\")\n@@ -2214,6 +2204,29 @@ def normalize_invisible_parens(node: Node, parens_after: Set[str]) -> None:\n         check_lpar = isinstance(child, Leaf) and child.value in parens_after\n \n \n+def maybe_make_parens_invisible_in_atom(node: LN) -> bool:\n+    \"\"\"If it's safe, make the parens in the atom `node` invisible, recusively.\"\"\"\n+    if (\n+        node.type != syms.atom\n+        or is_empty_tuple(node)\n+        or is_one_tuple(node)\n+        or max_delimiter_priority_in_atom(node) >= COMMA_PRIORITY\n+    ):\n+        return False\n+\n+    first = node.children[0]\n+    last = node.children[-1]\n+    if first.type == token.LPAR and last.type == token.RPAR:\n+        # make parentheses invisible\n+        first.value = \"\"  # type: ignore\n+        last.value = \"\"  # type: ignore\n+        if len(node.children) > 1:\n+            maybe_make_parens_invisible_in_atom(node.children[1])\n+        return True\n+\n+    return False\n+\n+\n def is_empty_tuple(node: LN) -> bool:\n     \"\"\"Return True if `node` holds an empty tuple.\"\"\"\n     return ("
+            },
+            {
+              "sha": "ede46a4507b418ddeed6103e989c9e37d533eb98",
+              "filename": "docs/reference/reference_functions.rst",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0,
+              "changes": 2,
+              "blob_url": "https://github.com/psf/black/blob/cfb003f51c89802b5bca29018fde62c4501a8940/docs%2Freference%2Freference_functions.rst",
+              "raw_url": "https://github.com/psf/black/raw/cfb003f51c89802b5bca29018fde62c4501a8940/docs%2Freference%2Freference_functions.rst",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/docs%2Freference%2Freference_functions.rst?ref=cfb003f51c89802b5bca29018fde62c4501a8940",
+              "patch": "@@ -98,6 +98,8 @@ Utilities\n \n .. autofunction:: black.make_comment\n \n+.. autofunction:: black.maybe_make_parens_invisible_in_atom\n+\n .. autofunction:: black.max_delimiter_priority_in_atom\n \n .. autofunction:: black.normalize_prefix"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "ad5e934adee206f7bd57a08758399573cd59950e",
+              "filename": "tests/expression.diff",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 1,
+              "changes": 10,
+              "blob_url": "https://github.com/psf/black/blob/cfb003f51c89802b5bca29018fde62c4501a8940/tests%2Fexpression.diff",
+              "raw_url": "https://github.com/psf/black/raw/cfb003f51c89802b5bca29018fde62c4501a8940/tests%2Fexpression.diff",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.diff?ref=cfb003f51c89802b5bca29018fde62c4501a8940",
+              "patch": "@@ -129,7 +129,7 @@\n  ]\n  slice[0]\n  slice[0:1]\n-@@ -123,88 +145,114 @@\n+@@ -123,91 +145,119 @@\n  numpy[-(c + 1) :, d]\n  numpy[:, l[-2]]\n  numpy[:, ::-1]\n@@ -201,6 +201,9 @@\n +print(*[] or [1])\n  print(**{1: 3} if False else {x: x for x in range(3)})\n -print(* lambda x: x)\n+-assert(not Test),(\"Short message\")\n+-assert this is ComplexTest and not requirements.fit_in_a_single_line(force=False), \"Short message\"\n+-assert(((parens is TooMany)))\n -for x, in (1,), (2,), (3,): ...\n -for y in (): ...\n -for z in (i for i in (1, 2, 3)): ...\n@@ -242,6 +245,11 @@\n -    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa /\n -    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n +print(*lambda x: x)\n++assert not Test, \"Short message\"\n++assert (\n++    this is ComplexTest and not requirements.fit_in_a_single_line(force=False)\n++), \"Short message\"\n++assert parens is TooMany\n +for (x,) in (1,), (2,), (3,):\n +    ...\n +for y in ():"
+            },
+            {
+              "sha": "2c92c0e8632fcf6dcf5cd638a356e2ca9d51324f",
+              "filename": "tests/expression.py",
+              "status": "modified",
+              "additions": 8,
+              "deletions": 0,
+              "changes": 8,
+              "blob_url": "https://github.com/psf/black/blob/cfb003f51c89802b5bca29018fde62c4501a8940/tests%2Fexpression.py",
+              "raw_url": "https://github.com/psf/black/raw/cfb003f51c89802b5bca29018fde62c4501a8940/tests%2Fexpression.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.py?ref=cfb003f51c89802b5bca29018fde62c4501a8940",
+              "patch": "@@ -163,6 +163,9 @@ async def f():\n print(* [] or [1])\n print(**{1: 3} if False else {x: x for x in range(3)})\n print(* lambda x: x)\n+assert(not Test),(\"Short message\")\n+assert this is ComplexTest and not requirements.fit_in_a_single_line(force=False), \"Short message\"\n+assert(((parens is TooMany)))\n for x, in (1,), (2,), (3,): ...\n for y in (): ...\n for z in (i for i in (1, 2, 3)): ...\n@@ -419,6 +422,11 @@ async def f():\n print(*[] or [1])\n print(**{1: 3} if False else {x: x for x in range(3)})\n print(*lambda x: x)\n+assert not Test, \"Short message\"\n+assert (\n+    this is ComplexTest and not requirements.fit_in_a_single_line(force=False)\n+), \"Short message\"\n+assert parens is TooMany\n for (x,) in (1,), (2,), (3,):\n     ...\n for y in ():"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

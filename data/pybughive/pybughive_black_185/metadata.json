@@ -1,0 +1,62 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 185,
+  "title": "Trailing comma after from .. import",
+  "labels": "T: bug, C: invalid code",
+  "buggy_commit": "c6a6cfd3a293a69c29f93beca1c64bd857371e14",
+  "fix_commit": "dc0c14240e7423d9ada002835dcc195f8c6d8797",
+  "warnings": [],
+  "score": 118,
+  "raw_issue": {
+    "id": 185,
+    "created_at": "2018-05-02T09:58:52Z",
+    "closed_at": "2018-05-07T17:41:10Z",
+    "title": "Trailing comma after from .. import",
+    "labels": "T: bug, C: invalid code",
+    "commits": [
+      {
+        "hash": "dc0c14240e7423d9ada002835dcc195f8c6d8797",
+        "commit_date": "2018-05-07T17:40:18Z",
+        "parents": "c6a6cfd3a293a69c29f93beca1c64bd857371e14",
+        "stat": {
+          "total": 3,
+          "additions": 15,
+          "deletions": 12,
+          "files": [
+            {
+              "sha": "fd2b75ed2c1cf9d5ffb3759f142b6855b0a23b9e",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 8,
+              "deletions": 3,
+              "changes": 11,
+              "blob_url": "https://github.com/psf/black/blob/dc0c14240e7423d9ada002835dcc195f8c6d8797/black.py",
+              "raw_url": "https://github.com/psf/black/raw/dc0c14240e7423d9ada002835dcc195f8c6d8797/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=dc0c14240e7423d9ada002835dcc195f8c6d8797",
+              "patch": "@@ -885,9 +885,14 @@ def maybe_remove_trailing_comma(self, closing: Leaf) -> bool:\n                 self.remove_trailing_comma()\n                 return True\n \n-        # For parens let's check if it's safe to remove the comma.  If the\n-        # trailing one is the only one, we might mistakenly change a tuple\n-        # into a different type by removing the comma.\n+        # For parens let's check if it's safe to remove the comma.\n+        # Imports are always safe.\n+        if self.is_import:\n+            self.remove_trailing_comma()\n+            return True\n+\n+        # Otheriwsse, if the trailing one is the only one, we might mistakenly\n+        # change a tuple into a different type by removing the comma.\n         depth = closing.bracket_depth + 1\n         commas = 0\n         opening = closing.opening_bracket"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "cc17405aa3a6486b3c05e1985fc808a1ab41e76f",
+              "filename": "tests/import_spacing.py",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 0,
+              "changes": 4,
+              "blob_url": "https://github.com/psf/black/blob/dc0c14240e7423d9ada002835dcc195f8c6d8797/tests%2Fimport_spacing.py",
+              "raw_url": "https://github.com/psf/black/raw/dc0c14240e7423d9ada002835dcc195f8c6d8797/tests%2Fimport_spacing.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fimport_spacing.py?ref=dc0c14240e7423d9ada002835dcc195f8c6d8797",
+              "patch": "@@ -2,6 +2,9 @@\n \n # flake8: noqa\n \n+from logging import (\n+    ERROR,\n+)\n import sys\n \n # This relies on each of the submodules having an __all__ variable.\n@@ -48,6 +51,7 @@\n \n # flake8: noqa\n \n+from logging import ERROR\n import sys\n \n # This relies on each of the submodules having an __all__ variable."
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

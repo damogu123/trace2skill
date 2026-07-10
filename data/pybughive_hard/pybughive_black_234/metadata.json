@@ -1,0 +1,86 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 234,
+  "title": "Star import after a long path produces invalid code",
+  "labels": "T: bug, C: invalid code",
+  "buggy_commit": "808754af18f1cea2444c6facf63f3a86952c5d44",
+  "fix_commit": "9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9",
+  "warnings": [],
+  "score": 262,
+  "raw_issue": {
+    "id": 234,
+    "created_at": "2018-05-20T03:16:47Z",
+    "closed_at": "2018-05-21T23:38:42Z",
+    "title": "Star import after a long path produces invalid code",
+    "labels": "T: bug, C: invalid code",
+    "commits": [
+      {
+        "hash": "9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9",
+        "commit_date": "2018-05-21T23:37:29Z",
+        "parents": "808754af18f1cea2444c6facf63f3a86952c5d44",
+        "stat": {
+          "total": 28,
+          "additions": 56,
+          "deletions": 28,
+          "files": [
+            {
+              "sha": "90731d231c2171ba130134e2a52e9f59726e211a",
+              "filename": "README.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0,
+              "changes": 2,
+              "blob_url": "https://github.com/psf/black/blob/9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9/README.md",
+              "raw_url": "https://github.com/psf/black/raw/9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9/README.md",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/README.md?ref=9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9",
+              "patch": "@@ -661,6 +661,8 @@ More details can be found in [CONTRIBUTING](CONTRIBUTING.md).\n \n * fixed optional parentheses being removed within `# fmt: off` sections (#224)\n \n+* fixed invalid code produced when stars in very long imports were incorrectly \n+  wrapped in optional parentheses (#234)\n \n ### 18.5b0\n "
+            },
+            {
+              "sha": "afc37d99fe3ac547383c1fa3c59cfba763aefc51",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 16,
+              "deletions": 28,
+              "changes": 44,
+              "blob_url": "https://github.com/psf/black/blob/9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9/black.py",
+              "raw_url": "https://github.com/psf/black/raw/9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9",
+              "patch": "@@ -1375,32 +1375,6 @@ def visit_decorators(self, node: Node) -> Iterator[Line]:\n             yield from self.line()\n             yield from self.visit(child)\n \n-    def visit_import_from(self, node: Node) -> Iterator[Line]:\n-        \"\"\"Visit import_from and maybe put invisible parentheses.\n-\n-        This is separate from `visit_stmt` because import statements don't\n-        support arbitrary atoms and thus handling of parentheses is custom.\n-        \"\"\"\n-        check_lpar = False\n-        for index, child in enumerate(node.children):\n-            if check_lpar:\n-                if child.type == token.LPAR:\n-                    # make parentheses invisible\n-                    child.value = \"\"  # type: ignore\n-                    node.children[-1].value = \"\"  # type: ignore\n-                else:\n-                    # insert invisible parentheses\n-                    node.insert_child(index, Leaf(token.LPAR, \"\"))\n-                    node.append_child(Leaf(token.RPAR, \"\"))\n-                break\n-\n-            check_lpar = (\n-                child.type == token.NAME and child.value == \"import\"  # type: ignore\n-            )\n-\n-        for child in node.children:\n-            yield from self.visit(child)\n-\n     def visit_SEMI(self, leaf: Leaf) -> Iterator[Line]:\n         \"\"\"Remove a semicolon and put the other statement on a separate line.\"\"\"\n         yield from self.line()\n@@ -1447,6 +1421,7 @@ def __attrs_post_init__(self) -> None:\n         self.visit_classdef = partial(v, keywords={\"class\"}, parens=Ø)\n         self.visit_expr_stmt = partial(v, keywords=Ø, parens=ASSIGNMENTS)\n         self.visit_return_stmt = partial(v, keywords={\"return\"}, parens={\"return\"})\n+        self.visit_import_from = partial(v, keywords=Ø, parens={\"import\"})\n         self.visit_async_funcdef = self.visit_async_stmt\n         self.visit_decorated = self.visit_decorators\n \n@@ -2343,16 +2318,29 @@ def normalize_invisible_parens(node: Node, parens_after: Set[str]) -> None:\n         return  # This `node` has a prefix with `# fmt: off`, don't mess with parens.\n \n     check_lpar = False\n-    for child in list(node.children):\n+    for index, child in enumerate(list(node.children)):\n         if check_lpar:\n             if child.type == syms.atom:\n                 maybe_make_parens_invisible_in_atom(child)\n             elif is_one_tuple(child):\n                 # wrap child in visible parentheses\n                 lpar = Leaf(token.LPAR, \"(\")\n                 rpar = Leaf(token.RPAR, \")\")\n-                index = child.remove() or 0\n+                child.remove()\n                 node.insert_child(index, Node(syms.atom, [lpar, child, rpar]))\n+            elif node.type == syms.import_from:\n+                # \"import from\" nodes store parentheses directly as part of\n+                # the statement\n+                if child.type == token.LPAR:\n+                    # make parentheses invisible\n+                    child.value = \"\"  # type: ignore\n+                    node.children[-1].value = \"\"  # type: ignore\n+                elif child.type != token.STAR:\n+                    # insert invisible parentheses\n+                    node.insert_child(index, Leaf(token.LPAR, \"\"))\n+                    node.append_child(Leaf(token.RPAR, \"\"))\n+                break\n+\n             elif not (isinstance(child, Leaf) and is_multiline_string(child)):\n                 # wrap child in invisible parentheses\n                 lpar = Leaf(token.LPAR, \"\")"
+            }
+          ],
+          "tests": [
+            {
+              "sha": "5666dd88c47c73229f0215de6b5355eb161b76b0",
+              "filename": "tests/fmtonoff.py",
+              "status": "modified",
+              "additions": 8,
+              "deletions": 0,
+              "changes": 8,
+              "blob_url": "https://github.com/psf/black/blob/9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9/tests%2Ffmtonoff.py",
+              "raw_url": "https://github.com/psf/black/raw/9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9/tests%2Ffmtonoff.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Ffmtonoff.py?ref=9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9",
+              "patch": "@@ -6,6 +6,10 @@\n \n from library import some_connection, \\\n                     some_decorator\n+# fmt: off\n+from third_party import (X,\n+                         Y, Z)\n+# fmt: on\n f'trigger 3.6 mode'\n # fmt: off\n def func_no_args():\n@@ -102,6 +106,10 @@ def single_literal_yapf_disable():\n \n from library import some_connection, some_decorator\n \n+# fmt: off\n+from third_party import (X,\n+                         Y, Z)\n+# fmt: on\n f\"trigger 3.6 mode\"\n # fmt: off\n def func_no_args():"
+            },
+            {
+              "sha": "0c98650f8339c56728442cdca93345d268c045c7",
+              "filename": "tests/import_spacing.py",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0,
+              "changes": 2,
+              "blob_url": "https://github.com/psf/black/blob/9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9/tests%2Fimport_spacing.py",
+              "raw_url": "https://github.com/psf/black/raw/9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9/tests%2Fimport_spacing.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fimport_spacing.py?ref=9a6c88c7f4b4db14631f8dc9e8d44b3aed9d57c9",
+              "patch": "@@ -24,6 +24,7 @@\n     Just, Enough, Libraries, To, Fit, In, This, Nice, Split, Which, We, No, Longer, Use\n )\n from name_of_a_company.extremely_long_project_name.component.ttypes import CuteLittleServiceHandlerFactoryyy\n+from name_of_a_company.extremely_long_project_name.extremely_long_component_name.ttypes import *\n \n from .a.b.c.subprocess import *\n from . import (tasks)\n@@ -87,6 +88,7 @@\n from name_of_a_company.extremely_long_project_name.component.ttypes import (\n     CuteLittleServiceHandlerFactoryyy\n )\n+from name_of_a_company.extremely_long_project_name.extremely_long_component_name.ttypes import *\n \n from .a.b.c.subprocess import *\n from . import tasks"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

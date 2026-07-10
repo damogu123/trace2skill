@@ -1,0 +1,7 @@
+diff --git a/src/config_reader/timeout.py b/src/config_reader/timeout.py
+--- a/src/config_reader/timeout.py
++++ b/src/config_reader/timeout.py
+@@ -1,2 +1,2 @@
+ def read_timeout(config: dict[str, object]) -> int:
+-    return int(config["timeout"])
++    return int(config.get("timeout", 30))

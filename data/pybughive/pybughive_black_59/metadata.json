@@ -1,0 +1,62 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 59,
+  "title": "Internal error on a complex variable type annotation",
+  "labels": "T: bug, C: invalid code",
+  "buggy_commit": "c9f8983936a3e4bf02ae4f71e9ccd0006baa5169",
+  "fix_commit": "a970a205bcea73672e85468836b477d3262ee75e",
+  "warnings": [],
+  "score": 121,
+  "raw_issue": {
+    "id": 59,
+    "created_at": "2018-03-22T12:56:03Z",
+    "closed_at": "2018-03-22T23:34:23Z",
+    "title": "Internal error on a complex variable type annotation",
+    "labels": "T: bug, C: invalid code",
+    "commits": [
+      {
+        "hash": "a970a205bcea73672e85468836b477d3262ee75e",
+        "commit_date": "2018-03-22T23:33:50Z",
+        "parents": "c9f8983936a3e4bf02ae4f71e9ccd0006baa5169",
+        "stat": {
+          "total": 2,
+          "additions": 18,
+          "deletions": 16,
+          "files": [
+            {
+              "sha": "877b632f3a54c3a5893290c1447c6221f73c1f68",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 7,
+              "deletions": 1,
+              "changes": 8,
+              "blob_url": "https://github.com/psf/black/blob/a970a205bcea73672e85468836b477d3262ee75e/black.py",
+              "raw_url": "https://github.com/psf/black/raw/a970a205bcea73672e85468836b477d3262ee75e/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=a970a205bcea73672e85468836b477d3262ee75e",
+              "patch": "@@ -510,10 +510,16 @@ def maybe_remove_trailing_comma(self, closing: Leaf) -> bool:\n         ):\n             return False\n \n-        if closing.type == token.RSQB or closing.type == token.RBRACE:\n+        if closing.type == token.RBRACE:\n             self.leaves.pop()\n             return True\n \n+        if closing.type == token.RSQB:\n+            comma = self.leaves[-1]\n+            if comma.parent and comma.parent.type == syms.listmaker:\n+                self.leaves.pop()\n+                return True\n+\n         # For parens let's check if it's safe to remove the comma.  If the\n         # trailing one is the only one, we might mistakenly change a tuple\n         # into a different type by removing the comma."
+            }
+          ],
+          "tests": [
+            {
+              "sha": "79e7c7ecef70327bba591e6f3057baa6dcb980b4",
+              "filename": "tests/expression.py",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 1,
+              "changes": 10,
+              "blob_url": "https://github.com/psf/black/blob/a970a205bcea73672e85468836b477d3262ee75e/tests%2Fexpression.py",
+              "raw_url": "https://github.com/psf/black/raw/a970a205bcea73672e85468836b477d3262ee75e/tests%2Fexpression.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.py?ref=a970a205bcea73672e85468836b477d3262ee75e",
+              "patch": "@@ -53,6 +53,7 @@\n (1, 2, 3)\n []\n [1, 2, 3, 4, 5, 6, 7, 8, 9, (10 or A), (11 or B), (12 or C)]\n+[1, 2, 3,]\n {i for i in (1, 2, 3)}\n {(i ** 2) for i in (1, 2, 3)}\n {(i ** 2) for i, _ in ((1, 'a'), (2, 'b'), (3, 'c'))}\n@@ -84,7 +85,10 @@\n list[str]\n dict[str, int]\n tuple[str, ...]\n-tuple[str, int, float, dict[str, int]]\n+tuple[str, int, float, dict[str, int],]\n+very_long_variable_name_filters: t.List[\n+    t.Tuple[str, t.Union[str, t.List[t.Optional[str]]]],\n+]\n slice[0]\n slice[0:1]\n slice[0:1:2]\n@@ -207,6 +211,7 @@ async def f():\n (1, 2, 3)\n []\n [1, 2, 3, 4, 5, 6, 7, 8, 9, (10 or A), (11 or B), (12 or C)]\n+[1, 2, 3]\n {i for i in (1, 2, 3)}\n {(i ** 2) for i in (1, 2, 3)}\n {(i ** 2) for i, _ in ((1, 'a'), (2, 'b'), (3, 'c'))}\n@@ -248,6 +253,9 @@ async def f():\n dict[str, int]\n tuple[str, ...]\n tuple[str, int, float, dict[str, int]]\n+very_long_variable_name_filters: t.List[\n+    t.Tuple[str, t.Union[str, t.List[t.Optional[str]]]],\n+]\n slice[0]\n slice[0:1]\n slice[0:1:2]"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}

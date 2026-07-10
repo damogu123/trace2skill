@@ -1,0 +1,40 @@
+{
+  "task_id": "local_missing_timeout_bug",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "local_missing_timeout_bug",
+    "source": "local",
+    "url": "../../fixtures/local_missing_timeout_bug",
+    "commit": "WORKTREE",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.11",
+    "install_command": "python -c \"import pytest\"",
+    "test_command": "python -m pytest tests/test_timeout.py::test_missing_timeout_uses_default -q",
+    "full_test_command": "python -m pytest -q",
+    "timeout_seconds": 120
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/test_timeout.py::test_missing_timeout_uses_default"
+    ],
+    "error_type": "KeyError",
+    "error_message": "Missing timeout should use the documented default.",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../patches/local_missing_timeout_bug.patch",
+    "modified_files": [
+      "src/config_reader/timeout.py"
+    ],
+    "bug_summary": "Missing timeout key raises an error instead of using the default value."
+  },
+  "labels": {
+    "surface_pattern": "exception_on_missing_value",
+    "root_cause": "missing_default_handling",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

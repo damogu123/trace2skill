@@ -1,0 +1,52 @@
+{
+  "task_id": "pybughive_black_1493",
+  "bug_family": "test_failure_triage",
+  "split": "heldout",
+  "repo": {
+    "name": "black",
+    "source": "pybughive",
+    "url": "https://github.com/psf/black.git",
+    "commit": "f90f50a7436ca13517933c290ef007e7cb2e7258",
+    "language": "python"
+  },
+  "environment": {
+    "python_version": "3.7",
+    "install_command": "pipenv --python 3.7\npipenv run python -m pip install setuptools==68.0.0\npipenv install\npipenv run python -m pip install click==8.0.2\npipenv run python -m pip install pytest==6.2.5",
+    "test_command": "pipenv run pytest -- tests/test_black.py",
+    "full_test_command": "pipenv run pytest",
+    "timeout_seconds": 300
+  },
+  "failure": {
+    "failing_tests": [
+      "tests/test_black.py"
+    ],
+    "error_type": "PyBugHiveTestFailure",
+    "error_message": "Black finds root incorrectly",
+    "failure_log_path": "logs/initial_failure.txt"
+  },
+  "ground_truth": {
+    "patch_path": "../../../patches/pybughive/pybughive_black_1493_fix.patch",
+    "modified_files": [
+      "src/black/__init__.py"
+    ],
+    "bug_summary": "Black finds root incorrectly"
+  },
+  "benchmark": {
+    "name": "pybughive",
+    "project": "black",
+    "issue_id": 1493,
+    "buggy_commit": "f90f50a7436ca13517933c290ef007e7cb2e7258",
+    "fix_commit": "2471b9256d9d9dfea1124d20072201693b9b0865",
+    "test_patch_path": "../../../patches/pybughive/pybughive_black_1493_tests.patch",
+    "metadata_path": "../../../data/pybughive/pybughive_black_1493/metadata.json",
+    "original_install_steps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "original_test_steps": "pipenv run pytest -- tests/test_black.py",
+    "original_full_test_steps": "pipenv run pytest"
+  },
+  "labels": {
+    "surface_pattern": "assertion_or_behavior_mismatch",
+    "root_cause": "localized_behavior_regression",
+    "requires_api_knowledge": false,
+    "adversarial_reason": null
+  }
+}

@@ -1,0 +1,11 @@
+diff --git a/src/sample_parser/parser.py b/src/sample_parser/parser.py
+--- a/src/sample_parser/parser.py
++++ b/src/sample_parser/parser.py
+@@ -1,6 +1,6 @@
+ def parse_items(text: str | None) -> list[str]:
+     if text is None:
+         return []
+     if not text.strip():
+-        return None
++        return []
+     return [part.strip() for part in text.split(",") if part.strip()]

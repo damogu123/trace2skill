@@ -1,0 +1,86 @@
+{
+  "source": "pybughive",
+  "project": "black",
+  "issue_id": 133,
+  "title": "Failure to reformat a lamba expression",
+  "labels": "T: bug, C: invalid code",
+  "buggy_commit": "b5b658da0683c3e0806461946d8b492784e26d97",
+  "fix_commit": "d73166c42b7de83249d17125cae3c2594a25b2c3",
+  "warnings": [],
+  "score": 305,
+  "raw_issue": {
+    "id": 133,
+    "created_at": "2018-04-15T13:12:26Z",
+    "closed_at": "2018-04-21T22:10:19Z",
+    "title": "Failure to reformat a lamba expression",
+    "labels": "T: bug, C: invalid code",
+    "commits": [
+      {
+        "hash": "d73166c42b7de83249d17125cae3c2594a25b2c3",
+        "commit_date": "2018-04-21T22:08:36Z",
+        "parents": "b5b658da0683c3e0806461946d8b492784e26d97",
+        "stat": {
+          "total": 31,
+          "additions": 99,
+          "deletions": 68,
+          "files": [
+            {
+              "sha": "5be349e42f28bbb5c5799ffd13f95de9bd984a2e",
+              "filename": "README.md",
+              "status": "modified",
+              "additions": 3,
+              "deletions": 1,
+              "changes": 4,
+              "blob_url": "https://github.com/psf/black/blob/d73166c42b7de83249d17125cae3c2594a25b2c3/README.md",
+              "raw_url": "https://github.com/psf/black/raw/d73166c42b7de83249d17125cae3c2594a25b2c3/README.md",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/README.md?ref=d73166c42b7de83249d17125cae3c2594a25b2c3",
+              "patch": "@@ -516,9 +516,11 @@ More details can be found in [CONTRIBUTING](CONTRIBUTING.md).\n * generalized star expression handling, including double stars; this\n   fixes multiplication making expressions \"unsafe\" for trailing commas (#132)\n \n-* fix parsing of complex expressions after star and double stars in\n+* fixed parsing of complex expressions after star and double stars in\n   function parameters (#2)\n \n+* fixed invalid splitting on comma in lambda arguments (#133)\n+\n ### 18.4a2\n \n * fixed parsing of unaligned standalone comments (#99, #112)"
+            },
+            {
+              "sha": "58f7976aa60bc72b0ceb72b5a160a6107bf6637b",
+              "filename": "black.py",
+              "status": "modified",
+              "additions": 50,
+              "deletions": 27,
+              "changes": 77,
+              "blob_url": "https://github.com/psf/black/blob/d73166c42b7de83249d17125cae3c2594a25b2c3/black.py",
+              "raw_url": "https://github.com/psf/black/raw/d73166c42b7de83249d17125cae3c2594a25b2c3/black.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/black.py?ref=d73166c42b7de83249d17125cae3c2594a25b2c3",
+              "patch": "@@ -609,6 +609,8 @@ class BracketTracker:\n     bracket_match: Dict[Tuple[Depth, NodeType], Leaf] = Factory(dict)\n     delimiters: Dict[LeafID, Priority] = Factory(dict)\n     previous: Optional[Leaf] = None\n+    _for_loop_variable: bool = False\n+    _lambda_arguments: bool = False\n \n     def mark(self, leaf: Leaf) -> None:\n         \"\"\"Mark `leaf` with bracket-related metadata. Keep track of delimiters.\n@@ -628,6 +630,8 @@ def mark(self, leaf: Leaf) -> None:\n         if leaf.type == token.COMMENT:\n             return\n \n+        self.maybe_decrement_after_for_loop_variable(leaf)\n+        self.maybe_decrement_after_lambda_arguments(leaf)\n         if leaf.type in CLOSING_BRACKETS:\n             self.depth -= 1\n             opening_bracket = self.bracket_match.pop((self.depth, leaf.type))\n@@ -645,6 +649,8 @@ def mark(self, leaf: Leaf) -> None:\n             self.bracket_match[self.depth, BRACKET[leaf.type]] = leaf\n             self.depth += 1\n         self.previous = leaf\n+        self.maybe_increment_lambda_arguments(leaf)\n+        self.maybe_increment_for_loop_variable(leaf)\n \n     def any_open_brackets(self) -> bool:\n         \"\"\"Return True if there is an yet unmatched open bracket on the line.\"\"\"\n@@ -658,6 +664,50 @@ def max_delimiter_priority(self, exclude: Iterable[LeafID] = ()) -> int:\n         \"\"\"\n         return max(v for k, v in self.delimiters.items() if k not in exclude)\n \n+    def maybe_increment_for_loop_variable(self, leaf: Leaf) -> bool:\n+        \"\"\"In a for loop, or comprehension, the variables are often unpacks.\n+\n+        To avoid splitting on the comma in this situation, increase the depth of\n+        tokens between `for` and `in`.\n+        \"\"\"\n+        if leaf.type == token.NAME and leaf.value == \"for\":\n+            self.depth += 1\n+            self._for_loop_variable = True\n+            return True\n+\n+        return False\n+\n+    def maybe_decrement_after_for_loop_variable(self, leaf: Leaf) -> bool:\n+        \"\"\"See `maybe_increment_for_loop_variable` above for explanation.\"\"\"\n+        if self._for_loop_variable and leaf.type == token.NAME and leaf.value == \"in\":\n+            self.depth -= 1\n+            self._for_loop_variable = False\n+            return True\n+\n+        return False\n+\n+    def maybe_increment_lambda_arguments(self, leaf: Leaf) -> bool:\n+        \"\"\"In a lambda expression, there might be more than one argument.\n+\n+        To avoid splitting on the comma in this situation, increase the depth of\n+        tokens between `lambda` and `:`.\n+        \"\"\"\n+        if leaf.type == token.NAME and leaf.value == \"lambda\":\n+            self.depth += 1\n+            self._lambda_arguments = True\n+            return True\n+\n+        return False\n+\n+    def maybe_decrement_after_lambda_arguments(self, leaf: Leaf) -> bool:\n+        \"\"\"See `maybe_increment_lambda_arguments` above for explanation.\"\"\"\n+        if self._lambda_arguments and leaf.type == token.COLON:\n+            self.depth -= 1\n+            self._lambda_arguments = False\n+            return True\n+\n+        return False\n+\n \n @dataclass\n class Line:\n@@ -668,8 +718,6 @@ class Line:\n     comments: List[Tuple[Index, Leaf]] = Factory(list)\n     bracket_tracker: BracketTracker = Factory(BracketTracker)\n     inside_brackets: bool = False\n-    has_for: bool = False\n-    _for_loop_variable: bool = False\n \n     def append(self, leaf: Leaf, preformatted: bool = False) -> None:\n         \"\"\"Add a new `leaf` to the end of the line.\n@@ -690,10 +738,8 @@ def append(self, leaf: Leaf, preformatted: bool = False) -> None:\n             # imports, for which we only preserve newlines.\n             leaf.prefix += whitespace(leaf)\n         if self.inside_brackets or not preformatted:\n-            self.maybe_decrement_after_for_loop_variable(leaf)\n             self.bracket_tracker.mark(leaf)\n             self.maybe_remove_trailing_comma(leaf)\n-            self.maybe_increment_for_loop_variable(leaf)\n \n         if not self.append_comment(leaf):\n             self.leaves.append(leaf)\n@@ -840,29 +886,6 @@ def maybe_remove_trailing_comma(self, closing: Leaf) -> bool:\n \n         return False\n \n-    def maybe_increment_for_loop_variable(self, leaf: Leaf) -> bool:\n-        \"\"\"In a for loop, or comprehension, the variables are often unpacks.\n-\n-        To avoid splitting on the comma in this situation, increase the depth of\n-        tokens between `for` and `in`.\n-        \"\"\"\n-        if leaf.type == token.NAME and leaf.value == \"for\":\n-            self.has_for = True\n-            self.bracket_tracker.depth += 1\n-            self._for_loop_variable = True\n-            return True\n-\n-        return False\n-\n-    def maybe_decrement_after_for_loop_variable(self, leaf: Leaf) -> bool:\n-        \"\"\"See `maybe_increment_for_loop_variable` above for explanation.\"\"\"\n-        if self._for_loop_variable and leaf.type == token.NAME and leaf.value == \"in\":\n-            self.bracket_tracker.depth -= 1\n-            self._for_loop_variable = False\n-            return True\n-\n-        return False\n-\n     def append_comment(self, comment: Leaf) -> bool:\n         \"\"\"Add an inline or standalone comment to the line.\"\"\"\n         if ("
+            }
+          ],
+          "tests": [
+            {
+              "sha": "9da00484c384d101bf8c088378ec8f4883c5572a",
+              "filename": "tests/expression.diff",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 3,
+              "changes": 12,
+              "blob_url": "https://github.com/psf/black/blob/d73166c42b7de83249d17125cae3c2594a25b2c3/tests%2Fexpression.diff",
+              "raw_url": "https://github.com/psf/black/raw/d73166c42b7de83249d17125cae3c2594a25b2c3/tests%2Fexpression.diff",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.diff?ref=d73166c42b7de83249d17125cae3c2594a25b2c3",
+              "patch": "@@ -11,7 +11,7 @@\n  True\n  False\n  1\n-@@ -29,59 +29,73 @@\n+@@ -29,60 +29,78 @@\n  ~great\n  +value\n  -1\n@@ -24,8 +24,14 @@\n  lambda a, b, c=True: a\n -lambda a, b, c=True, *, d=(1 << v2), e='str': a\n -lambda a, b, c=True, *vararg, d=(v1 << 2), e='str', **kwargs: a + b\n+-foo = (lambda port_id, ignore_missing: {\"port1\": port1_resource, \"port2\": port2_resource}[port_id])\n +lambda a, b, c=True, *, d=(1 << v2), e=\"str\": a\n +lambda a, b, c=True, *vararg, d=(v1 << 2), e=\"str\", **kwargs: a + b\n++foo = (\n++    lambda port_id, ignore_missing: {\"port1\": port1_resource, \"port2\": port2_resource}[\n++        port_id\n++    ]\n++)\n  1 if True else 2\n  str or None if True else str or bytes or None\n  (str or None) if True else (str or bytes or None)\n@@ -104,7 +110,7 @@\n  call(**self.screen_kwargs)\n  call(b, **self.screen_kwargs)\n  lukasz.langa.pl\n-@@ -90,11 +104,11 @@\n+@@ -91,11 +109,11 @@\n  1.0 .real\n  ....__class__\n  list[str]\n@@ -117,7 +123,7 @@\n  ]\n  slice[0]\n  slice[0:1]\n-@@ -121,88 +135,122 @@\n+@@ -122,88 +140,122 @@\n  numpy[-(c + 1):, d]\n  numpy[:, l[-2]]\n  numpy[:, ::-1]"
+            },
+            {
+              "sha": "c67505fc1fbf3d42370b2ab0b93bccabdbb29743",
+              "filename": "tests/expression.py",
+              "status": "modified",
+              "additions": 6,
+              "deletions": 0,
+              "changes": 6,
+              "blob_url": "https://github.com/psf/black/blob/d73166c42b7de83249d17125cae3c2594a25b2c3/tests%2Fexpression.py",
+              "raw_url": "https://github.com/psf/black/raw/d73166c42b7de83249d17125cae3c2594a25b2c3/tests%2Fexpression.py",
+              "contents_url": "https://api.github.com/repos/psf/black/contents/tests%2Fexpression.py?ref=d73166c42b7de83249d17125cae3c2594a25b2c3",
+              "patch": "@@ -37,6 +37,7 @@\n lambda a, b, c=True: a\n lambda a, b, c=True, *, d=(1 << v2), e='str': a\n lambda a, b, c=True, *vararg, d=(v1 << 2), e='str', **kwargs: a + b\n+foo = (lambda port_id, ignore_missing: {\"port1\": port1_resource, \"port2\": port2_resource}[port_id])\n 1 if True else 2\n str or None if True else str or bytes or None\n (str or None) if True else (str or bytes or None)\n@@ -249,6 +250,11 @@ async def f():\n lambda a, b, c=True: a\n lambda a, b, c=True, *, d=(1 << v2), e=\"str\": a\n lambda a, b, c=True, *vararg, d=(v1 << 2), e=\"str\", **kwargs: a + b\n+foo = (\n+    lambda port_id, ignore_missing: {\"port1\": port1_resource, \"port2\": port2_resource}[\n+        port_id\n+    ]\n+)\n 1 if True else 2\n str or None if True else str or bytes or None\n (str or None) if True else (str or bytes or None)"
+            }
+          ]
+        }
+      }
+    ],
+    "manuallyChecked": true,
+    "installSteps": "pipenv --python 3.7\npipenv install setuptools==68.0.0\npipenv install\npipenv install click==8.0.2\npipenv install pytest==6.2.5",
+    "testSteps": "pipenv run python setup.py test",
+    "testStepsFull": "pipenv run python setup.py test"
+  }
+}
