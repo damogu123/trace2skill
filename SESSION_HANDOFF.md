@@ -702,10 +702,95 @@ submission metadata without changing the empirical claim boundaries.
 - Current Method: `paper/sections/method.md`
 - Current Results: `paper/sections/results.md`
 - Integrated LaTeX driver: `paper/main.tex`
-- Latest verified compiled PDF: `paper/main_agenticdev.pdf`
+- Latest verified two-page poster PDF:
+  `paper/agenticdev2026_paper12_camera_ready.pdf`
+- Poster camera-ready source: `paper/main_poster.tex`
+- Reviewer-revised full manuscript PDF: `paper/main_revised_reviews.pdf`
+- Original submitted full-paper PDF: `paper/main_agenticdev.pdf`
 - Pre-venue generic PDF: `paper/main_figures_clean.pdf`
 - Earlier viewer-locked PDF: `paper/main.pdf`
 - LaTeX build report: `paper/reviews/latex_build_report_2026_06_08.md`
 - Full consistency audit:
   `paper/reviews/full_manuscript_consistency_report_2026_06_08.md`
 - Latest quick review: `paper/reviews/quick_review_intro_abstract_2026_06_03.md`
+
+## Current Status: AgenticDev Poster Camera-Ready Revision
+
+Updated on September 9, 2026. This section supersedes older submission-status
+notes above.
+
+- Paper #12 received one weak-accept and one accept review, then was accepted
+  for an in-person poster because the one-day workshop reached capacity.
+- The production category is `Extended Abstract (2 pages)`. The portal accepted
+  an upload on September 9, 2026; the corrected PDF, source ZIP, and CCS XML
+  still need to replace that upload and pass the external checker. The workshop
+  poster session is scheduled for October 12, 2026, in Munich.
+- `paper/main_poster.tex` is the current source, and
+  `paper/agenticdev2026_paper12_camera_ready.pdf` is the upload-ready,
+  non-anonymous two-page camera-ready PDF. The older `paper/main_poster.pdf`
+  is superseded.
+- `paper/main_revised_reviews.pdf` is the corresponding 11-page full revision;
+  it is not the file to upload for the two-page proceedings slot.
+- The reviewer revision adds Wilson solve-rate intervals, exact paired
+  task-resampling intervals, medians, leave-one-task-out sensitivity, an
+  explicit comparison with the human checklist, single-annotator disclosure,
+  and outlier sensitivity for the structural control.
+- The revisions do not claim repeated-seed evidence, broader bug-family
+  coverage, or independent negative-transfer annotation because those data do
+  not exist.
+- Reproducible uncertainty analysis is implemented in
+  `scripts/analyze_review_uncertainty.py`; generated outputs are
+  `results/reviewer_uncertainty_analysis.json` and
+  `paper/tables/reviewer_uncertainty_analysis.md`.
+- Response and verification records are in
+  `paper/reviews/agenticdev_camera_ready_response_2026_08_25.md` and
+  `paper/reviews/agenticdev_camera_ready_verification_review_2026_08_25.md`.
+- Final QA: the poster PDF has two US Letter pages, embedded Type 1 fonts, no
+  overfull boxes, no undefined citations/references, no visible overlap, and
+  visually balanced final-page columns. All trajectory, task, and manifest
+  validators pass.
+- The verified source upload archive is
+  `paper/submission/agenticdev_camera_ready_source.zip`. It contains exactly
+  `main.tex`, `references.bib`, `main.bbl`, `acmart.cls` v2.18, and
+  `ACM-Reference-Format.bst`; rebuilding a fresh extraction produces the same
+  two-page article text without blocking LaTeX diagnostics.
+
+ACM eRights was completed on September 9, 2026. The final source now uses
+CC-BY (`\setcopyright{cc}` and `\setcctype{by}`), DOI
+`10.1145/3843282.3844421`, ISBN `979-8-4007-2985-0/2026/10`, and the exact
+ACM-generated conference and book-title fields. The paper-specific Author
+Instructions were also applied: `sigconf,screen,pbalance`, `microtype`, submission ID,
+received/accepted dates, corresponding-author status, ORCID, default-size
+table/figure text, and removal of the Figure 1 frame. The source also uses the
+corrected ACM CCS identifiers for `Software testing and debugging`
+(`10011007.10011074.10011099.10011102.10011103`) and `Intelligent agents`
+(`10010147.10010178.10010219.10010221`). The exact ACM conference and
+book-title commands are each on one physical source line so the production
+checker can parse them. The refreshed source ZIP has SHA-256
+`CF39C1A13AA17544ACEC0B408B934694BE60326431AAEF42E91DB634C0A7378A`.
+The submission checklist and form-ready CCS XML are in
+`paper/submission/agenticdev_camera_ready_compliance_checklist.md` and
+`paper/submission/agenticdev_ccs.xml`.
+In-person attendance remains unresolved because the author indicated that
+travel to Germany may not be possible; obtain a written answer from the chairs
+before assuming remote presentation is allowed.
+
+## Project Page Status
+
+Updated on September 9, 2026.
+
+- The Trace2Skill academic project page is implemented at `docs/index.html`
+  with responsive styles and vanilla JavaScript under `docs/static/`.
+- It presents the camera-ready title, author, AgenticDev poster status, method,
+  primary five-condition results, uncertainty, negative transfer, structural
+  control, limitations, abstract, DOI, PDF, and BibTeX without exceeding the
+  paper's empirical claim boundaries.
+- Reused paper figures are copied to `docs/static/images/`; the page PDF is
+  `docs/static/pdfs/trace2skill-paper.pdf`.
+- `scripts/create_github_export.py` preserves project-page PDF/PNG media while
+  continuing to exclude generated PDFs and screenshots elsewhere.
+- The layout is adapted from the Academic Project Page Template. Attribution
+  and the page-specific CC BY-SA 4.0 notice are in
+  `docs/PROJECT_PAGE_LICENSE.md` and the page footer.
+- Publish with GitHub Pages from the default branch's `/docs` folder. The
+  expected public URL is `https://damogu123.github.io/trace2skill/`.

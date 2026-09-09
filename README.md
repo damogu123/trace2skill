@@ -13,6 +13,12 @@ The repository includes the manuscript source, cleaned trajectory records,
 experiment manifests, validation scripts, metrics, and a compact
 AgenticDev/ASE Workshop artifact package.
 
+## Project Page And Paper
+
+- Project page: https://damogu123.github.io/trace2skill/
+- Paper DOI: https://doi.org/10.1145/3843282.3844421
+- Camera-ready project-page copy: `docs/static/pdfs/trace2skill-paper.pdf`
+
 ## Start Here
 
 - Reviewing the artifact: start with `artifact_agenticdev2026/README.md`,
@@ -133,11 +139,19 @@ Git repository by default.
 
 ## Citation
 
-Formal citation metadata will be added after the submission/final author list is
-settled. For now, cite the repository as the Trace2Skill research artifact for
-**"Evaluating Low-Shot Procedural Skill Transfer in Language-Agent Debugging."**
+```bibtex
+@inproceedings{sun2026trace2skill,
+  author = {Sun, Jiachen},
+  title = {Evaluating Low-Shot Procedural Skill Transfer in Language-Agent Debugging},
+  year = {2026},
+  booktitle = {Proceedings of the 1st International Workshop on Agentic AI for Next-Generation Software Development},
+  doi = {10.1145/3843282.3844421}
+}
+```
 
 ## License
 
-No license has been selected yet. Until a `LICENSE` file is added, all rights
-are reserved by default.
+The camera-ready paper is licensed under CC BY 4.0. The project-page layout and
+code under `docs/` are licensed under CC BY-SA 4.0; see
+`docs/PROJECT_PAGE_LICENSE.md`. No repository-wide software or data license has
+been selected, so all other material remains all rights reserved by default.

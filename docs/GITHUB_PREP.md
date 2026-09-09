@@ -22,6 +22,9 @@ Confirm that these are ignored:
 - `paper/svg-inkscape/`
 - `results/*.png`
 
+The project-page media under `docs/static/` is intentionally retained,
+including its camera-ready PDF and social-preview PNG.
+
 ## 2. Validate Structured Artifacts
 
 ```powershell
@@ -62,3 +65,16 @@ git status
 ```
 
 If you commit from the project root instead, rely on the root `.gitignore`.
+
+## 6. Publish The Project Page
+
+The static project page is rooted at `docs/index.html`. After pushing the clean
+repository to GitHub:
+
+1. Open repository **Settings > Pages**.
+2. Under **Build and deployment**, select **Deploy from a branch**.
+3. Select the default branch and the `/docs` folder, then save.
+4. Verify `https://damogu123.github.io/trace2skill/` after deployment finishes.
+
+Do not add HotCRP, conference-publishing, or ACM rights-form authorization URLs
+to the page or repository.

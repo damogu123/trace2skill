@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Jiachen Sun">
+  <meta name="description" content="Trace2Skill studies low-shot procedural skill transfer for language-agent debugging using trajectory-induced SKILL.md memory.">
+  <meta name="keywords" content="language agents, software debugging, procedural memory, skill induction, negative transfer">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Trace2Skill">
+  <meta property="og:title" content="Trace2Skill: Low-Shot Procedural Skill Transfer">
+  <meta property="og:description" content="An evaluation protocol for trajectory-induced procedural memory in language-agent debugging.">
+  <meta property="og:url" content="https://damogu123.github.io/trace2skill/">
+  <meta property="og:image" content="https://damogu123.github.io/trace2skill/static/images/social-preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Trace2Skill pipeline from debugging trajectories to SKILL.md and held-out repairs">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Trace2Skill: Low-Shot Procedural Skill Transfer">
+  <meta name="twitter:description" content="Trajectory-induced procedural memory for language-agent debugging.">
+  <meta name="twitter:image" content="https://damogu123.github.io/trace2skill/static/images/social-preview.png">
+
+  <meta name="citation_title" content="Evaluating Low-Shot Procedural Skill Transfer in Language-Agent Debugging">
+  <meta name="citation_author" content="Sun, Jiachen">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_conference_title" content="Proceedings of the 1st International Workshop on Agentic AI for Next-Generation Software Development">
+  <meta name="citation_doi" content="10.1145/3843282.3844421">
+  <meta name="citation_pdf_url" content="https://damogu123.github.io/trace2skill/static/pdfs/trace2skill-paper.pdf">
+
+  <link rel="canonical" href="https://damogu123.github.io/trace2skill/">
+  <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+  <link rel="stylesheet" href="static/css/site.css">
+  <script defer src="static/js/site.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Evaluating Low-Shot Procedural Skill Transfer in Language-Agent Debugging",
+    "description": "An evaluation protocol for trajectory-induced procedural memory in language-agent debugging.",
+    "author": {
+      "@type": "Person",
+      "name": "Jiachen Sun",
+      "identifier": "https://orcid.org/0009-0004-8354-3728",
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": "ShanghaiTech University"
+      }
+    },
+    "datePublished": "2026",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Association for Computing Machinery"
+    },
+    "isPartOf": {
+      "@type": "PublicationEvent",
+      "name": "AgenticDev '26"
+    },
+    "url": "https://damogu123.github.io/trace2skill/",
+    "sameAs": "https://doi.org/10.1145/3843282.3844421",
+    "image": "https://damogu123.github.io/trace2skill/static/images/social-preview.png",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "keywords": [
+      "language agents",
+      "software debugging",
+      "procedural memory",
+      "skill induction",
+      "negative transfer"
+    ]
+  }
+  </script>
+
+  <title>Trace2Skill | Procedural Skill Transfer for Language-Agent Debugging</title>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <nav class="site-nav" aria-label="Primary navigation">
+    <div class="nav-inner">
+      <a class="wordmark" href="#top" aria-label="Trace2Skill home">
+        <span class="wordmark-mark" aria-hidden="true">T2S</span>
+        <span>Trace2Skill</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+        <span class="sr-only">Toggle navigation</span>
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links" id="nav-links">
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#limits">Limits</a>
+        <a href="#citation">Citation</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+    <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow"><span></span> AgenticDev '26 Poster</div>
+        <h1>Evaluating Low-Shot Procedural Skill Transfer in Language-Agent Debugging</h1>
+        <p class="hero-lede">
+          Can three prior debugging trajectories become an inspectable procedural memory
+          that transfers to held-out repairs?
+        </p>
+        <div class="author-line">
+          <a href="https://orcid.org/0009-0004-8354-3728">Jiachen Sun</a>
+          <span>ShanghaiTech University</span>
+        </div>
+        <div class="action-row" aria-label="Paper resources">
+          <a class="button button-primary" href="static/pdfs/trace2skill-paper.pdf">Read paper</a>
+          <a class="button" href="https://github.com/damogu123/trace2skill">Code &amp; data</a>
+          <a class="button" href="https://doi.org/10.1145/3843282.3844421">DOI</a>
+          <a class="button button-quiet" href="#citation">BibTeX</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" role="img" aria-label="Three debugging trajectories are induced into a SKILL.md and evaluated on six held-out bugs">
+        <div class="pipeline-label">LOW-SHOT EXPERIENCE</div>
+        <div class="trace-stack" aria-hidden="true">
+          <span>trace_01.json</span>
+          <span>trace_02.json</span>
+          <span>trace_03.json</span>
+        </div>
+        <div class="pipeline-arrow" aria-hidden="true">trajectory induction</div>
+        <div class="skill-card">
+          <div class="skill-file">SKILL.md</div>
+          <div class="skill-line"><i></i><span>Applicability triggers</span></div>
+          <div class="skill-line"><i></i><span>Ordered repair procedure</span></div>
+          <div class="skill-line"><i></i><span>Failure modes and exclusions</span></div>
+        </div>
+        <div class="pipeline-arrow" aria-hidden="true">fixed deployment</div>
+        <div class="heldout-row" aria-hidden="true">
+          <span>bug 1</span><span>bug 2</span><span>bug 3</span>
+          <span>bug 4</span><span>bug 5</span><span>bug 6</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="section thesis-section">
+      <div class="container">
+        <p class="section-kicker">The question</p>
+        <h2 class="display-heading">A memory can make an agent faster. It can also make it confidently wrong.</h2>
+        <div class="thesis-grid">
+          <article>
+            <span class="step-number">01</span>
+            <h3>Induce</h3>
+            <p>Compress three redacted debugging trajectories into one natural-language procedural artifact.</p>
+          </article>
+          <article>
+            <span class="step-number">02</span>
+            <h3>Transfer</h3>
+            <p>Deploy the same frozen <code>SKILL.md</code> on six related but held-out PyBugHive tasks.</p>
+          </article>
+          <article>
+            <span class="step-number">03</span>
+            <h3>Audit</h3>
+            <p>Measure success, diagnosis-edit-test cycles, tokens, failed patches, and negative transfer.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-tinted" id="method">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Evaluation protocol</p>
+            <h2>Experience becomes a testable memory object</h2>
+          </div>
+          <p>
+            The induction contract prohibits task-specific names and patches. Every primary
+            condition shares the same model, prompts, workspaces, tests, temperature, and budget.
+          </p>
+        </div>
+        <figure class="figure-panel">
+          <img src="static/images/evaluation-protocol.svg" alt="Evaluation protocol showing trajectory induction, a frozen SKILL.md, held-out debugging, controls, and metrics">
+          <figcaption>
+            The induced memory is evaluated as an artifact, not tuned separately for each test task.
+          </figcaption>
+        </figure>
+        <div class="control-grid" aria-label="Primary experimental controls">
+          <div><strong>Auto SKILL.md</strong><span>Trajectory-induced procedure</span></div>
+          <div><strong>Generic checklist</strong><span>Competent human-written advice</span></div>
+          <div><strong>Reflexion</strong><span>Verbal reflection memory</span></div>
+          <div><strong>Length-matched Reflexion</strong><span>Prompt-length control</span></div>
+          <div><strong>No memory</strong><span>Agent-only baseline</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Primary pilot</p>
+            <h2>Comparable success, lower observed process cost</h2>
+          </div>
+          <p>
+            Auto SKILL.md ties the best solve rate at 5/6. Its clearest signal is process
+            efficiency relative to reflection baselines, not universal solve-rate dominance.
+          </p>
+        </div>
+
+        <div class="metric-strip">
+          <div><strong>3</strong><span>training trajectories</span></div>
+          <div><strong>6</strong><span>held-out bugs</span></div>
+          <div><strong>5/6</strong><span>Auto SKILL.md solved</span></div>
+          <div><strong>56.9k</strong><span>tokens per solved task</span></div>
+          <div><strong>1</strong><span>negative-transfer flag</span></div>
+        </div>
+
+        <figure class="figure-panel figure-panel-white">
+          <img src="static/images/primary-results.svg" alt="Bar charts comparing solve rate and tokens per solved task across five memory conditions">
+          <figcaption>
+            Primary same-model run on six verified PyBugHive Black formatter tasks. Token values
+            are solve-conditional means.
+          </figcaption>
+        </figure>
+
+        <div class="table-wrap" tabindex="0" aria-label="Primary result table, horizontally scrollable on small screens">
+          <table>
+            <caption>Primary same-model pilot</caption>
+            <thead>
+              <tr>
+                <th scope="col">Method</th>
+                <th scope="col">Solved</th>
+                <th scope="col">Cycles / solved</th>
+                <th scope="col">Tokens / solved</th>
+                <th scope="col">Failed / run</th>
+                <th scope="col">NT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight-row"><th scope="row">Auto SKILL.md</th><td>5/6</td><td>2.00</td><td>56,867</td><td>0.83</td><td>1</td></tr>
+              <tr><th scope="row">Generic checklist</th><td>5/6</td><td>2.00</td><td>71,694</td><td>1.33</td><td>0</td></tr>
+              <tr><th scope="row">Reflexion memory</th><td>5/6</td><td>2.60</td><td>65,915</td><td>1.33</td><td>0</td></tr>
+              <tr><th scope="row">Length-matched Reflexion</th><td>4/6</td><td>2.75</td><td>75,231</td><td>1.50</td><td>0</td></tr>
+              <tr><th scope="row">No memory</th><td>4/6</td><td>3.00</td><td>92,031</td><td>1.17</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="data-note">NT is the number of runs labeled with memory-attributed negative transfer.</p>
+
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <p class="card-label">Paired task comparison</p>
+            <h3>Reflection baselines show a process gap</h3>
+            <p>
+              On four common-solved tasks, Auto-minus-Reflexion mean token use is
+              <strong>-22.8k</strong>; against length-matched Reflexion it is
+              <strong>-27.3k</strong>. Both comparisons record one fewer cycle on average.
+            </p>
+          </article>
+          <article class="evidence-card caution-card">
+            <p class="card-label">Human checklist control</p>
+            <h3>The strongest interpretation remains cautious</h3>
+            <p>
+              Auto and the checklist tie in success and cycles. Their paired token interval
+              crosses zero, so the pilot does not establish a stable advantage over competent
+              human-written procedure.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="negative-transfer">
+      <div class="container negative-grid">
+        <div>
+          <p class="section-kicker section-kicker-light">Failure is part of the measurement</p>
+          <h2>One memory-guided patch made the test suite worse.</h2>
+          <p>
+            On <code>black_132</code>, the first skill-guided patch increased full-suite failures
+            from four to six. The trajectory is retained as diagnostic evidence instead of being
+            hidden inside an aggregate solve rate.
+          </p>
+        </div>
+        <div class="failure-card" aria-label="Negative transfer example">
+          <div class="failure-head"><span>black_132</span><span>negative transfer</span></div>
+          <div class="failure-counts">
+            <div><small>before patch</small><strong>4</strong><span>failing tests</span></div>
+            <div class="failure-arrow" aria-hidden="true">-&gt;</div>
+            <div><small>after patch</small><strong>6</strong><span>failing tests</span></div>
+          </div>
+          <p>Memory should be evaluated for misapplication, not only retrieval and success.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="robustness">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Robustness and boundaries</p>
+            <h2>Useful signals, deliberately narrow claims</h2>
+          </div>
+          <p>
+            Task-level intervals and sensitivity checks expose how much the conclusion depends
+            on a small sample and a few expensive runs.
+          </p>
+        </div>
+        <div class="robustness-grid">
+          <article>
+            <span class="mini-tag">Uncertainty</span>
+            <h3>Wide solve-rate intervals</h3>
+            <p>Wilson 95% intervals are 0.44-0.97 for 5/6 and 0.30-0.90 for 4/6.</p>
+          </article>
+          <article>
+            <span class="mini-tag">Sensitivity</span>
+            <h3>Token means are fragile</h3>
+            <p>Auto's solve-conditional median is 52.6k; its leave-one-task-out mean spans 48.0-62.7k.</p>
+          </article>
+          <article>
+            <span class="mini-tag">Structure control</span>
+            <h3>Organization is not required for solving</h3>
+            <p>Auto and format-shuffled skills both solve 6/6 under the supplementary same-model rerun.</p>
+          </article>
+        </div>
+
+        <figure class="figure-panel compact-figure">
+          <img src="static/images/process-efficiency.svg" alt="Scatter plot comparing diagnosis-edit-test cycles and tokens per solved task">
+          <figcaption>
+            Lower-left indicates greater observed process efficiency. Marker size encodes solve rate.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section-tinted" id="limits">
+      <div class="container">
+        <p class="section-kicker">What this paper does not claim</p>
+        <h2 class="display-heading limits-heading">This is a protocol and pilot, not a universal ranking of memory methods.</h2>
+        <div class="limits-grid">
+          <div><strong>Six tasks</strong><p>The primary sample is intentionally small.</p></div>
+          <div><strong>One execution</strong><p>Intervals describe task variation, not run-to-run stochasticity.</p></div>
+          <div><strong>One bug family</strong><p>Within-family transfer may not generalize to repository-wide benchmarks.</p></div>
+          <div><strong>One annotator</strong><p>The negative-transfer label has no independent inter-rater check.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="abstract">
+      <div class="container narrow-container">
+        <p class="section-kicker">Abstract</p>
+        <h2>The paper in one paragraph</h2>
+        <p class="abstract-text">
+          We study whether a natural-language <code>SKILL.md</code> induced from three debugging
+          trajectories transfers to held-out language-agent debugging tasks. Our protocol records
+          repair success, diagnosis-edit-test cycles, tokens, failed patches, and memory-attributed
+          negative transfer. In a single-execution pilot on six verified PyBugHive <code>black</code>
+          tasks, Auto SKILL.md ties a generic checklist and Reflexion at 5/6 solved. Task-level
+          comparisons show lower process cost than reflection baselines but do not establish a
+          stable advantage over the checklist. One negative-transfer case and an outlier-sensitive
+          structural control illustrate why memory evaluation needs uncertainty, process, and
+          misapplication measures rather than solve rate alone.
+        </p>
+      </div>
+    </section>
+
+    <section class="section paper-section" id="paper">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Camera-ready paper</p>
+            <h2>Two-page extended abstract</h2>
+          </div>
+          <a class="text-link" href="static/pdfs/trace2skill-paper.pdf">Open PDF in a new tab -&gt;</a>
+        </div>
+        <object class="pdf-viewer" data="static/pdfs/trace2skill-paper.pdf" type="application/pdf">
+          <p>Your browser cannot display the embedded PDF. <a href="static/pdfs/trace2skill-paper.pdf">Download the paper.</a></p>
+        </object>
+      </div>
+    </section>
+
+    <section class="section citation-section" id="citation">
+      <div class="container narrow-container">
+        <div class="citation-heading">
+          <div>
+            <p class="section-kicker">Citation</p>
+            <h2>Cite Trace2Skill</h2>
+          </div>
+          <button class="copy-button" type="button" data-copy-target="bibtex-code">
+            <span class="copy-label">Copy BibTeX</span>
+          </button>
+        </div>
+        <pre id="bibtex-code"><code>@inproceedings{sun2026trace2skill,
+  author    = {Jiachen Sun},
+  title     = {Evaluating Low-Shot Procedural Skill Transfer in
+               Language-Agent Debugging},
+  booktitle = {Proceedings of the 1st International Workshop on Agentic AI
+               for Next-Generation Software Development},
+  year      = {2026},
+  publisher = {Association for Computing Machinery},
+  doi       = {10.1145/3843282.3844421},
+  url       = {https://doi.org/10.1145/3843282.3844421}
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <a class="wordmark footer-wordmark" href="#top"><span class="wordmark-mark">T2S</span><span>Trace2Skill</span></a>
+        <p>Low-shot procedural skill transfer for language-agent debugging.</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/damogu123/trace2skill">GitHub</a>
+        <a href="https://doi.org/10.1145/3843282.3844421">DOI</a>
+        <a href="static/pdfs/trace2skill-paper.pdf">Paper</a>
+      </div>
+      <p class="attribution">
+        Page design adapted from the
+        <a href="https://github.com/eliahuhorwitz/Academic-project-page-template">Academic Project Page Template</a>
+        under CC BY-SA 4.0. Paper content is CC BY 4.0.
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

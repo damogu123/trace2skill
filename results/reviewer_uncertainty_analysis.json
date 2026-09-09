@@ -1,0 +1,229 @@
+{
+  "scope_note": "Task-level descriptive uncertainty only; one execution per task/method means run-to-run variance is not estimable.",
+  "primary": {
+    "solve_rate_wilson_intervals": {
+      "auto_skill": {
+        "solved": 5,
+        "tasks": 6,
+        "rate": 0.8333333333333334,
+        "wilson_95": [
+          0.4364971778135299,
+          0.9699466302516934
+        ]
+      },
+      "generic_checklist": {
+        "solved": 5,
+        "tasks": 6,
+        "rate": 0.8333333333333334,
+        "wilson_95": [
+          0.4364971778135299,
+          0.9699466302516934
+        ]
+      },
+      "length_matched_reflexion": {
+        "solved": 4,
+        "tasks": 6,
+        "rate": 0.6666666666666666,
+        "wilson_95": [
+          0.2999933151383921,
+          0.9032285888942196
+        ]
+      },
+      "no_memory": {
+        "solved": 4,
+        "tasks": 6,
+        "rate": 0.6666666666666666,
+        "wilson_95": [
+          0.2999933151383921,
+          0.9032285888942196
+        ]
+      },
+      "reflexion": {
+        "solved": 5,
+        "tasks": 6,
+        "rate": 0.8333333333333334,
+        "wilson_95": [
+          0.4364971778135299,
+          0.9699466302516934
+        ]
+      }
+    },
+    "solve_conditional_token_sensitivity": {
+      "auto_skill": {
+        "mean": 56866.8,
+        "median": 52645.0,
+        "leave_one_out_mean_range": [
+          47973.75,
+          62676.25
+        ]
+      },
+      "generic_checklist": {
+        "mean": 71694.4,
+        "median": 55994.0,
+        "leave_one_out_mean_range": [
+          59790.25,
+          78195.0
+        ]
+      },
+      "length_matched_reflexion": {
+        "mean": 75231.25,
+        "median": 75249.0,
+        "leave_one_out_mean_range": [
+          67633.33333333333,
+          82841.0
+        ]
+      },
+      "no_memory": {
+        "mean": 92030.75,
+        "median": 85285.5,
+        "leave_one_out_mean_range": [
+          78328.66666666667,
+          101236.0
+        ]
+      },
+      "reflexion": {
+        "mean": 65914.6,
+        "median": 68543.0,
+        "leave_one_out_mean_range": [
+          59916.25,
+          70801.5
+        ]
+      }
+    },
+    "paired_common_solved": {
+      "generic_checklist": {
+        "tasks": [
+          "pybughive_black_133",
+          "pybughive_black_154",
+          "pybughive_black_183",
+          "pybughive_black_232"
+        ],
+        "n": 4,
+        "auto_minus_baseline_cycles_mean": 0.0,
+        "cycles_bootstrap_95": [
+          -0.75,
+          0.75
+        ],
+        "cycles_leave_one_out_mean_range": [
+          -0.3333333333333333,
+          0.3333333333333333
+        ],
+        "auto_minus_baseline_tokens_mean": -11816.5,
+        "tokens_bootstrap_95": [
+          -30265.5,
+          7078.5
+        ],
+        "tokens_leave_one_out_mean_range": [
+          -20286.0,
+          -3644.3333333333335
+        ]
+      },
+      "reflexion": {
+        "tasks": [
+          "pybughive_black_133",
+          "pybughive_black_154",
+          "pybughive_black_183",
+          "pybughive_black_232"
+        ],
+        "n": 4,
+        "auto_minus_baseline_cycles_mean": -1.0,
+        "cycles_bootstrap_95": [
+          -2.0,
+          0.25
+        ],
+        "cycles_leave_one_out_mean_range": [
+          -1.6666666666666667,
+          -0.6666666666666666
+        ],
+        "auto_minus_baseline_tokens_mean": -22827.75,
+        "tokens_bootstrap_95": [
+          -44393.5,
+          -1262.0
+        ],
+        "tokens_leave_one_out_mean_range": [
+          -30150.0,
+          -11677.333333333334
+        ]
+      },
+      "length_matched_reflexion": {
+        "tasks": [
+          "pybughive_black_133",
+          "pybughive_black_154",
+          "pybughive_black_183",
+          "pybughive_black_232"
+        ],
+        "n": 4,
+        "auto_minus_baseline_cycles_mean": -1.0,
+        "cycles_bootstrap_95": [
+          -1.75,
+          -0.25
+        ],
+        "cycles_leave_one_out_mean_range": [
+          -1.3333333333333333,
+          -0.6666666666666666
+        ],
+        "auto_minus_baseline_tokens_mean": -27257.5,
+        "tokens_bootstrap_95": [
+          -41409.0,
+          -13106.0
+        ],
+        "tokens_leave_one_out_mean_range": [
+          -33863.666666666664,
+          -21216.666666666668
+        ]
+      },
+      "no_memory": {
+        "tasks": [
+          "pybughive_black_154",
+          "pybughive_black_183",
+          "pybughive_black_232"
+        ],
+        "n": 3,
+        "auto_minus_baseline_cycles_mean": -1.0,
+        "cycles_bootstrap_95": [
+          -1.7833333333333334,
+          -0.21666666666666737
+        ],
+        "cycles_leave_one_out_mean_range": [
+          -1.5,
+          -0.5
+        ],
+        "auto_minus_baseline_tokens_mean": -25573.333333333332,
+        "tokens_bootstrap_95": [
+          -47137.183333333334,
+          -2453.500000000025
+        ],
+        "tokens_leave_one_out_mean_range": [
+          -40945.5,
+          -12424.0
+        ]
+      }
+    }
+  },
+  "structural_control_gpt55": {
+    "auto_skill": {
+      "tokens_mean": 111978.33333333333,
+      "tokens_median": 86435.5,
+      "tokens_leave_one_out_mean_range": [
+        82638.8,
+        122784.6
+      ],
+      "cycles_mean": 1.6666666666666667,
+      "cycles_median": 2.0
+    },
+    "format_shuffled_skill": {
+      "tokens_mean": 102005.83333333333,
+      "tokens_median": 86502.0,
+      "tokens_leave_one_out_mean_range": [
+        85556.0,
+        110710.4
+      ],
+      "cycles_mean": 2.1666666666666665,
+      "cycles_median": 2.0
+    },
+    "without_black_193_tokens_mean": {
+      "auto_skill": 82638.8,
+      "format_shuffled_skill": 85556.0
+    }
+  }
+}

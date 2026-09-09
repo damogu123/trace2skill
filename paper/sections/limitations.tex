@@ -4,14 +4,23 @@
 \subsection{Scale and experimental controls}
 
 The primary analysis contains six held-out tasks and one execution seed.
-Accordingly, we report exact outcomes and descriptive process measures rather
-than statistical significance. The seventh verified task is model-mixed, and
-the \texttt{gpt-5.5} structural control covers only Auto SKILL.md and its
+Accordingly, we report exact outcomes, Wilson solve-rate intervals, exploratory
+task-resampling intervals, and sensitivity summaries rather than statistical
+significance. These quantify variation across the selected tasks, not
+run-to-run stochasticity. The seventh verified task is model-mixed, and the
+\texttt{gpt-5.5} structural control covers only Auto SKILL.md and its
 format-shuffled variant. A larger study should rerun every method under one
 model, repeat agent and induction seeds, vary the $K=3$ training set, and
-report paired uncertainty estimates. Raw-trajectory retrieval and a
+estimate paired execution-level uncertainty. Raw-trajectory retrieval and a
 human-authored oracle skill are also needed to separate procedural compression
 from direct experience access and induction quality.
+
+The human-written generic checklist is a strong unresolved control. It ties
+Auto SKILL.md on solve rate and cycles, and the paired token interval crosses
+zero. Although the induced artifact contains more explicit applicability
+boundaries and failure classification, this pilot cannot show that those
+elements encode knowledge unavailable to a competent human author. Larger
+content and section ablations are required before making that claim.
 
 \subsection{Benchmark and executor scope}
 
@@ -27,9 +36,10 @@ frameworks and model families.
 
 \subsection{Measurement validity}
 
-Negative-transfer labels currently follow a predefined taxonomy but were not
-independently assigned by multiple annotators. Future studies should use at
-least two annotators, report agreement, and separate uncertain cases. Trace
+Negative-transfer labels currently follow a predefined taxonomy but were
+assigned by one annotator and were not independently adjudicated. Future
+studies should use at least two annotators, report agreement, and separate
+uncertain cases. Trace
 records are also best-effort summaries: the harness validates schemas and
 reruns tests, but a recorded cycle may contain substantial internal search.
 Cycles should therefore be interpreted together with tokens, tool activity,

@@ -1,0 +1,196 @@
+\documentclass[sigconf,screen,pbalance]{acmart}
+
+\usepackage{booktabs}
+\usepackage{microtype}
+\setlength{\emergencystretch}{1em}
+
+\setcopyright{cc}
+\setcctype{by}
+\acmDOI{10.1145/3843282.3844421}
+\acmYear{2026}
+\copyrightyear{2026}
+\acmISBN{979-8-4007-2985-0/2026/10}
+\acmConference[AgenticDev '26]{Proceedings of the 1st International Workshop on Agentic AI for Next-Generation Software Development}{October 12--16, 2026}{Munich, Germany}
+\acmBooktitle{Proceedings of the 1st International Workshop on Agentic AI for Next-Generation Software Development (AgenticDev '26), October 12--16, 2026, Munich, Germany}
+\acmSubmissionID{asews26agenticdevmain-p12-p}
+\received{2026-07-10}
+\received[accepted]{2026-08-20}
+
+\begin{document}
+
+\shrinkLastPage{75pt}
+\balancePageNum{2}
+
+\title{Evaluating Low-Shot Procedural Skill Transfer in Language-Agent
+Debugging}
+
+\author{Jiachen Sun}
+\correspondingauthor
+\orcid{0009-0004-8354-3728}
+\affiliation{%
+  \institution{ShanghaiTech University}
+  \city{Shanghai}
+  \country{China}
+}
+\email{13673527519sjc@gmail.com}
+
+\begin{abstract}
+We study whether a natural-language \texttt{SKILL.md} induced from three
+debugging trajectories transfers to held-out language-agent debugging tasks.
+Our protocol records repair success, diagnosis-edit-test cycles, tokens,
+failed patches, and memory-attributed negative transfer. In a single-execution
+pilot on six verified PyBugHive \texttt{black} tasks, Auto SKILL.md ties a
+generic checklist and Reflexion at 5/6 solved. Task-level comparisons show
+lower process cost than reflection baselines but do not establish a stable
+advantage over the checklist. One negative-transfer case and an outlier-sensitive
+structural control illustrate why memory evaluation needs uncertainty,
+process, and misapplication measures rather than solve rate alone.
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
+       <concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+   <concept>
+       <concept_id>10010147.10010178.10010219.10010221</concept_id>
+       <concept_desc>Computing methodologies~Intelligent agents</concept_desc>
+       <concept_significance>300</concept_significance>
+   </concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+\ccsdesc[300]{Computing methodologies~Intelligent agents}
+
+\keywords{language agents, software debugging, procedural memory, skill
+induction, negative transfer}
+
+\maketitle
+
+\section{Motivation and Protocol}
+Language-agent memory ranges from verbal reflection to distilled guidelines,
+workflows, and procedural repositories
+\cite{shinn2023reflexion,zhao2024expel,wang2025workflowmemory,fang2026memp}.
+In debugging, however, experience can accelerate a related repair or misdirect
+the agent toward an adjacent invariant. We therefore evaluate not only whether
+a memory solves a task, but also how it changes repair cost and whether the
+trajectory supports memory-attributed negative transfer. This complements
+recent work that reports steps or token cost and observes harm from noisy
+memory \cite{ouyang2026reasoningbank}.
+
+We induce one fixed artifact from $K=3$ redacted training trajectories. The
+induction contract forbids task-specific names and patches and requires three
+parts: applicability triggers, an ordered debugging procedure, and failure
+modes. The artifact is deployed unchanged on held-out tasks. Five primary
+conditions share the same model, task prompts, isolated workspaces, tests,
+temperature, and budgets: Auto SKILL.md, a human-written generic checklist,
+Reflexion, length-matched Reflexion, and no memory. The checklist already
+contains reproduction, localization, minimal editing, and broad validation;
+Auto SKILL.md additionally encodes applicability exclusions, expected-versus-
+actual invariant compression, and failed-rerun classification.
+
+We evaluate six reproducible PyBugHive \texttt{black} formatter bugs
+\cite{antal2024pybughive}. Each task/method pair has one execution. Metrics are
+computed from validated trajectories and test reruns. Negative transfer follows
+a predefined taxonomy but was assigned by one annotator. For task-level
+uncertainty, we use Wilson intervals for solve proportions, paired
+task-resampling bootstrap intervals on common-solved tasks, medians, and
+leave-one-task-out sensitivity. These do not estimate run-to-run variance.
+
+\begin{table*}[t]
+\centering
+\caption{Primary same-model pilot. Tokens are solve-conditional means. NT is
+the number of memory-attributed negative-transfer flags.}
+\label{tab:poster_primary}
+\begin{tabular}{lrrrr@{\hspace{1.2em}}r}
+\toprule
+Method & Solved & Cycles/solved & Tokens/solved & Failed/run & NT \\
+\midrule
+Auto SKILL.md & 5/6 & 2.00 & 56,867 & 0.83 & 1 \\
+Generic checklist & 5/6 & 2.00 & 71,694 & 1.33 & 0 \\
+Reflexion memory & 5/6 & 2.60 & 65,915 & 1.33 & 0 \\
+Length-matched Reflexion & 4/6 & 2.75 & 75,231 & 1.50 & 0 \\
+No memory & 4/6 & 3.00 & 92,031 & 1.17 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\section{Results and Robustness}
+Table~\ref{tab:poster_primary} shows no solve-rate dominance: Auto SKILL.md,
+the checklist, and Reflexion each solve 5/6. Wilson 95\% intervals are
+0.44--0.97 for 5/6 and 0.30--0.90 for 4/6. On four common-solved tasks,
+Auto-minus-baseline mean token differences are $-22.8$k for Reflexion,
+$-27.3$k for length-matched Reflexion, and $-11.8$k for the checklist.
+Exploratory task-bootstrap intervals are $-44.4$ to $-1.3$k, $-41.4$ to
+$-13.1$k, and $-30.3$ to 7.1k, respectively. Cycle differences are $-1.00$,
+$-1.00$, and 0.00; the checklist interval ($-0.75$ to 0.75) again shows no
+separation. Thus the pilot differentiates Auto SKILL.md more clearly from
+reflection memories than from competent human-written advice.
+
+The Auto SKILL.md token median is 52.6k, compared with 56.0k for the checklist
+and 68.5k for Reflexion; its leave-one-solved-task-out mean spans 48.0--62.7k.
+One Auto run on \texttt{black\_132} is labeled negative transfer: the first
+skill-guided patch increased full-suite failures from four to six. This label
+is useful diagnostic evidence, not a population-rate estimate.
+
+A supplementary \texttt{gpt-5.5} structure control preserves skill content
+but shuffles its organization. Both versions solve 6/6; Auto SKILL.md uses
+fewer cycles (1.67 vs. 2.17) and failed patches (0.50 vs. 0.83). Mean tokens
+favor shuffled content (102.0k vs. 112.0k), but medians are nearly identical
+(86.5k vs. 86.4k), and excluding one outlier reverses the mean ordering. The
+control therefore suggests process differences without showing that the
+canonical structure is necessary for solvability.
+
+\section{Interpretation and Threats}
+The induced artifact is inspectable: relative to the checklist, it makes
+applicability boundaries, invariant compression, and failed-rerun categories
+explicit. Yet these differences are not equivalent to demonstrated new
+knowledge. The tie in solve rate and cycles, together with a checklist token
+interval that crosses zero, leaves open whether trajectory induction adds more
+than competent human-written procedure. Content-matched section ablations are
+needed to identify causal components.
+
+The evidence also has three direct validity limits. First, six selected tasks
+and one execution per condition cannot characterize stochastic agent behavior;
+our intervals describe task variation only. Second, all primary tasks come
+from one formatter project, so within-family transfer may not extend to
+repository-wide debugging benchmarks such as SWE-bench
+\cite{jimenez2024swebench,yang2024sweagent}. Third, cycle records compress
+internal search, token means are outlier-sensitive, and one annotator assigned
+negative transfer. Repeated seeds, direct tool instrumentation, and independent
+annotation are prerequisites for stronger performance claims.
+
+\section{Conclusion}
+The main contribution is an inspectable protocol for evaluating low-shot
+procedural-memory transfer, including process cost and misapplication. The
+pilot provides initial process evidence but does not establish stable
+superiority. Code, artifacts, and validated trajectories are available at
+\url{https://github.com/damogu123/trace2skill}.
+
+\begin{figure}[b]
+\centering
+\begin{minipage}{.96\columnwidth}
+\centering
+\textbf{3 redacted debugging trajectories}\\[2pt]
+$\Downarrow$ trajectory-to-skill induction\\[2pt]
+\textbf{SKILL.md}: triggers $\mid$ ordered procedure $\mid$ failure modes\\[2pt]
+$\Downarrow$ fixed deployment\\[2pt]
+\textbf{6 held-out bugs} under one harness\\
+Controls: checklist $\mid$ Reflexion $\mid$ length-matched $\mid$ no memory\\
+Measures: solve $\mid$ cycles/tokens $\mid$ failed patches $\mid$ negative transfer
+\end{minipage}
+\Description{Three redacted debugging trajectories are compressed into a
+SKILL.md containing triggers, an ordered procedure, and failure modes. The
+fixed artifact and four controls are evaluated on six held-out bugs using
+success, efficiency, failed-patch, and negative-transfer metrics.}
+\caption{Low-shot procedural-memory induction and held-out evaluation.}
+\label{fig:poster_protocol}
+\end{figure}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

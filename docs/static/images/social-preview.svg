@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Trace2Skill</title>
+  <desc id="desc">Low-shot procedural skill transfer for language-agent debugging</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="0.62" stop-color="#111d33"/>
+      <stop offset="1" stop-color="#0a2a36"/>
+    </linearGradient>
+    <linearGradient id="skill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1463ff" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#4ed7d0" stop-opacity="0.22"/>
+    </linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M 42 0 L 0 0 0 42" fill="none" stroke="#ffffff" stroke-opacity="0.045" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <circle cx="1050" cy="60" r="250" fill="#4ed7d0" opacity="0.08"/>
+  <circle cx="100" cy="650" r="260" fill="#1463ff" opacity="0.11"/>
+
+  <g transform="translate(72 70)">
+    <rect width="62" height="62" rx="17" fill="#4ed7d0"/>
+    <text x="31" y="39" text-anchor="middle" fill="#0b1220" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800">T2S</text>
+    <text x="82" y="41" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="750">Trace2Skill</text>
+  </g>
+
+  <text x="72" y="218" fill="#a9f6ea" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="2">AGENTICDEV '26 POSTER</text>
+  <text x="72" y="282" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="760">Low-Shot Procedural Skill Transfer</text>
+  <text x="72" y="342" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="760">for Language-Agent Debugging</text>
+  <text x="72" y="398" fill="#b9c8dc" font-family="Arial, Helvetica, sans-serif" font-size="24">Three trajectories. One inspectable SKILL.md. Six held-out repairs.</text>
+
+  <g transform="translate(72 470)" font-family="Arial, Helvetica, sans-serif">
+    <g>
+      <rect width="236" height="88" rx="16" fill="#17243a" stroke="#34445d"/>
+      <text x="118" y="38" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="700">3 trajectories</text>
+      <text x="118" y="64" text-anchor="middle" fill="#91a3bc" font-size="15">low-shot experience</text>
+    </g>
+    <path d="M256 44 H318" stroke="#4ed7d0" stroke-width="4" stroke-linecap="round"/>
+    <path d="M308 34 L322 44 L308 54" fill="none" stroke="#4ed7d0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(340)">
+      <rect width="286" height="88" rx="16" fill="url(#skill)" stroke="#4ed7d0" stroke-opacity="0.72"/>
+      <text x="143" y="38" text-anchor="middle" fill="#ffffff" font-family="Consolas, monospace" font-size="22" font-weight="700">SKILL.md</text>
+      <text x="143" y="64" text-anchor="middle" fill="#a9f6ea" font-size="15">triggers | procedure | failures</text>
+    </g>
+    <path d="M646 44 H708" stroke="#4ed7d0" stroke-width="4" stroke-linecap="round"/>
+    <path d="M698 34 L712 44 L698 54" fill="none" stroke="#4ed7d0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(730)">
+      <rect width="250" height="88" rx="16" fill="#17243a" stroke="#34445d"/>
+      <text x="125" y="38" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="700">6 held-out bugs</text>
+      <text x="125" y="64" text-anchor="middle" fill="#91a3bc" font-size="15">success, cost, transfer</text>
+    </g>
+  </g>
+</svg>
