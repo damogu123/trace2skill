@@ -23,7 +23,8 @@ py scripts\validate_trajectory.py trajectories
 py scripts\validate_run_manifest.py manifests
 py scripts\validate_task.py task_sets\primary_first6
 py scripts\validate_trajectory.py trajectory_sets\primary_first6
-py scripts\validate_run_manifest.py manifests
+py scripts\validate_trajectory.py trajectory_sets\structural_control_gpt55
+py scripts\validate_artifact_inventory.py .
 ```
 
 Recompute the main first-six aggregate:

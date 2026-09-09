@@ -1,0 +1,47 @@
+name: Validate repository
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile repository scripts
+        run: python -m compileall -q scripts
+
+      - name: Validate top-level records
+        run: |
+          python scripts/validate_task.py tasks
+          python scripts/validate_trajectory.py trajectories
+          python scripts/validate_run_manifest.py manifests
+
+      - name: Validate curated artifact
+        run: |
+          python scripts/validate_task.py artifact_agenticdev2026/tasks
+          python scripts/validate_trajectory.py artifact_agenticdev2026/trajectory_sets/primary_first6
+          python scripts/validate_trajectory.py artifact_agenticdev2026/trajectory_sets/structural_control_gpt55
+          python scripts/validate_run_manifest.py artifact_agenticdev2026/manifests
+          python scripts/validate_artifact_inventory.py artifact_agenticdev2026
+
+      - name: Validate project page
+        run: python scripts/validate_project_page.py docs
+
+      - name: Verify generated analyses are current
+        run: |
+          python scripts/make_paper_results.py
+          python scripts/analyze_review_uncertainty.py
+          git diff --exit-code -- paper results/reviewer_uncertainty_analysis.json

@@ -794,3 +794,37 @@ Updated on September 9, 2026.
   `docs/PROJECT_PAGE_LICENSE.md` and the page footer.
 - Publish with GitHub Pages from the default branch's `/docs` folder. The
   expected public URL is `https://damogu123.github.io/trace2skill/`.
+
+## GitHub Repository Audit
+
+Updated on September 9, 2026.
+
+- The public repository is `https://github.com/damogu123/trace2skill`, and the
+  project page is `https://damogu123.github.io/trace2skill/`.
+- The root `README.md` is now the Chinese project overview. It documents the
+  research design, exact primary and structural-control results, validation and
+  recomputation commands, limitations, licenses, DOI, and citation entry.
+- A release-ready `CITATION.cff` was added and validated against CFF schema
+  version 1.2.0. It identifies the repository as software and the AgenticDev
+  extended abstract as the preferred citation.
+- GitHub Actions validation is defined in `.github/workflows/validate.yml`.
+  It compiles the scripts, validates top-level and packaged records, verifies
+  the artifact inventory and project page, and checks that generated result
+  files are reproducible.
+- `scripts/validate_artifact_inventory.py` verifies every listed file's path,
+  size, and SHA-256 digest and detects unlisted files.
+- `scripts/validate_project_page.py` checks local resources, fragment targets,
+  duplicate IDs, JSON-LD, SVG XML, the linked PDF header, and the Chinese HTML
+  language declaration.
+- A packaging bug was fixed in `scripts/create_agenticdev_artifact.py`: the
+  nested artifact `.gitignore` no longer excludes the 50 prompt files under
+  `artifact_agenticdev2026/prompts/runs/`. The regenerated inventory contains
+  495 entries and passes complete hash verification.
+- When the space-heavy local `runs/` directory is absent, the same generator
+  now preserves the previously verified 11-row raw-run size inventory instead
+  of replacing it with an empty table.
+- `scripts/make_paper_results.py` now preserves the camera-ready primary table's
+  top-of-page placement (`[t]`) when results are regenerated.
+- The audit did not create new empirical evidence. Multi-seed runs,
+  cross-project evaluation, broader bug families, and a second annotator remain
+  future work rather than repository omissions.

@@ -136,29 +136,41 @@ def should_skip(path: Path) -> bool:
 
 
 def sanitize_text(text: str) -> str:
-    wsl_root = ""
-    root_posix = ROOT.as_posix()
-    if len(root_posix) >= 2 and root_posix[1] == ":":
-        drive = root_posix[0].lower()
-        wsl_root = f"/mnt/{drive}{root_posix[2:]}"
-
     local_python = Path.home() / "AppData" / "Local" / "Python"
     local_programs_python = Path.home() / "AppData" / "Local" / "Programs" / "Python"
 
     replacements = {
-        str(ROOT): "<PROJECT_ROOT>",
-        str(ROOT).replace("\\", "\\\\"): "<PROJECT_ROOT>",
-        root_posix: "<PROJECT_ROOT>",
         str(local_python): "<LOCAL_PYTHON>",
         str(local_python).replace("\\", "\\\\"): "<LOCAL_PYTHON>",
         str(local_programs_python): "<LOCAL_PYTHON>",
         str(local_programs_python).replace("\\", "\\\\"): "<LOCAL_PYTHON>",
     }
-    if wsl_root:
-        replacements[wsl_root] = "<PROJECT_ROOT>"
+
+    # Some runs predate the move from the parent Project directory into the
+    # trace2skill directory, so both historical roots must be sanitized.
+    project_roots = [ROOT]
+    if ROOT.name.casefold() == "trace2skill":
+        project_roots.append(ROOT.parent)
+    for project_root in project_roots:
+        root_posix = project_root.as_posix()
+        replacements[str(project_root)] = "<PROJECT_ROOT>"
+        replacements[str(project_root).replace("\\", "\\\\")] = "<PROJECT_ROOT>"
+        replacements[root_posix] = "<PROJECT_ROOT>"
+        if len(root_posix) >= 2 and root_posix[1] == ":":
+            replacements[f"/mnt/{root_posix[0].lower()}{root_posix[2:]}"] = "<PROJECT_ROOT>"
+
     for old, new in replacements.items():
         text = text.replace(old, new)
     return text
+
+
+def artifact_gitignore_text() -> str:
+    text = (ROOT / ".gitignore").read_text(encoding="utf-8-sig")
+    old = "# Generated prompt/run scratch space\n/prompts/runs/\n"
+    new = "# Generated run prompts are evidence and are tracked in this artifact.\n"
+    if old not in text:
+        raise ValueError("Expected /prompts/runs/ rule was not found in the root .gitignore")
+    return text.replace(old, new)
 
 
 def copy_file(source: Path, destination: Path) -> bool:
@@ -261,10 +273,14 @@ def write_text_file(path: Path, text: str) -> None:
     path.write_text(text.strip() + "\n", encoding="utf-8", newline="\n")
 
 
-def raw_runs_inventory() -> str:
+def raw_runs_inventory(previous_inventory: str | None = None) -> str:
     rows = ["run_dir\tfiles\tbytes\tincluded_in_artifact"]
     runs_dir = ROOT / "runs"
     if not runs_dir.exists():
+        if previous_inventory:
+            previous_lines = previous_inventory.strip().splitlines()
+            if previous_lines and previous_lines[0] == rows[0]:
+                return "\n".join(previous_lines)
         return "\n".join(rows)
     for child in sorted(runs_dir.iterdir()):
         if not child.is_dir():
@@ -313,7 +329,8 @@ py scripts\\validate_trajectory.py trajectories
 py scripts\\validate_run_manifest.py manifests
 py scripts\\validate_task.py task_sets\\primary_first6
 py scripts\\validate_trajectory.py trajectory_sets\\primary_first6
-py scripts\\validate_run_manifest.py manifests
+py scripts\\validate_trajectory.py trajectory_sets\\structural_control_gpt55
+py scripts\\validate_artifact_inventory.py .
 ```
 
 Recompute the main first-six aggregate:
@@ -364,6 +381,9 @@ additional path configuration:
 py scripts\\validate_task.py tasks
 py scripts\\validate_trajectory.py trajectories
 py scripts\\validate_run_manifest.py manifests
+py scripts\\validate_trajectory.py trajectory_sets\\primary_first6
+py scripts\\validate_trajectory.py trajectory_sets\\structural_control_gpt55
+py scripts\\validate_artifact_inventory.py .
 ```
 
 ## Metrics
@@ -444,6 +464,11 @@ def build_artifact(output: Path, force: bool) -> dict[str, int]:
     output = output.resolve()
     ensure_within(ROOT, output)
 
+    previous_raw_runs_inventory = None
+    inventory_path = output / "process" / "raw_runs_inventory.tsv"
+    if inventory_path.is_file():
+        previous_raw_runs_inventory = inventory_path.read_text(encoding="utf-8")
+
     if output.exists():
         if not force:
             raise FileExistsError(f"{output} exists; pass --force to recreate it")
@@ -453,9 +478,11 @@ def build_artifact(output: Path, force: bool) -> dict[str, int]:
     copied = 0
     skipped = 0
 
-    for root_file in [".gitattributes", ".gitignore", "requirements.txt"]:
+    for root_file in [".gitattributes", "requirements.txt"]:
         if copy_file(ROOT / root_file, output / root_file):
             copied += 1
+    write_text_file(output / ".gitignore", artifact_gitignore_text())
+    copied += 1
 
     for source_name in ["scripts", "schemas", "annotation", "baselines"]:
         c, s = copy_tree(ROOT / source_name, output / source_name)
@@ -597,7 +624,10 @@ def build_artifact(output: Path, force: bool) -> dict[str, int]:
     write_text_file(output / "README.md", readme_text())
     write_text_file(output / "REPRODUCE.md", reproduce_text())
     write_text_file(output / "DATA_SELECTION.md", selection_text())
-    write_text_file(output / "process" / "raw_runs_inventory.tsv", raw_runs_inventory())
+    write_text_file(
+        output / "process" / "raw_runs_inventory.tsv",
+        raw_runs_inventory(previous_raw_runs_inventory),
+    )
     write_text_file(output / "FILE_INVENTORY.tsv", file_inventory(output))
 
     return {"copied_files": copied, "skipped_files": skipped}

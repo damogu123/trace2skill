@@ -10,8 +10,12 @@ DEFAULT_OUTPUT = ROOT / "github_export"
 
 TEXT_SUFFIXES = {
     ".bib",
+    ".cff",
     ".csv",
+    ".css",
+    ".html",
     ".json",
+    ".js",
     ".md",
     ".patch",
     ".py",
@@ -27,12 +31,14 @@ TEXT_SUFFIXES = {
 ROOT_FILES = [
     ".gitattributes",
     ".gitignore",
+    "CITATION.cff",
     "README.md",
     "requirements.txt",
     "SESSION_HANDOFF.md",
 ]
 
 ROOT_DIRS = [
+    ".github",
     "annotation",
     "artifact_agenticdev2026",
     "baselines",
@@ -84,6 +90,9 @@ EXCLUDED_SUFFIXES = {
     ".xmpi",
 }
 
+PROJECT_PAGE_MEDIA_ROOT = Path("docs") / "static"
+PROJECT_PAGE_MEDIA_SUFFIXES = {".ico", ".jpeg", ".jpg", ".pdf", ".png", ".webp"}
+
 
 def normalize_relative(path: Path) -> Path:
     return Path(*path.parts)
@@ -104,6 +113,12 @@ def is_excluded_dir(relative_path: Path) -> bool:
 
 
 def is_excluded_file(relative_path: Path) -> bool:
+    normalized = normalize_relative(relative_path)
+    if (
+        PROJECT_PAGE_MEDIA_ROOT == normalized.parent
+        or PROJECT_PAGE_MEDIA_ROOT in normalized.parents
+    ) and normalized.suffix.lower() in PROJECT_PAGE_MEDIA_SUFFIXES:
+        return False
     name = relative_path.name
     if name.endswith(".synctex.gz") or name.endswith(".run.xml"):
         return True
@@ -111,25 +126,28 @@ def is_excluded_file(relative_path: Path) -> bool:
 
 
 def sanitize_text(text: str) -> str:
-    root_posix = ROOT.as_posix()
-    wsl_root = ""
-    if len(root_posix) >= 2 and root_posix[1] == ":":
-        wsl_root = f"/mnt/{root_posix[0].lower()}{root_posix[2:]}"
-
     local_python = Path.home() / "AppData" / "Local" / "Python"
     local_programs_python = Path.home() / "AppData" / "Local" / "Programs" / "Python"
 
     replacements = {
-        str(ROOT): "<PROJECT_ROOT>",
-        str(ROOT).replace("\\", "\\\\"): "<PROJECT_ROOT>",
-        root_posix: "<PROJECT_ROOT>",
         str(local_python): "<LOCAL_PYTHON>",
         str(local_python).replace("\\", "\\\\"): "<LOCAL_PYTHON>",
         str(local_programs_python): "<LOCAL_PYTHON>",
         str(local_programs_python).replace("\\", "\\\\"): "<LOCAL_PYTHON>",
     }
-    if wsl_root:
-        replacements[wsl_root] = "<PROJECT_ROOT>"
+
+    # Older trajectories were recorded before the repository moved from its
+    # parent Project directory into trace2skill. Sanitize both locations.
+    project_roots = [ROOT]
+    if ROOT.name.casefold() == "trace2skill":
+        project_roots.append(ROOT.parent)
+    for project_root in project_roots:
+        root_posix = project_root.as_posix()
+        replacements[str(project_root)] = "<PROJECT_ROOT>"
+        replacements[str(project_root).replace("\\", "\\\\")] = "<PROJECT_ROOT>"
+        replacements[root_posix] = "<PROJECT_ROOT>"
+        if len(root_posix) >= 2 and root_posix[1] == ":":
+            replacements[f"/mnt/{root_posix[0].lower()}{root_posix[2:]}"] = "<PROJECT_ROOT>"
 
     for old, new in replacements.items():
         text = text.replace(old, new)

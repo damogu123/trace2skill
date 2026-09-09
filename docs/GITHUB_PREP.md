@@ -28,9 +28,15 @@ including its camera-ready PDF and social-preview PNG.
 ## 2. Validate Structured Artifacts
 
 ```powershell
-python scripts/validate_task.py tasks
-python scripts/validate_trajectory.py trajectories
-python scripts/validate_run_manifest.py manifests
+py scripts/validate_task.py tasks
+py scripts/validate_trajectory.py trajectories
+py scripts/validate_run_manifest.py manifests
+py scripts/validate_task.py artifact_agenticdev2026/tasks
+py scripts/validate_trajectory.py artifact_agenticdev2026/trajectory_sets/primary_first6
+py scripts/validate_trajectory.py artifact_agenticdev2026/trajectory_sets/structural_control_gpt55
+py scripts/validate_run_manifest.py artifact_agenticdev2026/manifests
+py scripts/validate_artifact_inventory.py artifact_agenticdev2026
+py scripts/validate_project_page.py docs
 ```
 
 ## 3. Decide What To Release Separately
@@ -47,7 +53,8 @@ Recommended GitHub release or external archive attachments:
 Before making the repository public:
 
 - choose and add a `LICENSE`;
-- add citation metadata if desired, for example `CITATION.cff`;
+- validate the checked-in `CITATION.cff` against CFF schema 1.2.0;
+- confirm `.github/workflows/validate.yml` passes on the default branch;
 - decide whether the initial repository should be anonymous for review;
 - remove or postpone non-anonymous metadata if the venue requires double-blind
   review.
@@ -58,11 +65,16 @@ This workspace can generate `github_export/`, a clean copy that excludes large
 local artifacts. It is intended for initializing a separate Git repository:
 
 ```powershell
-python scripts/create_github_export.py --force
+py scripts/create_agenticdev_artifact.py --force
+py scripts/create_github_export.py --force
 cd github_export
 git init
 git status
 ```
+
+The export must include the 50 evidence prompts under
+`artifact_agenticdev2026/prompts/runs/`. Run the artifact-inventory validator
+again inside the generated export before committing it.
 
 If you commit from the project root instead, rely on the root `.gitignore`.
 

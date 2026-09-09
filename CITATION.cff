@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use Trace2Skill, please cite the paper below."
+title: "Trace2Skill"
+type: software
+authors:
+  - family-names: "Sun"
+    given-names: "Jiachen"
+    orcid: "https://orcid.org/0009-0004-8354-3728"
+    affiliation: "ShanghaiTech University"
+abstract: >-
+  Reproducibility artifact and evaluation harness for low-shot procedural
+  skill transfer in language-agent debugging.
+repository-code: "https://github.com/damogu123/trace2skill"
+url: "https://damogu123.github.io/trace2skill/"
+date-released: 2026-09-09
+preferred-citation:
+  type: conference-paper
+  authors:
+    - family-names: "Sun"
+      given-names: "Jiachen"
+      orcid: "https://orcid.org/0009-0004-8354-3728"
+  title: "Evaluating Low-Shot Procedural Skill Transfer in Language-Agent Debugging"
+  collection-title: "Proceedings of the 1st International Workshop on Agentic AI for Next-Generation Software Development"
+  year: 2026
+  publisher:
+    name: "Association for Computing Machinery"
+  doi: "10.1145/3843282.3844421"
+  url: "https://doi.org/10.1145/3843282.3844421"

@@ -480,10 +480,16 @@ def latex_escape(value: str) -> str:
     )
 
 
-def latex_table(headers: list[str], rows: list[list[str]], caption: str, label: str) -> str:
+def latex_table(
+    headers: list[str],
+    rows: list[list[str]],
+    caption: str,
+    label: str,
+    placement: str = "H",
+) -> str:
     col_spec = "l" + "r" * (len(headers) - 1)
     lines = [
-        "\\begin{table}[H]",
+        f"\\begin{{table}}[{placement}]",
         "\\centering",
         "\\small",
         f"\\caption{{{latex_escape(caption)}}}",
@@ -540,6 +546,7 @@ def write_main_tables(first6: list[dict[str, str]], first7: list[dict[str, str]]
             first6_rows,
             "Same-model hard-smoke results over the first six PyBugHive Black tasks.",
             "tab:hard_first6_main",
+            placement="t",
         ),
         encoding="utf-8",
     )

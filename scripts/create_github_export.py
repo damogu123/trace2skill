@@ -10,6 +10,7 @@ DEFAULT_OUTPUT = ROOT / "github_export"
 
 TEXT_SUFFIXES = {
     ".bib",
+    ".cff",
     ".csv",
     ".css",
     ".html",
@@ -30,12 +31,14 @@ TEXT_SUFFIXES = {
 ROOT_FILES = [
     ".gitattributes",
     ".gitignore",
+    "CITATION.cff",
     "README.md",
     "requirements.txt",
     "SESSION_HANDOFF.md",
 ]
 
 ROOT_DIRS = [
+    ".github",
     "annotation",
     "artifact_agenticdev2026",
     "baselines",
