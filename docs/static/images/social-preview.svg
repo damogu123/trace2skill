@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">Trace2Skill</title>
-  <desc id="desc">Low-shot procedural skill transfer for language-agent debugging</desc>
+  <desc id="desc">面向语言智能体调试的低样本程序性技能迁移</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0b1220"/>
@@ -27,30 +27,30 @@
     <text x="82" y="41" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="750">Trace2Skill</text>
   </g>
 
-  <text x="72" y="218" fill="#a9f6ea" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="2">AGENTICDEV '26 POSTER</text>
-  <text x="72" y="282" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="760">Low-Shot Procedural Skill Transfer</text>
-  <text x="72" y="342" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="760">for Language-Agent Debugging</text>
-  <text x="72" y="398" fill="#b9c8dc" font-family="Arial, Helvetica, sans-serif" font-size="24">Three trajectories. One inspectable SKILL.md. Six held-out repairs.</text>
+  <text x="72" y="218" fill="#a9f6ea" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="2">AGENTICDEV '26 海报论文</text>
+  <text x="72" y="282" fill="#ffffff" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif" font-size="52" font-weight="760">低样本程序性技能迁移评估</text>
+  <text x="72" y="342" fill="#ffffff" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif" font-size="52" font-weight="760">面向语言智能体调试</text>
+  <text x="72" y="398" fill="#b9c8dc" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif" font-size="24">三条轨迹、一份可检查的 SKILL.md、六个未见修复任务</text>
 
-  <g transform="translate(72 470)" font-family="Arial, Helvetica, sans-serif">
+  <g transform="translate(72 470)" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif">
     <g>
       <rect width="236" height="88" rx="16" fill="#17243a" stroke="#34445d"/>
-      <text x="118" y="38" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="700">3 trajectories</text>
-      <text x="118" y="64" text-anchor="middle" fill="#91a3bc" font-size="15">low-shot experience</text>
+      <text x="118" y="38" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="700">3 条轨迹</text>
+      <text x="118" y="64" text-anchor="middle" fill="#91a3bc" font-size="15">低样本经验</text>
     </g>
     <path d="M256 44 H318" stroke="#4ed7d0" stroke-width="4" stroke-linecap="round"/>
     <path d="M308 34 L322 44 L308 54" fill="none" stroke="#4ed7d0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
     <g transform="translate(340)">
       <rect width="286" height="88" rx="16" fill="url(#skill)" stroke="#4ed7d0" stroke-opacity="0.72"/>
       <text x="143" y="38" text-anchor="middle" fill="#ffffff" font-family="Consolas, monospace" font-size="22" font-weight="700">SKILL.md</text>
-      <text x="143" y="64" text-anchor="middle" fill="#a9f6ea" font-size="15">triggers | procedure | failures</text>
+      <text x="143" y="64" text-anchor="middle" fill="#a9f6ea" font-size="15">适用条件 | 操作流程 | 失败模式</text>
     </g>
     <path d="M646 44 H708" stroke="#4ed7d0" stroke-width="4" stroke-linecap="round"/>
     <path d="M698 34 L712 44 L698 54" fill="none" stroke="#4ed7d0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
     <g transform="translate(730)">
       <rect width="250" height="88" rx="16" fill="#17243a" stroke="#34445d"/>
-      <text x="125" y="38" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="700">6 held-out bugs</text>
-      <text x="125" y="64" text-anchor="middle" fill="#91a3bc" font-size="15">success, cost, transfer</text>
+      <text x="125" y="38" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="700">6 个未见缺陷</text>
+      <text x="125" y="64" text-anchor="middle" fill="#91a3bc" font-size="15">成功率、成本与迁移</text>
     </g>
   </g>
 </svg>

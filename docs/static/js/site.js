@@ -46,10 +46,10 @@
       }
 
       const label = copyButton.querySelector('.copy-label');
-      if (label) label.textContent = 'Copied';
+      if (label) label.textContent = '已复制';
       copyButton.classList.add('copied');
       window.setTimeout(() => {
-        if (label) label.textContent = 'Copy BibTeX';
+        if (label) label.textContent = '复制 BibTeX';
         copyButton.classList.remove('copied');
       }, 1800);
     });

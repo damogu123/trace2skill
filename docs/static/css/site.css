@@ -28,7 +28,7 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--paper);
-  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: Inter, "Noto Sans SC", "Microsoft YaHei", "PingFang SC", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 17px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -272,9 +272,37 @@ code {
   line-height: 0.99;
 }
 
+html[lang="zh-CN"] .hero h1 {
+  font-size: clamp(2.7rem, 5vw, 4.8rem);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+
+html[lang="zh-CN"] .display-heading,
+html[lang="zh-CN"] .section-heading h2,
+html[lang="zh-CN"] .negative-grid h2 {
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+html[lang="zh-CN"] .eyebrow,
+html[lang="zh-CN"] .section-kicker {
+  letter-spacing: 0.1em;
+  text-transform: none;
+}
+
+.paper-title-original {
+  max-width: 720px;
+  margin: 20px 0 0;
+  color: #aebed5;
+  font-size: clamp(0.9rem, 1.25vw, 1.05rem);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
 .hero-lede {
   max-width: 720px;
-  margin: 30px 0 22px;
+  margin: 22px 0 22px;
   color: #c8d4e7;
   font-size: clamp(1.08rem, 1.65vw, 1.35rem);
   line-height: 1.55;
